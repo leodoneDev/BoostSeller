@@ -65,27 +65,37 @@ class _TestDriveLeadDetailScreenState extends State<TestDriveLeadDetailScreen> {
           body: SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _leadHeader(),
-                  const SizedBox(height: 20),
-                  _checkboxRow(),
-                  const SizedBox(height: 12),
-                  _dropdownRow(),
-                  const SizedBox(height: 12),
-                  _qualityOptionsUI(),
-                  const SizedBox(height: 12),
-                  _completedItemsUI(),
-                  const SizedBox(height: 12),
-                  _fileInputsUI(),
-                  const SizedBox(height: 12),
-                  _photoDateInputs(),
-                  const SizedBox(height: 12),
-                  _commentInput(),
-                  const SizedBox(height: 24),
-                  _actionButtons(),
-                ],
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Color(0xFF2A2A2A),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _leadHeader(),
+                    const SizedBox(height: 10),
+                    const Divider(color: Colors.white30, height: 1),
+                    const SizedBox(height: 20),
+                    _checkboxRow(),
+                    const SizedBox(height: 12),
+                    _dropdownRow(),
+                    const SizedBox(height: 12),
+                    _qualityOptionsUI(),
+                    const SizedBox(height: 12),
+                    _completedItemsUI(),
+                    const SizedBox(height: 12),
+                    _fileInputsUI(),
+                    const SizedBox(height: 12),
+                    _photoDateInputs(),
+                    const SizedBox(height: 12),
+                    _commentInput(),
+                    const SizedBox(height: 24),
+                    _actionButtons(),
+                  ],
+                ),
               ),
             ),
           ),
@@ -188,8 +198,8 @@ class _TestDriveLeadDetailScreenState extends State<TestDriveLeadDetailScreen> {
     return _buildGroupBox(
       title: "Quality",
       child: Wrap(
-        spacing: 8,
-        runSpacing: 4,
+        spacing: 0,
+        runSpacing: 0,
         children:
             qualityOptions.map((opt) {
               return Row(
@@ -359,7 +369,7 @@ class _TestDriveLeadDetailScreenState extends State<TestDriveLeadDetailScreen> {
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 8),
+          // const SizedBox(height: 8),
           child,
         ],
       ),

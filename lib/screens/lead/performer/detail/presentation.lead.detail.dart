@@ -215,7 +215,6 @@ class _PresentationLeadDetailScreenState
 
                             const SizedBox(height: 20),
 
-                            // Add button
                             SizedBox(
                               width: double.infinity,
                               child: ElevatedButton(
@@ -382,8 +381,8 @@ class _PresentationLeadDetailScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildHeader(),
-                    const Divider(color: Colors.white30, height: 1),
                     const SizedBox(height: 10),
+                    const Divider(color: Colors.white30, height: 1),
                     _buildForm(),
                     const Spacer(),
                     _buildActions(context),

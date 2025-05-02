@@ -32,11 +32,11 @@ dependencies:
     sdk: flutter
   flutter_launcher_icons: ^0.13.1
 
-flutter_icons:
-  android: true
-  ios: true
-  image_path: "assets/logo.png"
-  background_color: "#ffffff"
+# flutter_icons:
+#   android: true
+#   ios: true
+#   image_path: "assets/logo.png"
+#   background_color: "#110A0AFF"
   # adaptive_icon_background: "#DBE5EEFF" # dark background
   # adaptive_icon_foreground: "assets/logo.png"
   
