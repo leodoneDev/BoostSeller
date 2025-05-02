@@ -436,130 +436,144 @@ void showCloseReasonNotification(BuildContext context) {
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     builder: (context) {
-      return StatefulBuilder(
-        builder: (context, setModalState) {
-          return Container(
-            width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
-            decoration: const BoxDecoration(
-              color: Color(0xFF2C2C2C),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-            ),
-            child: Stack(
-              children: [
-                // Close Button
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: const Icon(Icons.close, color: Colors.blueAccent),
-                  ),
-                ),
-
-                // Content
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SizedBox(height: 20),
-                    const Text(
-                      "Add reason & comment",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white70,
-                        fontWeight: FontWeight.w500,
-                      ),
+      return Padding(
+        // Adjust height when keyboard appears
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: StatefulBuilder(
+          builder: (context, setModalState) {
+            return Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
+              decoration: const BoxDecoration(
+                color: Color(0xFF2C2C2C),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+              ),
+              child: Stack(
+                children: [
+                  // Close Icon
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: const Icon(Icons.close, color: Colors.blueAccent),
                     ),
-                    const SizedBox(height: 20),
+                  ),
 
-                    // Reason Dropdown
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[700],
-                        borderRadius: BorderRadius.circular(50),
+                  // Main Content
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 20),
+                      const Center(
+                        child: Text(
+                          "Add reason & comment",
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white70,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          dropdownColor: Colors.grey[800],
-                          value: selectedReason,
-                          hint: const Text(
-                            "Reason",
-                            style: TextStyle(color: Colors.white54),
-                          ),
-                          icon: const Icon(
-                            Icons.keyboard_arrow_down,
-                            color: Colors.white54,
-                          ),
-                          items:
-                              ["Rejected", "Unqualified", "Deal closed"]
-                                  .map(
-                                    (reason) => DropdownMenuItem(
-                                      value: reason,
-                                      child: Text(
-                                        reason,
-                                        style: const TextStyle(
-                                          color: Colors.white,
+
+                      const SizedBox(height: 20),
+
+                      // Reason Dropdown
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[700],
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            dropdownColor: Colors.grey[800],
+                            value: selectedReason,
+                            hint: const Text(
+                              "Reason",
+                              style: TextStyle(color: Colors.white54),
+                            ),
+                            icon: const Icon(
+                              Icons.keyboard_arrow_down,
+                              color: Colors.white54,
+                            ),
+                            items:
+                                ["Rejected", "Unqualified", "Deal closed"]
+                                    .map(
+                                      (reason) => DropdownMenuItem(
+                                        value: reason,
+                                        child: Text(
+                                          reason,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  )
-                                  .toList(),
-                          onChanged:
-                              (value) =>
-                                  setModalState(() => selectedReason = value),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // Comment
-                    TextField(
-                      controller: commentController,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        hintText: "Comment",
-                        hintStyle: const TextStyle(color: Colors.white54),
-                        filled: true,
-                        fillColor: Colors.grey[700],
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // Submit Button
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          _showCloseSuccessOverlay(context); // Keep this as is
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF1E90FF),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
+                                    )
+                                    .toList(),
+                            onChanged:
+                                (val) => setModalState(() {
+                                  selectedReason = val;
+                                }),
                           ),
                         ),
-                        child: const Text(
-                          "Add",
-                          style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Comment Field
+                      TextField(
+                        controller: commentController,
+                        minLines: 1,
+                        maxLines: null, // expands automatically
+                        keyboardType: TextInputType.multiline,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                          hintText: "Comment",
+                          hintStyle: const TextStyle(color: Colors.white54),
+                          filled: true,
+                          fillColor: Colors.grey[700],
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          );
-        },
+
+                      const SizedBox(height: 20),
+
+                      // Submit Button
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            _showCloseSuccessOverlay(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF1E90FF),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                          child: const Text(
+                            "Add",
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       );
     },
   );
