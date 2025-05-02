@@ -13,7 +13,7 @@ class WelcomeScreen extends StatelessWidget {
     final height = size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF2C2C2C),
+      backgroundColor: const Color(0xFF333333),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(

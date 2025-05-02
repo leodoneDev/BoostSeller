@@ -2,9 +2,17 @@
 
 import 'package:flutter/material.dart';
 import '../lead/hostess/lead.list.dart';
+import '../lead/performer/lead.list.dart';
 
 class VerificationScreen extends StatelessWidget {
-  const VerificationScreen({super.key});
+  final String role;
+  final String email;
+
+  const VerificationScreen({
+    super.key,
+    required this.role,
+    required this.email,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,12 +21,23 @@ class VerificationScreen extends StatelessWidget {
     final height = size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF2C2C2C),
+      backgroundColor: const Color(0xFF333333),
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.transparent,
-        surfaceTintColor: Colors.transparent,
-        leading: const BackButton(color: Colors.white),
+        backgroundColor: const Color(0xFF3C3C3C),
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          padding: const EdgeInsets.all(0),
+          icon: Container(
+            width: 25,
+            height: 25,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: Color(0xFF42A5F5), // light blue
+            ),
+            child: const Icon(Icons.arrow_back, size: 14, color: Colors.white),
+          ),
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -79,16 +98,28 @@ class VerificationScreen extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Verify action
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LeadListScreen(),
-                      ),
-                    );
+                    if (role == 'hostess') {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LeadListScreen(),
+                        ),
+                      );
+                    } else if (role == 'performer') {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LeadAssignedScreen(),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Unknown role")),
+                      );
+                    }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
+                    backgroundColor: Color(0xFF1E90FF),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),

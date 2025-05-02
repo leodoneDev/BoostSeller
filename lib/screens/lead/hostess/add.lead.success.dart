@@ -1,62 +1,100 @@
-import 'package:flutter/material.dart';
+// Add Lead Success Page : made by Leo on 2025/04/30
 
-class AddSuccessScreen extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:boostseller/screens/profile/hostess/profile.panel.dart';
+
+class AddSuccessScreen extends StatefulWidget {
   const AddSuccessScreen({super.key});
+
+  @override
+  State<AddSuccessScreen> createState() => _AddSuccessScreenState();
+}
+
+class _AddSuccessScreenState extends State<AddSuccessScreen> {
+  final ProfileHostessPanelController _profileController =
+      ProfileHostessPanelController();
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFF2C2C2C),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        surfaceTintColor: Colors.transparent,
-        leading: const BackButton(color: Colors.white),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.filter_alt_outlined, color: Colors.white),
-            onPressed: () {},
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: width * 0.08),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Logo
-              Image.asset('assets/logo.png', height: height * 0.18),
-              const SizedBox(height: 30),
-
-              // Congratulations!
-              const Text(
-                'Congratulations!',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
+    return Stack(
+      children: [
+        Scaffold(
+          backgroundColor: const Color(0xFF333333),
+          appBar: AppBar(
+            backgroundColor: const Color(0xFF3C3C3C),
+            elevation: 0,
+            leading: IconButton(
+              onPressed: () => Navigator.pop(context),
+              padding: const EdgeInsets.all(0),
+              icon: Container(
+                width: 25,
+                height: 25,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Color(0xFF42A5F5),
+                ),
+                child: const Icon(
+                  Icons.arrow_back,
+                  size: 14,
                   color: Colors.white,
                 ),
               ),
-              const SizedBox(height: 20),
-
-              // Success message
-              const Text(
-                'Your lead has been added\nsuccessfully!\n\nLet’s connect\nwith them soon!',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white70,
-                  height: 1.5,
+            ),
+            actions: [
+              GestureDetector(
+                onTap: () => _profileController.toggle(),
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child: Image.asset('assets/list.png', width: 24, height: 24),
                 ),
-                textAlign: TextAlign.center,
               ),
             ],
           ),
+          body: SafeArea(
+            child: Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: width * 0.08),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Logo
+                    Image.asset('assets/logo.png', height: height * 0.2),
+                    const SizedBox(height: 30),
+
+                    // Title
+                    const Text(
+                      'Congratulations!',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Message
+                    const Text(
+                      'Your lead has been added\nsuccessfully!\n\nLet’s connect\nwith them soon!',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white70,
+                        height: 1.5,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ),
-      ),
+
+        /// ✅ Slide-out profile panel
+        ProfileHostessPanel(controller: _profileController),
+      ],
     );
   }
 }

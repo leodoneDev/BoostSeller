@@ -1,3 +1,5 @@
+// Register Page : made by Leo on 2025/04/30
+
 import 'package:flutter/material.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -20,12 +22,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final height = size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF2C2C2C),
+      backgroundColor: const Color(0xFF333333),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color(0xFF3C3C3C),
         elevation: 0,
         surfaceTintColor: Colors.transparent,
-        leading: const BackButton(color: Colors.white),
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          padding: const EdgeInsets.all(0),
+          icon: Container(
+            width: 25,
+            height: 25,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: Color(0xFF42A5F5), // light blue
+            ),
+            child: const Icon(Icons.arrow_back, size: 14, color: Colors.white),
+          ),
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -149,7 +163,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     print('Register as ${widget.role}');
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
+                    backgroundColor: Color(0xFF1E90FF),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),

@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import './register.dart';
-import './forgot_password.dart';
+import './forgot.password.dart';
 import './verification.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -16,6 +16,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;
+  final TextEditingController emailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +25,23 @@ class _LoginScreenState extends State<LoginScreen> {
     final height = size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF2C2C2C),
+      backgroundColor: const Color(0xFF333333),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color(0xFF3C3C3C),
         elevation: 0,
-        leading: BackButton(color: Colors.white),
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          padding: const EdgeInsets.all(0),
+          icon: Container(
+            width: 25,
+            height: 25,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: Color(0xFF42A5F5), // light blue
+            ),
+            child: const Icon(Icons.arrow_back, size: 14, color: Colors.white),
+          ),
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -66,6 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 6),
               TextField(
+                controller: emailController,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   filled: true,
@@ -116,13 +130,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
 
-              const SizedBox(height: 8),
+              const SizedBox(height: 20),
 
               // Forgot Password
               Align(
                 alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {
+                child: GestureDetector(
+                  onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -132,27 +146,41 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   child: const Text(
                     'Forgot Password?',
-                    style: TextStyle(color: Colors.redAccent),
+                    style: TextStyle(color: Color(0xFFEA4335)),
                   ),
                 ),
               ),
 
-              const SizedBox(height: 10),
+              const SizedBox(height: 20),
 
               // Login Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const VerificationScreen(),
-                      ),
-                    );
+                    final email = emailController.text.trim();
+                    if (email.isNotEmpty) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => VerificationScreen(
+                                role: widget.role,
+                                email: email,
+                              ),
+                        ),
+                      );
+                    } else {
+                      // optional: show error message
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Please enter your email."),
+                        ),
+                      );
+                    }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
+                    backgroundColor: Color(0xFF1E90FF),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),

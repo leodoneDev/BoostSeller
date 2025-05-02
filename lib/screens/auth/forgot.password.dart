@@ -1,6 +1,7 @@
 // Forgot Password Page : made by Leo on 2025/04/30
 
 import 'package:flutter/material.dart';
+import './change.password.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
   const ForgotPasswordScreen({super.key});
@@ -12,12 +13,23 @@ class ForgotPasswordScreen extends StatelessWidget {
     final height = size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF2C2C2C),
+      backgroundColor: const Color(0xFF333333),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color(0xFF3C3C3C),
         elevation: 0,
-        surfaceTintColor: Colors.transparent,
-        leading: const BackButton(color: Colors.white),
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          padding: const EdgeInsets.all(0),
+          icon: Container(
+            width: 25,
+            height: 25,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: Color(0xFF42A5F5), // light blue
+            ),
+            child: const Icon(Icons.arrow_back, size: 14, color: Colors.white),
+          ),
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -100,11 +112,15 @@ class ForgotPasswordScreen extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // TODO: Handle OTP send
-                    print("Send OTP clicked");
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ChangePasswordScreen(),
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
+                    backgroundColor: Color(0xFF1E90FF),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
