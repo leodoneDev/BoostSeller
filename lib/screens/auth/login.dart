@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:boostseller/screens/auth/register.dart';
 import 'package:boostseller/screens/auth/forgot.password.dart';
 import 'package:boostseller/screens/auth/verification.dart';
+import 'package:boostseller/utils/validation.dart';
 import 'package:boostseller/widgets/button.effect.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -18,6 +19,36 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController pwdController = TextEditingController();
+
+  void handleLogin() {
+    final email = emailController.text.trim();
+    final password = pwdController.text.trim();
+
+    if (email.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Please enter your email.")));
+    } else if (!isValidEmail(email)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please enter a valid email address.")),
+      );
+    } else if (!isValidPassword(password)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Password must be at least 6 characters."),
+        ),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder:
+              (context) => VerificationScreen(role: widget.role, email: email),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,6 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 6),
               TextField(
                 controller: emailController,
+                keyboardType: TextInputType.emailAddress,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   filled: true,
@@ -106,6 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 6),
               TextField(
+                controller: pwdController,
                 obscureText: _obscurePassword,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
@@ -158,27 +191,7 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(
                 width: double.infinity,
                 child: EffectButton(
-                  onTap: () {
-                    final email = emailController.text.trim();
-                    if (email.isNotEmpty) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => VerificationScreen(
-                                role: widget.role,
-                                email: email,
-                              ),
-                        ),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Please enter your email."),
-                        ),
-                      );
-                    }
-                  },
+                  onTap: handleLogin,
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 10),

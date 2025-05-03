@@ -1,10 +1,19 @@
 // Forgot Password Page : made by Leo on 2025/04/30
 
 import 'package:flutter/material.dart';
-import './change.password.dart';
+import 'package:boostseller/screens/auth/change.password.dart';
+
+import 'package:boostseller/widgets/button.effect.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
   const ForgotPasswordScreen({super.key});
+
+  void handleOTP(context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ChangePasswordScreen()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,25 +119,21 @@ class ForgotPasswordScreen extends StatelessWidget {
               // Send OTP Button
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ChangePasswordScreen(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF1E90FF),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
+                child: EffectButton(
+                  onTap: () => handleOTP(context),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1E90FF),
                       borderRadius: BorderRadius.circular(30),
                     ),
-                  ),
-                  child: const Text(
-                    'Send OTP',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
+                    child: const Center(
+                      child: Text(
+                        'Send OTP',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
+                    ),
                   ),
                 ),
               ),

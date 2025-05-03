@@ -1,6 +1,7 @@
 // Change Password Page : made by Leo on 2025/04/30
 
 import 'package:flutter/material.dart';
+import 'package:boostseller/widgets/button.effect.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -18,6 +19,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+
+  void handleChangePwd() {}
 
   @override
   Widget build(BuildContext context) {
@@ -90,20 +93,21 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // TODO: implement password change logic
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1E90FF),
-                    shape: RoundedRectangleBorder(
+                child: EffectButton(
+                  onTap: handleChangePwd,
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1E90FF),
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  child: const Text(
-                    'Submit',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
+                    child: const Center(
+                      child: Text(
+                        'Submit',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
+                    ),
                   ),
                 ),
               ),

@@ -1,6 +1,9 @@
 // Register Page : made by Leo on 2025/04/30
 
 import 'package:flutter/material.dart';
+import 'package:boostseller/widgets/button.effect.dart';
+import 'package:boostseller/utils/validation.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 
 class RegisterScreen extends StatefulWidget {
   final String role;
@@ -14,6 +17,52 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   bool _obscurePassword = true;
   bool _obscurePasswordConfirm = true;
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController pwdController = TextEditingController();
+  final TextEditingController pwdConfirmController = TextEditingController();
+  String phoneNumber = '';
+
+  void handleRegister() {
+    final name = nameController.text.trim();
+    final email = emailController.text.trim();
+    final password = pwdController.text.trim();
+    final password_confirm = pwdConfirmController.text.trim();
+
+    if ((name.isNotEmpty) &&
+        (email.isNotEmpty) &&
+        (phoneNumber.isNotEmpty) &&
+        (password.isNotEmpty) &&
+        (password_confirm.isNotEmpty)) {
+      if (isValidEmail(email)) {
+        if (isValidPassword(password)) {
+          if (password == password_confirm) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("register successfully.")),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Passwords do not match.")),
+            );
+          }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Password must be at least 6 characters."),
+            ),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Please enter a valid email address.")),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please filled all fileds.")),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,11 +120,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 12),
 
               // Email
+              _buildLabel('Name'),
+              const SizedBox(height: 6),
+              _buildTextField(
+                hint: 'Name',
+                keyboardType: TextInputType.text,
+                controller: nameController,
+              ),
+              const SizedBox(height: 6),
+              // Email
               _buildLabel('Email'),
               const SizedBox(height: 6),
               _buildTextField(
                 hint: 'Email',
                 keyboardType: TextInputType.emailAddress,
+                controller: emailController,
               ),
 
               const SizedBox(height: 6),
@@ -83,9 +142,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
               // Phone Number
               _buildLabel('Phone Number'),
               const SizedBox(height: 6),
-              _buildTextField(
-                hint: 'Phone Number',
-                keyboardType: TextInputType.phone,
+              IntlPhoneField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[800],
+                  labelStyle: TextStyle(color: Colors.white),
+                ),
+                initialCountryCode: 'US',
+                style: TextStyle(color: Colors.white),
+                dropdownIcon: const Icon(
+                  Icons.arrow_drop_down,
+                  color: Colors.white,
+                ),
+                onChanged: (phone) {
+                  phoneNumber = phone.completeNumber;
+                },
               ),
 
               const SizedBox(height: 6),
@@ -94,6 +169,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               _buildLabel('Password'),
               const SizedBox(height: 6),
               TextField(
+                controller: pwdController,
                 obscureText: _obscurePassword,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
@@ -125,6 +201,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               _buildLabel('Password Confirm'),
               const SizedBox(height: 6),
               TextField(
+                controller: pwdConfirmController,
                 obscureText: _obscurePasswordConfirm,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
@@ -158,20 +235,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
               // Register Button
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    print('Register as ${widget.role}');
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF1E90FF),
-                    shape: RoundedRectangleBorder(
+                child: EffectButton(
+                  onTap: handleRegister,
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1E90FF),
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  child: const Text(
-                    'Register',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
+                    child: const Center(
+                      child: Text(
+                        'Register',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -185,7 +263,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     "Already have account? ",
                     style: TextStyle(color: Colors.white38),
                   ),
-                  GestureDetector(
+                  SizedBox(width: 10),
+                  EffectButton(
                     onTap: () => Navigator.pop(context),
                     child: const Text(
                       "Login",
@@ -216,8 +295,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _buildTextField({required String hint, TextInputType? keyboardType}) {
+  Widget _buildTextField({
+    required String hint,
+    TextInputType? keyboardType,
+    required TextEditingController controller,
+  }) {
     return TextField(
+      controller: controller,
       keyboardType: keyboardType,
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(

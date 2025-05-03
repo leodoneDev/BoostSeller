@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:boostseller/screens/profile/performer/profile.panel.dart';
+import 'package:boostseller/widgets/button.effect.dart';
 
 class AssignedLeadDetailScreen extends StatefulWidget {
   const AssignedLeadDetailScreen({super.key});
@@ -131,18 +132,18 @@ class _AssignedLeadDetailScreenState extends State<AssignedLeadDetailScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _actionButton(
-                        "Accept",
-                        const Color(0xFF1E90FF),
-                        Colors.white,
-                        () => showAcceptedOverlay(context),
-                      ),
-                      _actionButton(
-                        "Close",
-                        Color(0xFF2A2A2A),
-                        Colors.white,
-                        () => showCloseReasonNotification(context),
-                      ),
+                      // _actionButton(
+                      //   "Accept",
+                      //   const Color(0xFF1E90FF),
+                      //   Colors.white,
+                      //   () => showAcceptedOverlay(context),
+                      // ),
+                      // _actionButton(
+                      //   "Close",
+                      //   Color(0xFF2A2A2A),
+                      //   Colors.white,
+                      //   () => showCloseReasonNotification(context),
+                      // ),
                     ],
                   ),
 

@@ -1,8 +1,9 @@
 // Verification Page : made by Leo on 2025/04/30
 
 import 'package:flutter/material.dart';
-import '../lead/hostess/lead.list.dart';
-import '../lead/performer/lead.list.dart';
+import 'package:boostseller/screens/lead/hostess/lead.list.dart';
+import 'package:boostseller/screens/lead/performer/lead.list.dart';
+import 'package:boostseller/widgets/button.effect.dart';
 
 class VerificationScreen extends StatelessWidget {
   final String role;
@@ -13,6 +14,24 @@ class VerificationScreen extends StatelessWidget {
     required this.role,
     required this.email,
   });
+
+  void handleVerify(context) {
+    if (role == 'hostess') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const LeadListScreen()),
+      );
+    } else if (role == 'performer') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const LeadAssignedScreen()),
+      );
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Unknown role")));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,38 +115,21 @@ class VerificationScreen extends StatelessWidget {
               // Verify button
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (role == 'hostess') {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LeadListScreen(),
-                        ),
-                      );
-                    } else if (role == 'performer') {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LeadAssignedScreen(),
-                        ),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Unknown role")),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF1E90FF),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
+                child: EffectButton(
+                  onTap: () => handleVerify(context),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1E90FF),
                       borderRadius: BorderRadius.circular(30),
                     ),
-                  ),
-                  child: const Text(
-                    'Verify',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
+                    child: const Center(
+                      child: Text(
+                        'Verify',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -135,7 +137,7 @@ class VerificationScreen extends StatelessWidget {
               const SizedBox(height: 20),
 
               // Resend text
-              GestureDetector(
+              EffectButton(
                 onTap: () {
                   // resend verification request.
                   ScaffoldMessenger.of(context).showSnackBar(
