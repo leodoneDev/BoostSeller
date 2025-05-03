@@ -1,7 +1,8 @@
 // Welcome Page : made by Leo on 2025/04/30
 
 import 'package:flutter/material.dart';
-import './auth/login.dart';
+import 'package:boostseller/screens/auth/login.dart';
+import 'package:boostseller/widgets/button.effect.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -40,8 +41,7 @@ class WelcomeScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Hostess
-                      GestureDetector(
+                      EffectButton(
                         onTap: () {
                           Navigator.push(
                             context,
@@ -66,7 +66,7 @@ class WelcomeScreen extends StatelessWidget {
                       SizedBox(width: width * 0.1),
 
                       // Performer
-                      GestureDetector(
+                      EffectButton(
                         onTap: () {
                           Navigator.push(
                             context,

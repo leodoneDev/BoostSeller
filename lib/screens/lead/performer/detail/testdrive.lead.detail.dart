@@ -63,39 +63,51 @@ class _TestDriveLeadDetailScreenState extends State<TestDriveLeadDetailScreen> {
             ],
           ),
           body: SafeArea(
-            child: SingleChildScrollView(
+            child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Color(0xFF2A2A2A),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _leadHeader(),
-                    const SizedBox(height: 10),
-                    const Divider(color: Colors.white30, height: 1),
-                    const SizedBox(height: 20),
-                    _checkboxRow(),
-                    const SizedBox(height: 12),
-                    _dropdownRow(),
-                    const SizedBox(height: 12),
-                    _qualityOptionsUI(),
-                    const SizedBox(height: 12),
-                    _completedItemsUI(),
-                    const SizedBox(height: 12),
-                    _fileInputsUI(),
-                    const SizedBox(height: 12),
-                    _photoDateInputs(),
-                    const SizedBox(height: 12),
-                    _commentInput(),
-                    const SizedBox(height: 24),
-                    _actionButtons(),
-                  ],
-                ),
+              child: Column(
+                children: [
+                  // Scrollable content
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2A2A2A),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _leadHeader(),
+                            const SizedBox(height: 10),
+                            const Divider(color: Colors.white30, height: 1),
+                            const SizedBox(height: 20),
+                            _checkboxRow(),
+                            const SizedBox(height: 12),
+                            _dropdownRow(),
+                            const SizedBox(height: 12),
+                            _qualityOptionsUI(),
+                            const SizedBox(height: 12),
+                            _completedItemsUI(),
+                            const SizedBox(height: 12),
+                            _fileInputsUI(),
+                            const SizedBox(height: 12),
+                            _photoDateInputs(),
+                            const SizedBox(height: 12),
+                            _commentInput(),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Pinned bottom action buttons
+                  _actionButtons(),
+                ],
               ),
             ),
           ),
@@ -145,14 +157,28 @@ class _TestDriveLeadDetailScreenState extends State<TestDriveLeadDetailScreen> {
   Widget _checkboxRow() {
     return Row(
       children: [
-        Checkbox(
-          value: showedInterest,
-          onChanged: (val) => setState(() => showedInterest = val ?? false),
-          activeColor: Colors.lightBlueAccent,
-        ),
-        const Text(
-          "Client showed interest",
-          style: TextStyle(color: Colors.white),
+        Padding(
+          padding: const EdgeInsets.only(left: 0), // No indent
+          child: Row(
+            children: [
+              SizedBox(
+                width: 24, // Checkbox default size
+                height: 24,
+                child: Checkbox(
+                  value: showedInterest,
+                  onChanged: (val) => setState(() => showedInterest = val!),
+                  activeColor: Colors.lightBlueAccent,
+                  visualDensity: VisualDensity.compact,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Text(
+                "Client showed interest",
+                style: TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -197,24 +223,37 @@ class _TestDriveLeadDetailScreenState extends State<TestDriveLeadDetailScreen> {
   Widget _qualityOptionsUI() {
     return _buildGroupBox(
       title: "Quality",
-      child: Wrap(
-        spacing: 0,
-        runSpacing: 0,
-        children:
-            qualityOptions.map((opt) {
-              return Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Radio<String>(
-                    value: opt,
-                    groupValue: selectedQuality,
-                    onChanged: (val) => setState(() => selectedQuality = val),
-                    activeColor: Colors.lightBlueAccent,
-                  ),
-                  Text(opt, style: const TextStyle(color: Colors.white)),
-                ],
-              );
-            }).toList(),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: List.generate(2, (colIndex) {
+          // Get items for this column (3 per column)
+          final items = qualityOptions.skip(colIndex * 3).take(3).toList();
+          return Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children:
+                  items.map((opt) {
+                    return Row(
+                      children: [
+                        Radio<String>(
+                          value: opt,
+                          groupValue: selectedQuality,
+                          onChanged:
+                              (val) => setState(() => selectedQuality = val),
+                          activeColor: Colors.lightBlueAccent,
+                        ),
+                        Flexible(
+                          child: Text(
+                            opt,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+            ),
+          );
+        }),
       ),
     );
   }

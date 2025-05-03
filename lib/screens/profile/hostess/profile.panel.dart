@@ -32,7 +32,6 @@ class ProfileHostessPanel extends StatelessWidget {
 
         return Stack(
           children: [
-            // ✅ Tap outside to close
             GestureDetector(
               onTap: controller.toggle,
               child: Container(
@@ -42,7 +41,6 @@ class ProfileHostessPanel extends StatelessWidget {
               ),
             ),
 
-            // ✅ Right-side panel
             Positioned(
               top: 0,
               right: 0,
@@ -59,43 +57,79 @@ class ProfileHostessPanel extends StatelessWidget {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        Container(
-                          width: double.infinity,
-                          height: 160,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF42A5F5),
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                          child: const Center(
-                            child: Icon(
-                              Icons.person,
-                              size: 60,
-                              color: Colors.white,
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: 30.0,
+                          ), // Top padding
+                          child: Center(
+                            child: CircleAvatar(
+                              radius: 70, // Increased size (default ~40)
+                              backgroundColor: Colors.white,
+                              backgroundImage: AssetImage(
+                                'assets/profile.jpg',
+                              ), // Replace with your image path
                             ),
                           ),
                         ),
+
                         const SizedBox(height: 20),
-                        const ListTile(
-                          leading: Icon(Icons.home, color: Colors.white),
-                          title: Text(
-                            "Maxim",
-                            style: TextStyle(color: Colors.white),
-                          ),
+
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.home, color: Colors.white, size: 20),
+                                SizedBox(width: 8),
+                                Text(
+                                  "Maxim",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.phone,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                                SizedBox(width: 8),
+                                Text(
+                                  "1-232-234-2345",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.check,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                                SizedBox(width: 8),
+                                Text(
+                                  "Performer",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                          ],
                         ),
-                        const ListTile(
-                          leading: Icon(Icons.phone, color: Colors.white),
-                          title: Text(
-                            "1-232-234-2345",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                        const ListTile(
-                          leading: Icon(Icons.check, color: Colors.white),
-                          title: Text(
-                            "Hostess",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
+
                         const Divider(color: Colors.white24),
                         const Align(
                           alignment: Alignment.centerLeft,

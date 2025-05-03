@@ -15,10 +15,6 @@ class _PresentationLeadDetailScreenState
       ProfilePerformerPanelController();
   bool _clientInterested = false;
   String _presentationSent = "Yes";
-  final TextEditingController _commentController = TextEditingController();
-
-  String? _closeReason;
-  final TextEditingController _closeComment = TextEditingController();
 
   void _showSuccessAdvanceOverlay(BuildContext context) {
     final overlay = Overlay.of(context);
@@ -111,155 +107,163 @@ class _PresentationLeadDetailScreenState
     overlay.insert(overlayEntry);
   }
 
-  void _showCloseReasonOverlay(BuildContext context) {
-    final overlay = Overlay.of(context);
-    late OverlayEntry overlayEntry;
+  void showCloseReasonNotification(BuildContext context) {
+    final TextEditingController commentReasonController =
+        TextEditingController();
+    String? selectedReason;
 
-    overlayEntry = OverlayEntry(
-      builder:
-          (context) => Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Material(
-              color: Colors.transparent,
-              child: Stack(
-                children: [
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF2C2C2C),
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(24),
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Padding(
+          // Adjust height when keyboard appears
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: StatefulBuilder(
+            builder: (context, setModalState) {
+              return Container(
+                width: double.infinity,
+                padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF2C2C2C),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                ),
+                child: Stack(
+                  children: [
+                    // Close Icon
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: const Icon(
+                          Icons.close,
+                          color: Colors.blueAccent,
+                        ),
                       ),
                     ),
-                    child: StatefulBuilder(
-                      builder: (context, setModalState) {
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text(
-                              "Add reason & comment",
+
+                    // Main Content
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 20),
+                        const Center(
+                          child: Text(
+                            "Add reason & comment",
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.white70,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        // Reason Dropdown
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[700],
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              dropdownColor: Colors.grey[800],
+                              value: selectedReason,
+                              hint: const Text(
+                                "Reason",
+                                style: TextStyle(color: Colors.white54),
+                              ),
+                              icon: const Icon(
+                                Icons.keyboard_arrow_down,
+                                color: Colors.white54,
+                              ),
+                              items:
+                                  ["Rejected", "Unqualified", "Deal closed"]
+                                      .map(
+                                        (reason) => DropdownMenuItem(
+                                          value: reason,
+                                          child: Text(
+                                            reason,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
+                              onChanged:
+                                  (val) => setModalState(() {
+                                    selectedReason = val;
+                                  }),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        // Comment Field
+                        TextField(
+                          controller: commentReasonController,
+                          minLines: 1,
+                          maxLines: null, // expands automatically
+                          keyboardType: TextInputType.multiline,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            hintText: "Comment",
+                            hintStyle: const TextStyle(color: Colors.white54),
+                            filled: true,
+                            fillColor: Colors.grey[700],
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        // Submit Button
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              _showCloseSuccessOverlay(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF1E90FF),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                            child: const Text(
+                              "Add",
                               style: TextStyle(
                                 fontSize: 16,
-                                color: Colors.white70,
-                                fontWeight: FontWeight.w500,
+                                color: Colors.white,
                               ),
                             ),
-                            const SizedBox(height: 20),
-
-                            // Dropdown
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[700],
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton<String>(
-                                  dropdownColor: Colors.grey[800],
-                                  value: _closeReason,
-                                  hint: const Text(
-                                    "Reason",
-                                    style: TextStyle(color: Colors.white54),
-                                  ),
-                                  icon: const Icon(
-                                    Icons.keyboard_arrow_down,
-                                    color: Colors.white54,
-                                  ),
-                                  items:
-                                      ["Rejected", "Unqualified", "Deal closed"]
-                                          .map(
-                                            (reason) => DropdownMenuItem(
-                                              value: reason,
-                                              child: Text(
-                                                reason,
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                          )
-                                          .toList(),
-                                  onChanged:
-                                      (value) => setModalState(
-                                        () => _closeReason = value,
-                                      ),
-                                ),
-                              ),
-                            ),
-
-                            const SizedBox(height: 16),
-
-                            // Comment
-                            TextField(
-                              controller: _closeComment,
-                              style: const TextStyle(color: Colors.white),
-                              decoration: InputDecoration(
-                                hintText: "Comment",
-                                hintStyle: const TextStyle(
-                                  color: Colors.white54,
-                                ),
-                                filled: true,
-                                fillColor: Colors.grey[700],
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide.none,
-                                ),
-                              ),
-                            ),
-
-                            const SizedBox(height: 20),
-
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  overlayEntry.remove();
-                                  _showCloseSuccessOverlay(context);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF1E90FF),
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 14,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                ),
-                                child: const Text(
-                                  "Add",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  Positioned(
-                    top: 16,
-                    right: 16,
-                    child: GestureDetector(
-                      onTap: () => overlayEntry.remove(),
-                      child: const Icon(Icons.close, color: Colors.blueAccent),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                  ],
+                ),
+              );
+            },
           ),
+        );
+      },
     );
-
-    overlay.insert(overlayEntry);
   }
 
   void _showCloseSuccessOverlay(BuildContext context) {
@@ -332,12 +336,15 @@ class _PresentationLeadDetailScreenState
     overlay.insert(overlayEntry);
   }
 
+  final TextEditingController mainCommentController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         Scaffold(
           backgroundColor: const Color(0xFF333333),
+          resizeToAvoidBottomInset: true,
           appBar: AppBar(
             backgroundColor: const Color(0xFF3C3C3C),
             elevation: 0,
@@ -368,29 +375,101 @@ class _PresentationLeadDetailScreenState
             ],
           ),
           body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Color(0xFF2A2A2A),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildHeader(),
-                    const SizedBox(height: 10),
-                    const Divider(color: Colors.white30, height: 1),
-                    _buildForm(),
-                    const Spacer(),
-                    _buildActions(context),
-                  ],
-                ),
-              ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.only(
+                    left: 20,
+                    right: 20,
+                    bottom: 10,
+                    top: 10,
+                  ),
+                  reverse: true, // ensures keyboard pushes UI up
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: IntrinsicHeight(
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF2A2A2A),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildHeader(),
+                                  const SizedBox(height: 10),
+                                  const Divider(
+                                    color: Colors.white30,
+                                    height: 1,
+                                  ),
+                                  const SizedBox(height: 20),
+                                  Expanded(
+                                    child: _buildForm(),
+                                  ), // scrollable form
+                                ],
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          // Bottom Buttons (no space between form and buttons)
+                          _buildActions(context),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
+
+          // body: SafeArea(
+          //   child: Column(
+          //     children: [
+          //       // Content Area
+          //       Expanded(
+          //         child: SingleChildScrollView(
+          //           padding: EdgeInsets.only(
+          //             left: 20,
+          //             right: 20,
+          //             top: 10,
+          //             bottom: MediaQuery.of(context).viewInsets.bottom,
+          //           ),
+          //           child: Container(
+          //             padding: const EdgeInsets.all(16),
+          //             decoration: BoxDecoration(
+          //               color: const Color(0xFF2A2A2A),
+          //               borderRadius: BorderRadius.circular(16),
+          //             ),
+          //             child: Column(
+          //               crossAxisAlignment: CrossAxisAlignment.start,
+          //               children: [
+          //                 _buildHeader(),
+          //                 const SizedBox(height: 10),
+          //                 const Divider(color: Colors.white30, height: 1),
+          //                 const SizedBox(height: 20),
+          //                 _buildForm(),
+          //               ],
+          //             ),
+          //           ),
+          //         ),
+          //       ),
+
+          //       // Action Buttons (Fixed at bottom)
+          //       Padding(
+          //         padding: const EdgeInsets.fromLTRB(20, 10, 20, 16),
+          //         child: _buildActions(context),
+          //       ),
+          //     ],
+          //   ),
+          // ),
         ),
         PerformerProfilePanel(controller: _profileController),
       ],
@@ -438,17 +517,31 @@ class _PresentationLeadDetailScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CheckboxListTile(
-          value: _clientInterested,
-          onChanged: (val) => setState(() => _clientInterested = val!),
-          title: const Text(
-            "Client showed interest",
-            style: TextStyle(color: Colors.white),
+        Padding(
+          padding: const EdgeInsets.only(left: 0), // No indent
+          child: Row(
+            children: [
+              SizedBox(
+                width: 24, // Checkbox default size
+                height: 24,
+                child: Checkbox(
+                  value: _clientInterested,
+                  onChanged: (val) => setState(() => _clientInterested = val!),
+                  activeColor: Colors.lightBlueAccent,
+                  visualDensity: VisualDensity.compact,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Text(
+                "Client showed interest",
+                style: TextStyle(color: Colors.white),
+              ),
+            ],
           ),
-          controlAffinity: ListTileControlAffinity.leading,
-          contentPadding: EdgeInsets.zero,
-          activeColor: Colors.lightBlueAccent,
         ),
+
+        const SizedBox(height: 20),
         Row(
           children: [
             Container(
@@ -490,8 +583,8 @@ class _PresentationLeadDetailScreenState
         const Text("Comment", style: TextStyle(color: Colors.white)),
         const SizedBox(height: 8),
         TextField(
-          controller: _commentController,
-          maxLines: 5,
+          controller: mainCommentController,
+          maxLines: 3,
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             hintText: "Comment",
@@ -516,7 +609,7 @@ class _PresentationLeadDetailScreenState
           _showSuccessAdvanceOverlay(context);
         }),
         _actionButton("Close", const Color(0xFF2A2A2A), Colors.white, () {
-          _showCloseReasonOverlay(context);
+          showCloseReasonNotification(context);
         }),
       ],
     );
