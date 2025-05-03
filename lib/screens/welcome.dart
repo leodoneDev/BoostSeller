@@ -65,7 +65,6 @@ class WelcomeScreen extends StatelessWidget {
 
                       SizedBox(width: width * 0.1),
 
-                      // Performer
                       EffectButton(
                         onTap: () {
                           Navigator.push(

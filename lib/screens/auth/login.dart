@@ -1,9 +1,10 @@
 // Login Page : made by Leo on 2025/04/30
 
 import 'package:flutter/material.dart';
-import './register.dart';
-import './forgot.password.dart';
-import './verification.dart';
+import 'package:boostseller/screens/auth/register.dart';
+import 'package:boostseller/screens/auth/forgot.password.dart';
+import 'package:boostseller/screens/auth/verification.dart';
+import 'package:boostseller/widgets/button.effect.dart';
 
 class LoginScreen extends StatefulWidget {
   final String role;
@@ -135,7 +136,7 @@ class _LoginScreenState extends State<LoginScreen> {
               // Forgot Password
               Align(
                 alignment: Alignment.centerRight,
-                child: GestureDetector(
+                child: EffectButton(
                   onTap: () {
                     Navigator.push(
                       context,
@@ -156,8 +157,8 @@ class _LoginScreenState extends State<LoginScreen> {
               // Login Button
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
+                child: EffectButton(
+                  onTap: () {
                     final email = emailController.text.trim();
                     if (email.isNotEmpty) {
                       Navigator.push(
@@ -171,7 +172,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       );
                     } else {
-                      // optional: show error message
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text("Please enter your email."),
@@ -179,16 +179,19 @@ class _LoginScreenState extends State<LoginScreen> {
                       );
                     }
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF1E90FF),
-                    shape: RoundedRectangleBorder(
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1E90FF),
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  child: const Text(
-                    'Login',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
+                    child: const Center(
+                      child: Text(
+                        'Login',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -202,7 +205,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     "Don’t have account? ",
                     style: TextStyle(color: Colors.white38),
                   ),
-                  GestureDetector(
+                  SizedBox(width: 10),
+                  EffectButton(
                     onTap: () {
                       Navigator.push(
                         context,
