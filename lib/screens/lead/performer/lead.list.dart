@@ -1,8 +1,10 @@
 // Lead List Page : made by Leo on 2025/05/04
 
+import 'package:boostseller/widgets/button.effect.dart';
 import 'package:flutter/material.dart';
 import 'package:boostseller/screens/profile/performer/profile.panel.dart';
 import 'package:boostseller/screens/lead/performer/lead.detail.dart';
+import 'package:boostseller/constants.dart';
 
 class LeadAssignedScreen extends StatefulWidget {
   const LeadAssignedScreen({super.key});
@@ -21,9 +23,9 @@ class _LeadAssignedScreenState extends State<LeadAssignedScreen> {
     return Stack(
       children: [
         Scaffold(
-          backgroundColor: const Color(0xFF333333),
+          backgroundColor: Config.backgroundColor,
           appBar: AppBar(
-            backgroundColor: const Color(0xFF3C3C3C),
+            backgroundColor: Config.appbarColor,
             elevation: 0,
             leading: IconButton(
               onPressed: () => Navigator.pop(context),
@@ -32,17 +34,17 @@ class _LeadAssignedScreenState extends State<LeadAssignedScreen> {
                 height: 25,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Color(0xFF42A5F5),
+                  color: Config.activeButtonColor,
                 ),
                 child: const Icon(
                   Icons.arrow_back,
                   size: 14,
-                  color: Colors.white,
+                  color: Config.iconDefaultColor,
                 ),
               ),
             ),
             actions: [
-              GestureDetector(
+              EffectButton(
                 onTap: () => _profileController.toggle(),
                 child: Padding(
                   padding: const EdgeInsets.only(right: 12),
@@ -60,15 +62,18 @@ class _LeadAssignedScreenState extends State<LeadAssignedScreen> {
                   const Text(
                     "Leads",
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: Config.titleFontSize,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Config.titleFontColor,
                     ),
                   ),
                   const SizedBox(height: 4),
                   const Text(
                     "Work with leads!",
-                    style: TextStyle(fontSize: 14, color: Colors.white60),
+                    style: TextStyle(
+                      fontSize: Config.subTitleFontSize,
+                      color: Config.subTitleFontColor,
+                    ),
                   ),
                   const SizedBox(height: 20),
 
@@ -125,13 +130,14 @@ class _LeadAssignedScreenState extends State<LeadAssignedScreen> {
 
   Widget _buildTab(String label, bool selected, VoidCallback onTap) {
     return Expanded(
-      child: GestureDetector(
+      child: EffectButton(
         onTap: onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: selected ? const Color(0xFF1E90FF) : const Color(0xFF1C1C1C),
+            color:
+                selected ? Config.activeButtonColor : Config.deactiveTabColor,
             borderRadius: BorderRadius.circular(20),
             boxShadow:
                 selected
@@ -148,7 +154,8 @@ class _LeadAssignedScreenState extends State<LeadAssignedScreen> {
             child: Text(
               label,
               style: const TextStyle(
-                color: Colors.white,
+                color: Config.buttonTextColor,
+                fontSize: Config.buttonTextFontSize,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -165,7 +172,7 @@ class _LeadAssignedScreenState extends State<LeadAssignedScreen> {
     required String date,
     required String status,
   }) {
-    return GestureDetector(
+    return EffectButton(
       onTap: () {
         Navigator.push(
           context,
@@ -181,7 +188,7 @@ class _LeadAssignedScreenState extends State<LeadAssignedScreen> {
         margin: const EdgeInsets.only(top: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.black38,
+          color: Config.leadCardColor,
           borderRadius: BorderRadius.circular(20),
           boxShadow: const [
             BoxShadow(
@@ -201,17 +208,17 @@ class _LeadAssignedScreenState extends State<LeadAssignedScreen> {
                 Text(
                   name,
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: Config.leadNameFontSize,
                     fontWeight: FontWeight.bold,
-                    color: Colors.lightBlueAccent,
+                    color: Config.leadNameColor,
                   ),
                 ),
                 Text(
                   status,
                   style: const TextStyle(
-                    fontSize: 13,
+                    fontSize: Config.leadTextFontSize,
                     fontWeight: FontWeight.w500,
-                    color: Colors.white70,
+                    color: Config.leadTextFontSizeColor,
                   ),
                 ),
               ],

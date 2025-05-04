@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:boostseller/screens/lead/hostess/lead.list.dart';
 import 'package:boostseller/screens/lead/performer/lead.list.dart';
 import 'package:boostseller/widgets/button.effect.dart';
+import 'package:boostseller/constants.dart';
 
 class VerificationScreen extends StatelessWidget {
   final String role;
@@ -40,10 +41,10 @@ class VerificationScreen extends StatelessWidget {
     final height = size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF333333),
+      backgroundColor: Config.backgroundColor,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: const Color(0xFF3C3C3C),
+        backgroundColor: Config.appbarColor,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
           padding: const EdgeInsets.all(0),
@@ -52,9 +53,13 @@ class VerificationScreen extends StatelessWidget {
             height: 25,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
-              color: Color(0xFF42A5F5), // light blue
+              color: Config.activeButtonColor, // light blue
             ),
-            child: const Icon(Icons.arrow_back, size: 14, color: Colors.white),
+            child: const Icon(
+              Icons.arrow_back,
+              size: 14,
+              color: Config.iconDefaultColor,
+            ),
           ),
         ),
       ),
@@ -72,9 +77,9 @@ class VerificationScreen extends StatelessWidget {
               const Text(
                 'Verification',
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: Config.titleFontSize,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Config.titleFontColor,
                 ),
               ),
 
@@ -83,7 +88,10 @@ class VerificationScreen extends StatelessWidget {
                 const Text(
                   'Please enter the verification code sent \n to your email',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 15, color: Colors.white60),
+                  style: TextStyle(
+                    fontSize: Config.subTitleFontSize,
+                    color: Config.subTitleFontColor,
+                  ),
                 ),
                 const SizedBox(height: 30),
                 const Align(
@@ -100,7 +108,10 @@ class VerificationScreen extends StatelessWidget {
                 const Text(
                   'Please enter the verification code sent \n to your phone number',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 15, color: Colors.white60),
+                  style: TextStyle(
+                    fontSize: Config.subTitleFontSize,
+                    color: Config.subTitleFontColor,
+                  ),
                 ),
                 const SizedBox(height: 30),
                 const Align(
@@ -125,13 +136,16 @@ class VerificationScreen extends StatelessWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1E90FF),
+                      color: Config.activeButtonColor,
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: const Center(
                       child: Text(
                         'Verify',
-                        style: TextStyle(fontSize: 18, color: Colors.white),
+                        style: TextStyle(
+                          fontSize: Config.buttonTextFontSize,
+                          color: Config.buttonTextColor,
+                        ),
                       ),
                     ),
                   ),
@@ -145,7 +159,10 @@ class VerificationScreen extends StatelessWidget {
                 children: [
                   const Text(
                     "If you didn't receive a code,",
-                    style: TextStyle(color: Colors.white38),
+                    style: TextStyle(
+                      color: Config.guideTextColor,
+                      fontSize: 16,
+                    ),
                   ),
                   SizedBox(width: 10),
                   EffectButton(
@@ -155,6 +172,7 @@ class VerificationScreen extends StatelessWidget {
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),
                     ),
                   ),

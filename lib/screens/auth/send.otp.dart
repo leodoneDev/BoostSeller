@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:boostseller/screens/auth/verification.dart';
 import 'package:boostseller/widgets/button.effect.dart';
+import 'package:boostseller/constants.dart';
 
 class SendOTPScreen extends StatefulWidget {
   final String email;
@@ -45,9 +46,9 @@ class _SendOTPScreenState extends State<SendOTPScreen> {
     final height = size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF333333),
+      backgroundColor: Config.backgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF3C3C3C),
+        backgroundColor: Config.appbarColor,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
@@ -56,9 +57,13 @@ class _SendOTPScreenState extends State<SendOTPScreen> {
             height: 25,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
-              color: Color(0xFF42A5F5),
+              color: Config.activeButtonColor,
             ),
-            child: const Icon(Icons.arrow_back, size: 14, color: Colors.white),
+            child: const Icon(
+              Icons.arrow_back,
+              size: 14,
+              color: Config.iconDefaultColor,
+            ),
           ),
         ),
       ),
@@ -74,9 +79,9 @@ class _SendOTPScreenState extends State<SendOTPScreen> {
               const Text(
                 'Verification',
                 style: TextStyle(
-                  fontSize: 26,
+                  fontSize: Config.titleFontSize,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Config.titleFontColor,
                 ),
               ),
               const SizedBox(height: 4),
@@ -84,7 +89,10 @@ class _SendOTPScreenState extends State<SendOTPScreen> {
                 usePhone
                     ? 'Verify your phone number to continue \n We will send OTP to your phone number'
                     : 'Verify your email to continue \n We will send OTP to your email',
-                style: const TextStyle(fontSize: 16, color: Colors.white60),
+                style: const TextStyle(
+                  fontSize: Config.subTitleFontSize,
+                  color: Config.subTitleFontColor,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 30),
@@ -96,8 +104,8 @@ class _SendOTPScreenState extends State<SendOTPScreen> {
                       : 'Your email is ${widget.email}',
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+                    fontSize: Config.subTitleFontSize,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
@@ -112,13 +120,16 @@ class _SendOTPScreenState extends State<SendOTPScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1E90FF),
+                      color: Config.activeButtonColor,
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: const Center(
                       child: Text(
                         'Send OTP',
-                        style: TextStyle(fontSize: 18, color: Colors.white),
+                        style: TextStyle(
+                          fontSize: Config.buttonTextFontSize,
+                          color: Config.buttonTextColor,
+                        ),
                       ),
                     ),
                   ),

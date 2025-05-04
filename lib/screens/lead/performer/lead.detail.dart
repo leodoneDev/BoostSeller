@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:boostseller/screens/lead/performer/detail/assigned.lead.detail.dart';
 import 'package:boostseller/screens/lead/performer/detail//presentation.lead.detail.dart';
 import 'package:boostseller/screens/lead/performer/detail//testdrive.lead.detail.dart';
+import 'package:boostseller/constants.dart';
 
 class LeadDetailScreen extends StatefulWidget {
   final String status;
@@ -47,8 +48,8 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      backgroundColor: Colors.black,
-      body: Center(child: CircularProgressIndicator(color: Colors.blueAccent)),
+      backgroundColor: Config.backgroundColor,
+      body: Center(child: CircularProgressIndicator(color: Colors.blue)),
     );
   }
 }

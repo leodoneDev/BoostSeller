@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:boostseller/screens/profile/performer/profile.panel.dart';
 import 'package:boostseller/widgets/button.effect.dart';
+import 'package:boostseller/constants.dart';
 
 class PresentationLeadDetailScreen extends StatefulWidget {
   const PresentationLeadDetailScreen({super.key});
@@ -54,7 +55,7 @@ class _PresentationLeadDetailScreenState
                         onTap: () => overlayEntry.remove(),
                         child: const Icon(
                           Icons.close,
-                          color: Colors.blueAccent,
+                          color: Config.activeButtonColor,
                         ),
                       ),
                     ),
@@ -68,9 +69,9 @@ class _PresentationLeadDetailScreenState
                         Text(
                           "Oleh",
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: Config.leadNameFontSize,
                             fontWeight: FontWeight.bold,
-                            color: Colors.lightBlueAccent,
+                            color: Config.leadNameColor,
                           ),
                         ),
                         SizedBox(height: 10),
@@ -144,7 +145,7 @@ class _PresentationLeadDetailScreenState
                         onTap: () => Navigator.pop(context),
                         child: const Icon(
                           Icons.close,
-                          color: Colors.blueAccent,
+                          color: Config.activeButtonColor,
                         ),
                       ),
                     ),
@@ -245,15 +246,15 @@ class _PresentationLeadDetailScreenState
                               width: double.infinity,
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF1E90FF),
+                                color: Config.activeButtonColor,
                                 borderRadius: BorderRadius.circular(30),
                               ),
                               alignment: Alignment.center,
                               child: const Text(
                                 "Add",
                                 style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white,
+                                  fontSize: Config.buttonTextFontSize,
+                                  color: Config.buttonTextColor,
                                 ),
                               ),
                             ),
@@ -348,10 +349,10 @@ class _PresentationLeadDetailScreenState
     return Stack(
       children: [
         Scaffold(
-          backgroundColor: const Color(0xFF333333),
+          backgroundColor: Config.backgroundColor,
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
-            backgroundColor: const Color(0xFF3C3C3C),
+            backgroundColor: Config.appbarColor,
             elevation: 0,
             leading: IconButton(
               onPressed: () => Navigator.pop(context),
@@ -360,17 +361,17 @@ class _PresentationLeadDetailScreenState
                 height: 25,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Color(0xFF42A5F5),
+                  color: Config.activeButtonColor,
                 ),
                 child: const Icon(
                   Icons.arrow_back,
                   size: 14,
-                  color: Colors.white,
+                  color: Config.iconDefaultColor,
                 ),
               ),
             ),
             actions: [
-              GestureDetector(
+              EffectButton(
                 onTap: () => _profileController.toggle(),
                 child: Padding(
                   padding: const EdgeInsets.only(right: 12),
@@ -401,7 +402,7 @@ class _PresentationLeadDetailScreenState
                             child: Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF2A2A2A),
+                                color: Config.containerColor,
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               child: Column(
@@ -410,7 +411,7 @@ class _PresentationLeadDetailScreenState
                                   _buildHeader(),
                                   const SizedBox(height: 10),
                                   const Divider(
-                                    color: Colors.white30,
+                                    color: Config.leadDivederColor,
                                     height: 1,
                                   ),
                                   const SizedBox(height: 20),
@@ -491,7 +492,7 @@ class _PresentationLeadDetailScreenState
             Text(
               "Maxim",
               style: TextStyle(
-                color: Colors.lightBlueAccent,
+                color: Config.leadNameColor,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -532,7 +533,7 @@ class _PresentationLeadDetailScreenState
                 child: Checkbox(
                   value: _clientInterested,
                   onChanged: (val) => setState(() => _clientInterested = val!),
-                  activeColor: Colors.lightBlueAccent,
+                  activeColor: Config.activeButtonColor,
                   visualDensity: VisualDensity.compact,
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
@@ -610,12 +611,22 @@ class _PresentationLeadDetailScreenState
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        _actionButton("Advance", const Color(0xFF1E90FF), Colors.white, () {
-          _showSuccessAdvanceOverlay(context);
-        }),
-        _actionButton("Close", const Color(0xFF2A2A2A), Colors.white, () {
-          showCloseReasonNotification(context);
-        }),
+        _actionButton(
+          "Advance",
+          Config.activeButtonColor,
+          Config.buttonTextColor,
+          () {
+            _showSuccessAdvanceOverlay(context);
+          },
+        ),
+        _actionButton(
+          "Close",
+          Config.deactiveButtonColor,
+          Config.buttonTextColor,
+          () {
+            showCloseReasonNotification(context);
+          },
+        ),
       ],
     );
   }
@@ -643,7 +654,7 @@ class _PresentationLeadDetailScreenState
             label,
             style: TextStyle(
               color: textColor,
-              fontSize: 16,
+              fontSize: Config.buttonTextFontSize,
               fontWeight: FontWeight.w600,
             ),
           ),

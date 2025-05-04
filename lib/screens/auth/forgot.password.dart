@@ -3,6 +3,7 @@ import 'package:boostseller/screens/auth/change.password.dart';
 import 'package:boostseller/widgets/button.effect.dart';
 import 'package:boostseller/widgets/custom.phone.field.dart';
 import 'package:boostseller/widgets/custom.input.text.dart';
+import 'package:boostseller/constants.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -31,9 +32,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     final height = size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF333333),
+      backgroundColor: Config.backgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF3C3C3C),
+        backgroundColor: Config.appbarColor,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
@@ -43,9 +44,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             height: 25,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
-              color: Color(0xFF42A5F5),
+              color: Config.activeButtonColor,
             ),
-            child: const Icon(Icons.arrow_back, size: 14, color: Colors.white),
+            child: const Icon(
+              Icons.arrow_back,
+              size: 14,
+              color: Config.iconDefaultColor,
+            ),
           ),
         ),
       ),
@@ -61,9 +66,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               const Text(
                 'Forgot Password',
                 style: TextStyle(
-                  fontSize: 26,
+                  fontSize: Config.titleFontSize,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Config.titleFontColor,
                 ),
               ),
               const SizedBox(height: 4),
@@ -71,7 +76,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 usePhone
                     ? 'Enter your phone number to reset password'
                     : 'Enter your email to reset password',
-                style: const TextStyle(fontSize: 16, color: Colors.white60),
+                style: const TextStyle(
+                  fontSize: Config.subTitleFontSize,
+                  color: Config.subTitleFontColor,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 30),
@@ -114,7 +122,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     child: const Center(
                       child: Text(
                         'Send OTP',
-                        style: TextStyle(fontSize: 18, color: Colors.white),
+                        style: TextStyle(
+                          fontSize: Config.buttonTextFontSize,
+                          color: Config.buttonTextColor,
+                        ),
                       ),
                     ),
                   ),
@@ -131,6 +142,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
                 ),
               ),

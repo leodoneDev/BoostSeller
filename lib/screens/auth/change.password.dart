@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:boostseller/widgets/button.effect.dart';
 import 'package:boostseller/utils/validation.dart';
 import 'package:boostseller/widgets/custom.password.field.dart';
+import 'package:boostseller/constants.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -46,9 +47,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     final height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF333333),
+      backgroundColor: Config.backgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF3C3C3C),
+        backgroundColor: Config.appbarColor,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
@@ -58,9 +59,13 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             height: 25,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
-              color: Color(0xFF42A5F5), // light blue
+              color: Config.activeButtonColor, // light blue
             ),
-            child: const Icon(Icons.arrow_back, size: 14, color: Colors.white),
+            child: const Icon(
+              Icons.arrow_back,
+              size: 14,
+              color: Config.iconDefaultColor,
+            ),
           ),
         ),
       ),
@@ -77,9 +82,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               const Text(
                 'Change Password',
                 style: TextStyle(
-                  fontSize: 22,
+                  fontSize: Config.titleFontSize,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Config.titleFontColor,
                 ),
               ),
 
@@ -107,13 +112,16 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1E90FF),
+                      color: Config.activeButtonColor,
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: const Center(
                       child: Text(
                         'Submit',
-                        style: TextStyle(fontSize: 18, color: Colors.white),
+                        style: TextStyle(
+                          fontSize: Config.buttonTextFontSize,
+                          color: Config.buttonTextColor,
+                        ),
                       ),
                     ),
                   ),
@@ -136,35 +144,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         child: Text(
           text,
           style: const TextStyle(color: Colors.white, fontSize: 14),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPasswordField({
-    required TextEditingController controller,
-    required bool obscureText,
-    required VoidCallback onToggle,
-  }) {
-    return TextField(
-      controller: controller,
-      obscureText: obscureText,
-      style: const TextStyle(color: Colors.white),
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Colors.grey[800],
-        hintText: 'Password',
-        hintStyle: const TextStyle(color: Colors.white38),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide.none,
-        ),
-        suffixIcon: IconButton(
-          icon: Icon(
-            obscureText ? Icons.visibility_off : Icons.visibility,
-            color: Colors.white54,
-          ),
-          onPressed: onToggle,
         ),
       ),
     );

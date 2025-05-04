@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:boostseller/screens/profile/performer/profile.panel.dart';
 import 'package:boostseller/widgets/button.effect.dart';
+import 'package:boostseller/constants.dart';
 
 class AssignedLeadDetailScreen extends StatefulWidget {
   const AssignedLeadDetailScreen({super.key});
@@ -22,9 +23,9 @@ class _AssignedLeadDetailScreenState extends State<AssignedLeadDetailScreen> {
     return Stack(
       children: [
         Scaffold(
-          backgroundColor: const Color(0xFF333333),
+          backgroundColor: Config.backgroundColor,
           appBar: AppBar(
-            backgroundColor: const Color(0xFF3C3C3C),
+            backgroundColor: Config.appbarColor,
             elevation: 0,
             leading: IconButton(
               onPressed: () => Navigator.pop(context),
@@ -33,17 +34,17 @@ class _AssignedLeadDetailScreenState extends State<AssignedLeadDetailScreen> {
                 height: 25,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Color(0xFF42A5F5),
+                  color: Config.activeButtonColor,
                 ),
                 child: const Icon(
                   Icons.arrow_back,
                   size: 14,
-                  color: Colors.white,
+                  color: Config.iconDefaultColor,
                 ),
               ),
             ),
             actions: [
-              GestureDetector(
+              EffectButton(
                 onTap: () => _profileController.toggle(),
                 child: Padding(
                   padding: const EdgeInsets.only(right: 12),
@@ -61,15 +62,18 @@ class _AssignedLeadDetailScreenState extends State<AssignedLeadDetailScreen> {
                   const Text(
                     "Lead assigned to you",
                     style: TextStyle(
-                      fontSize: 22,
+                      fontSize: Config.titleFontSize,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Config.titleFontColor,
                     ),
                   ),
                   const SizedBox(height: 4),
                   const Text(
                     "Let’s start your work with lead!",
-                    style: TextStyle(fontSize: 14, color: Colors.white60),
+                    style: TextStyle(
+                      fontSize: Config.subTitleFontSize,
+                      color: Config.subTitleFontColor,
+                    ),
                   ),
                   const SizedBox(height: 20),
 
@@ -77,7 +81,7 @@ class _AssignedLeadDetailScreenState extends State<AssignedLeadDetailScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.only(bottom: 10),
                     decoration: BoxDecoration(
-                      color: Colors.grey[700],
+                      color: Config.leadDetailBackroudColor,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Column(
@@ -92,13 +96,16 @@ class _AssignedLeadDetailScreenState extends State<AssignedLeadDetailScreen> {
                           child: const Text(
                             "Oleh",
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: Config.leadNameFontSize,
                               fontWeight: FontWeight.bold,
-                              color: Colors.lightBlueAccent,
+                              color: Config.leadNameColor,
                             ),
                           ),
                         ),
-                        const Divider(color: Colors.white30, height: 1),
+                        const Divider(
+                          color: Config.leadDivederColor,
+                          height: 1,
+                        ),
                         _infoRow("Phone", "1-234-567-890"),
                         _infoRow("Interest", "Interest 1"),
                         _infoRow("Register ID", "1234-1234-1234"),
@@ -117,8 +124,8 @@ class _AssignedLeadDetailScreenState extends State<AssignedLeadDetailScreen> {
                               child: Text(
                                 _showMore ? "less ..." : "more ...",
                                 style: const TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.white70,
+                                  fontSize: Config.leadTextFontSize,
+                                  color: Config.leadTextFontSizeColor,
                                   fontStyle: FontStyle.italic,
                                 ),
                               ),
@@ -168,41 +175,23 @@ class _AssignedLeadDetailScreenState extends State<AssignedLeadDetailScreen> {
       child: RichText(
         text: TextSpan(
           text: "$label : ",
-          style: const TextStyle(color: Colors.white60, fontSize: 14),
+          style: const TextStyle(
+            color: Config.leadDetailInfoLabelColor,
+            fontSize: Config.leadTextFontSize,
+          ),
           children: [
             TextSpan(
               text: value,
-              style: const TextStyle(color: Colors.white, fontSize: 14),
+              style: const TextStyle(
+                color: Config.leadDetailInfoColor,
+                fontSize: Config.leadTextFontSize,
+              ),
             ),
           ],
         ),
       ),
     );
   }
-
-  // Widget _actionButton(
-  //   String label,
-  //   Color bgColor,
-  //   Color textColor,
-  //   VoidCallback onPressed,
-  // ) {
-  //   return SizedBox(
-  //     width: 140,
-  //     height: 50,
-  //     child: ElevatedButton(
-  //       onPressed: onPressed,
-  //       style: ElevatedButton.styleFrom(
-  //         backgroundColor: bgColor,
-  //         foregroundColor: textColor,
-  //         shape: RoundedRectangleBorder(
-  //           borderRadius: BorderRadius.circular(30),
-  //         ),
-  //         elevation: 5,
-  //       ),
-  //       child: Text(label, style: const TextStyle(fontSize: 16)),
-  //     ),
-  //   );
-  // }
 
   Widget _actionButton(
     String label,
@@ -227,7 +216,7 @@ class _AssignedLeadDetailScreenState extends State<AssignedLeadDetailScreen> {
             label,
             style: TextStyle(
               color: textColor,
-              fontSize: 16,
+              fontSize: Config.buttonTextFontSize,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -268,7 +257,10 @@ void showAcceptedOverlay(BuildContext context) {
                     right: 0,
                     child: GestureDetector(
                       onTap: () => overlayEntry.remove(),
-                      child: const Icon(Icons.close, color: Colors.blueAccent),
+                      child: const Icon(
+                        Icons.close,
+                        color: Config.activeButtonColor,
+                      ),
                     ),
                   ),
                   Center(
@@ -343,7 +335,10 @@ void showCloseReasonNotification(BuildContext context) {
                     right: 0,
                     child: GestureDetector(
                       onTap: () => Navigator.pop(context),
-                      child: const Icon(Icons.close, color: Colors.blueAccent),
+                      child: const Icon(
+                        Icons.close,
+                        color: Config.activeButtonColor,
+                      ),
                     ),
                   ),
 
@@ -443,15 +438,15 @@ void showCloseReasonNotification(BuildContext context) {
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF1E90FF),
+                              color: Config.activeButtonColor,
                               borderRadius: BorderRadius.circular(30),
                             ),
                             alignment: Alignment.center,
                             child: const Text(
                               "Add",
                               style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.white,
+                                fontSize: Config.buttonTextFontSize,
+                                color: Config.buttonTextColor,
                               ),
                             ),
                           ),
@@ -500,7 +495,10 @@ void _showCloseSuccessOverlay(BuildContext context) {
                     right: 0,
                     child: GestureDetector(
                       onTap: () => overlayEntry.remove(),
-                      child: const Icon(Icons.close, color: Colors.blueAccent),
+                      child: const Icon(
+                        Icons.close,
+                        color: Config.activeButtonColor,
+                      ),
                     ),
                   ),
                   Center(

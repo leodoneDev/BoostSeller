@@ -16,4 +16,16 @@ class Config {
   static const double buttonTextFontSize = 16;
   static const guideTextColor = Colors.white38;
   static const double guideTextFontSize = 14;
+  static const deactiveTabColor = Color(0xFF1C1C1C);
+  static const leadCardColor = Colors.black38;
+  static const leadNameColor = Color(0xFF8DD1FE);
+  static const double leadTextFontSize = 14;
+  static const double leadNameFontSize = 16;
+  static const leadTextFontSizeColor = Colors.white70;
+  static const leadDetailBackroudColor = Color(0xFF616161);
+  static const leadDivederColor = Colors.white30;
+  static const leadDetailInfoLabelColor = Color(0xFFC4C4C4);
+  static const leadDetailInfoColor = Colors.white;
+  static const containerColor = Color(0xFF2A2A2A);
+  static const deactiveButtonColor = Color(0xFF2A2A2A);
 }

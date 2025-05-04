@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:boostseller/screens/profile/performer/profile.panel.dart';
 import 'package:boostseller/widgets/button.effect.dart';
+import 'package:boostseller/constants.dart';
 
 class TestDriveLeadDetailScreen extends StatefulWidget {
   const TestDriveLeadDetailScreen({super.key});
@@ -34,27 +35,27 @@ class _TestDriveLeadDetailScreenState extends State<TestDriveLeadDetailScreen> {
     return Stack(
       children: [
         Scaffold(
-          backgroundColor: const Color(0xFF333333),
+          backgroundColor: Config.backgroundColor,
           appBar: AppBar(
-            backgroundColor: const Color(0xFF3C3C3C),
+            backgroundColor: Config.appbarColor,
             elevation: 0,
             leading: IconButton(
               onPressed: () => Navigator.pop(context),
               icon: Container(
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Color(0xFF42A5F5),
+                  color: Config.activeButtonColor,
                 ),
                 padding: const EdgeInsets.all(6),
                 child: const Icon(
                   Icons.arrow_back,
                   size: 14,
-                  color: Colors.white,
+                  color: Config.iconDefaultColor,
                 ),
               ),
             ),
             actions: [
-              GestureDetector(
+              EffectButton(
                 onTap: () => _profileController.toggle(),
                 child: Padding(
                   padding: const EdgeInsets.only(right: 12),
@@ -75,7 +76,7 @@ class _TestDriveLeadDetailScreenState extends State<TestDriveLeadDetailScreen> {
                         width: double.infinity,
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF2A2A2A),
+                          color: Config.containerColor,
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Column(
@@ -83,7 +84,10 @@ class _TestDriveLeadDetailScreenState extends State<TestDriveLeadDetailScreen> {
                           children: [
                             _leadHeader(),
                             const SizedBox(height: 10),
-                            const Divider(color: Colors.white30, height: 1),
+                            const Divider(
+                              color: Config.leadDivederColor,
+                              height: 1,
+                            ),
                             const SizedBox(height: 20),
                             _checkboxRow(),
                             const SizedBox(height: 12),
@@ -128,7 +132,7 @@ class _TestDriveLeadDetailScreenState extends State<TestDriveLeadDetailScreen> {
             Text(
               "Maxim",
               style: TextStyle(
-                color: Colors.lightBlueAccent,
+                color: Config.leadNameColor,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -168,7 +172,7 @@ class _TestDriveLeadDetailScreenState extends State<TestDriveLeadDetailScreen> {
                 child: Checkbox(
                   value: showedInterest,
                   onChanged: (val) => setState(() => showedInterest = val!),
-                  activeColor: Colors.lightBlueAccent,
+                  activeColor: Config.activeButtonColor,
                   visualDensity: VisualDensity.compact,
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
@@ -191,7 +195,7 @@ class _TestDriveLeadDetailScreenState extends State<TestDriveLeadDetailScreen> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
-            color: Colors.grey[700],
+            color: Config.leadDetailBackroudColor,
             borderRadius: BorderRadius.circular(6),
           ),
           child: DropdownButton<String>(
@@ -199,7 +203,7 @@ class _TestDriveLeadDetailScreenState extends State<TestDriveLeadDetailScreen> {
             hint: const Text("3", style: TextStyle(color: Colors.white)),
             dropdownColor: Colors.grey[800],
             icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white),
-            underline: const SizedBox(),
+            underline: const SizedBox(height: 1),
             items:
                 ["1", "2", "3", "4", "5"]
                     .map(
@@ -241,7 +245,7 @@ class _TestDriveLeadDetailScreenState extends State<TestDriveLeadDetailScreen> {
                           groupValue: selectedQuality,
                           onChanged:
                               (val) => setState(() => selectedQuality = val),
-                          activeColor: Colors.lightBlueAccent,
+                          activeColor: Config.activeButtonColor,
                         ),
                         Flexible(
                           child: Text(
@@ -279,7 +283,7 @@ class _TestDriveLeadDetailScreenState extends State<TestDriveLeadDetailScreen> {
                         : completedItems.remove(item);
                   });
                 },
-                activeColor: Colors.lightBlueAccent,
+                activeColor: Config.activeButtonColor,
               ),
               Text(item, style: const TextStyle(color: Colors.white)),
             ],
@@ -362,8 +366,18 @@ class _TestDriveLeadDetailScreenState extends State<TestDriveLeadDetailScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        _actionButton("Advance", const Color(0xFF1E90FF), Colors.white, () {}),
-        _actionButton("Close", const Color(0xFF2A2A2A), Colors.white, () {}),
+        _actionButton(
+          "Advance",
+          Config.activeButtonColor,
+          Config.buttonTextColor,
+          () {},
+        ),
+        _actionButton(
+          "Close",
+          Config.deactiveButtonColor,
+          Config.buttonTextColor,
+          () {},
+        ),
       ],
     );
   }
@@ -391,7 +405,7 @@ class _TestDriveLeadDetailScreenState extends State<TestDriveLeadDetailScreen> {
             label,
             style: TextStyle(
               color: textColor,
-              fontSize: 16,
+              fontSize: Config.buttonTextFontSize,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -405,7 +419,7 @@ class _TestDriveLeadDetailScreenState extends State<TestDriveLeadDetailScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.grey[800],
+        color: Config.leadDetailBackroudColor,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
