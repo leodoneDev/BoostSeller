@@ -7,12 +7,12 @@ import 'package:boostseller/widgets/button.effect.dart';
 
 class VerificationScreen extends StatelessWidget {
   final String role;
-  final String email;
+  final int otpType;
 
   const VerificationScreen({
     super.key,
     required this.role,
-    required this.email,
+    required this.otpType,
   });
 
   void handleVerify(context) {
@@ -77,38 +77,42 @@ class VerificationScreen extends StatelessWidget {
                   color: Colors.white,
                 ),
               ),
-              const SizedBox(height: 6),
-              const Text(
-                'Messenger has send a code to\nverify your account',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 15, color: Colors.white60),
-              ),
 
-              const SizedBox(height: 30),
-
-              // Email OTP label
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Email OTP',
-                  style: TextStyle(color: Colors.white, fontSize: 14),
+              if (otpType == 1) ...[
+                const SizedBox(height: 6),
+                const Text(
+                  'Please enter the verification code sent \n to your email',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 15, color: Colors.white60),
                 ),
-              ),
-              const SizedBox(height: 10),
-              _buildOtpRow(),
-
-              const SizedBox(height: 24),
-
-              // Mobile OTP label
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Mobile OTP',
-                  style: TextStyle(color: Colors.white, fontSize: 14),
+                const SizedBox(height: 30),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Email OTP',
+                    style: TextStyle(color: Colors.white, fontSize: 14),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              _buildOtpRow(),
+                const SizedBox(height: 10),
+                _buildOtpRow(),
+              ] else if (otpType == 2) ...[
+                const SizedBox(height: 6),
+                const Text(
+                  'Please enter the verification code sent \n to your phone number',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 15, color: Colors.white60),
+                ),
+                const SizedBox(height: 30),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Mobile OTP',
+                    style: TextStyle(color: Colors.white, fontSize: 14),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                _buildOtpRow(),
+              ],
 
               const SizedBox(height: 40),
 
@@ -136,29 +140,26 @@ class VerificationScreen extends StatelessWidget {
 
               const SizedBox(height: 20),
 
-              // Resend text
-              EffectButton(
-                onTap: () {
-                  // resend verification request.
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('OTP resent successfully'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                },
-                child: const Text(
-                  'Resend',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    decoration: TextDecoration.underline,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    "If you didn't receive a code,",
+                    style: TextStyle(color: Colors.white38),
                   ),
-                ),
+                  SizedBox(width: 10),
+                  EffectButton(
+                    onTap: () {},
+                    child: const Text(
+                      "Resend",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-
-              const SizedBox(height: 30),
             ],
           ),
         ),

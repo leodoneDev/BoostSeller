@@ -1,7 +1,10 @@
+// Lead List Page : made by Leo on 2025/05/04
+
 import 'package:flutter/material.dart';
-import './add.lead.dart';
-import './lead.detail.dart';
+import 'package:boostseller/screens/lead/hostess/add.lead.dart';
+import 'package:boostseller/screens/lead/hostess/lead.detail.dart';
 import 'package:boostseller/screens/profile/hostess/profile.panel.dart';
+import 'package:boostseller/widgets/button.effect.dart';
 
 class LeadListScreen extends StatefulWidget {
   const LeadListScreen({super.key});
@@ -74,10 +77,35 @@ class _LeadListScreenState extends State<LeadListScreen> {
                   const SizedBox(height: 20),
 
                   // Add Lead Button
+                  // SizedBox(
+                  //   width: width * 0.3,
+                  //   child: ElevatedButton(
+                  //     onPressed: () {
+                  //       Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //           builder: (_) => const AddLeadScreen(),
+                  //         ),
+                  //       );
+                  //     },
+                  //     style: ElevatedButton.styleFrom(
+                  //       backgroundColor: const Color(0xFF1E90FF),
+                  //       foregroundColor: Colors.white,
+                  //       shape: RoundedRectangleBorder(
+                  //         borderRadius: BorderRadius.circular(30),
+                  //       ),
+                  //       padding: const EdgeInsets.symmetric(vertical: 14),
+                  //     ),
+                  //     child: const Text(
+                  //       "Add Lead",
+                  //       style: TextStyle(fontSize: 16),
+                  //     ),
+                  //   ),
+                  // ),
                   SizedBox(
                     width: width * 0.3,
-                    child: ElevatedButton(
-                      onPressed: () {
+                    child: EffectButton(
+                      onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -85,20 +113,22 @@ class _LeadListScreenState extends State<LeadListScreen> {
                           ),
                         );
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF1E90FF),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF1E90FF),
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                      ),
-                      child: const Text(
-                        "Add Lead",
-                        style: TextStyle(fontSize: 16),
+                        alignment: Alignment.center,
+                        child: const Text(
+                          "Add Lead",
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
                       ),
                     ),
                   ),
+
                   const SizedBox(height: 20),
 
                   _buildLeadCard(

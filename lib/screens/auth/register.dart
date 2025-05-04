@@ -3,7 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:boostseller/widgets/button.effect.dart';
 import 'package:boostseller/utils/validation.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:boostseller/screens/auth/send.otp.dart';
+import 'package:boostseller/widgets/custom.input.text.dart';
+import 'package:boostseller/widgets/custom.phone.field.dart';
+import 'package:boostseller/widgets/custom.password.field.dart';
 
 class RegisterScreen extends StatefulWidget {
   final String role;
@@ -15,10 +18,9 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  bool _obscurePassword = true;
-  bool _obscurePasswordConfirm = true;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
   final TextEditingController pwdController = TextEditingController();
   final TextEditingController pwdConfirmController = TextEditingController();
   String phoneNumber = '';
@@ -27,18 +29,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final name = nameController.text.trim();
     final email = emailController.text.trim();
     final password = pwdController.text.trim();
-    final password_confirm = pwdConfirmController.text.trim();
+    final passwordConfirm = pwdConfirmController.text.trim();
 
     if ((name.isNotEmpty) &&
         (email.isNotEmpty) &&
         (phoneNumber.isNotEmpty) &&
         (password.isNotEmpty) &&
-        (password_confirm.isNotEmpty)) {
+        (passwordConfirm.isNotEmpty) &&
+        (phoneNumber.isNotEmpty)) {
       if (isValidEmail(email)) {
         if (isValidPassword(password)) {
-          if (password == password_confirm) {
+          if (password == passwordConfirm) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text("register successfully.")),
+            );
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder:
+                    (context) => SendOTPScreen(
+                      email: email,
+                      phoneNumber: phoneNumber,
+                      role: widget.role,
+                    ),
+              ),
             );
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -122,44 +136,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
               // Email
               _buildLabel('Name'),
               const SizedBox(height: 6),
-              _buildTextField(
+              CustomTextField(
+                controller: nameController,
                 hint: 'Name',
                 keyboardType: TextInputType.text,
-                controller: nameController,
               ),
               const SizedBox(height: 6),
               // Email
               _buildLabel('Email'),
               const SizedBox(height: 6),
-              _buildTextField(
+              CustomTextField(
+                controller: emailController,
                 hint: 'Email',
                 keyboardType: TextInputType.emailAddress,
-                controller: emailController,
               ),
-
               const SizedBox(height: 6),
-
               // Phone Number
               _buildLabel('Phone Number'),
               const SizedBox(height: 6),
-              IntlPhoneField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey[800],
-                  labelStyle: TextStyle(color: Colors.white),
-                ),
-                initialCountryCode: 'US',
-                style: TextStyle(color: Colors.white),
-                dropdownIcon: const Icon(
-                  Icons.arrow_drop_down,
-                  color: Colors.white,
-                ),
-                onChanged: (phone) {
-                  phoneNumber = phone.completeNumber;
+              CustomPhoneField(
+                controller: phoneController,
+                onChanged: (value) {
+                  phoneNumber = value;
                 },
               ),
 
@@ -168,67 +166,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
               // Password
               _buildLabel('Password'),
               const SizedBox(height: 6),
-              TextField(
-                controller: pwdController,
-                obscureText: _obscurePassword,
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.grey[800],
-                  hintText: 'Password',
-                  hintStyle: const TextStyle(color: Colors.white38),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscurePassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                      color: Colors.white54,
-                    ),
-                    onPressed: () {
-                      setState(() => _obscurePassword = !_obscurePassword);
-                    },
-                  ),
-                ),
-              ),
+              PasswordField(controller: pwdController, hint: 'Passwrod'),
 
               const SizedBox(height: 6),
 
               // paswird confirm
               _buildLabel('Password Confirm'),
               const SizedBox(height: 6),
-              TextField(
-                controller: pwdConfirmController,
-                obscureText: _obscurePasswordConfirm,
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.grey[800],
-                  hintText: 'Password',
-                  hintStyle: const TextStyle(color: Colors.white38),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscurePasswordConfirm
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                      color: Colors.white54,
-                    ),
-                    onPressed: () {
-                      setState(
-                        () =>
-                            _obscurePasswordConfirm = !_obscurePasswordConfirm,
-                      );
-                    },
-                  ),
-                ),
-              ),
+              PasswordField(controller: pwdConfirmController, hint: 'Passwrod'),
 
               const SizedBox(height: 30),
 
@@ -291,28 +236,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       child: Text(
         text,
         style: const TextStyle(color: Colors.white, fontSize: 14),
-      ),
-    );
-  }
-
-  Widget _buildTextField({
-    required String hint,
-    TextInputType? keyboardType,
-    required TextEditingController controller,
-  }) {
-    return TextField(
-      controller: controller,
-      keyboardType: keyboardType,
-      style: const TextStyle(color: Colors.white),
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Colors.grey[800],
-        hintText: hint,
-        hintStyle: const TextStyle(color: Colors.white38),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide.none,
-        ),
       ),
     );
   }

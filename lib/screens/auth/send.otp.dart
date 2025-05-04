@@ -1,26 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
-import 'package:boostseller/screens/auth/change.password.dart';
+import 'package:boostseller/screens/auth/verification.dart';
 import 'package:boostseller/widgets/button.effect.dart';
-import 'package:boostseller/utils/validation.dart';
 
-class ForgotPasswordScreen extends StatefulWidget {
-  const ForgotPasswordScreen({super.key});
+class SendOTPScreen extends StatefulWidget {
+  final String email;
+  final String phoneNumber;
+  final String role;
+
+  const SendOTPScreen({
+    super.key,
+    required this.email,
+    required this.phoneNumber,
+    required this.role,
+  });
 
   @override
-  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+  State<SendOTPScreen> createState() => _SendOTPScreenState();
 }
 
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+class _SendOTPScreenState extends State<SendOTPScreen> {
   bool usePhone = false;
-  final emailController = TextEditingController();
-  final phoneController = TextEditingController();
-  String fullPhoneNumber = '';
+  int otpType = 1;
 
-  void handleSendOTP() {
+  void handleSendVerifyOTP() {
+    if (usePhone) {
+      otpType = 2;
+    }
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const ChangePasswordScreen()),
+      MaterialPageRoute(
+        builder:
+            (context) =>
+                VerificationScreen(role: widget.role, otpType: otpType),
+      ),
     );
   }
 
@@ -37,7 +49,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          padding: EdgeInsets.zero,
           icon: Container(
             width: 25,
             height: 25,
@@ -59,7 +70,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               SizedBox(height: height * 0.04),
 
               const Text(
-                'Forgot Password',
+                'Verification',
                 style: TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.bold,
@@ -69,66 +80,32 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               const SizedBox(height: 4),
               Text(
                 usePhone
-                    ? 'Enter your phone number to reset password'
-                    : 'Enter your email to reset password',
+                    ? 'Verify your phone number to continue \n We will send OTP to your phone number'
+                    : 'Verify your email to continue \n We will send OTP to your email',
                 style: const TextStyle(fontSize: 16, color: Colors.white60),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 30),
 
               Align(
-                alignment: Alignment.centerLeft,
                 child: Text(
-                  usePhone ? 'Phone Number' : 'Email',
-                  style: const TextStyle(color: Colors.white, fontSize: 14),
+                  usePhone
+                      ? 'Your phone number is ${widget.phoneNumber}'
+                      : 'Your email is ${widget.email}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-              const SizedBox(height: 6),
-
-              usePhone
-                  ? IntlPhoneField(
-                    decoration: InputDecoration(
-                      labelStyle: const TextStyle(color: Colors.white54),
-                      filled: true,
-                      fillColor: Colors.grey[800],
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                    initialCountryCode: 'US',
-                    style: const TextStyle(color: Colors.white),
-                    dropdownTextStyle: const TextStyle(color: Colors.white),
-                    dropdownIcon: const Icon(
-                      Icons.arrow_drop_down,
-                      color: Colors.white,
-                    ),
-                    onChanged: (phone) {
-                      fullPhoneNumber = phone.completeNumber;
-                    },
-                  )
-                  : TextField(
-                    controller: emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.grey[800],
-                      hintText: 'Email',
-                      hintStyle: const TextStyle(color: Colors.white38),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                  ),
 
               const SizedBox(height: 30),
 
               SizedBox(
                 width: double.infinity,
                 child: EffectButton(
-                  onTap: handleSendOTP,
+                  onTap: handleSendVerifyOTP,
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 10),

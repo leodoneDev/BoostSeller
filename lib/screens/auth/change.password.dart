@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:boostseller/widgets/button.effect.dart';
+import 'package:boostseller/utils/validation.dart';
+import 'package:boostseller/screens/auth/login.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -11,16 +13,35 @@ class ChangePasswordScreen extends StatefulWidget {
 }
 
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
-  bool _obscureOld = true;
   bool _obscureNew = true;
   bool _obscureConfirm = true;
 
-  final TextEditingController oldPasswordController = TextEditingController();
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
 
-  void handleChangePwd() {}
+  void handleChangePwd() {
+    final password = newPasswordController.text.trim();
+    final passwordConfirm = confirmPasswordController.text.trim();
+
+    if (isValidPassword(password)) {
+      if (password == passwordConfirm) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Changed password successfullly.")),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Passwords do not match.")),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Password must be at least 6 characters."),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,13 +87,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               ),
 
               const SizedBox(height: 30),
-
-              _buildLabel('Enter your old password'),
-              _buildPasswordField(
-                controller: oldPasswordController,
-                obscureText: _obscureOld,
-                onToggle: () => setState(() => _obscureOld = !_obscureOld),
-              ),
 
               _buildLabel('Enter your new password'),
               _buildPasswordField(

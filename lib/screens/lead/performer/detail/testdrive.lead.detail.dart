@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:boostseller/screens/profile/performer/profile.panel.dart';
+import 'package:boostseller/widgets/button.effect.dart';
 
 class TestDriveLeadDetailScreen extends StatefulWidget {
   const TestDriveLeadDetailScreen({super.key});
@@ -376,16 +377,25 @@ class _TestDriveLeadDetailScreenState extends State<TestDriveLeadDetailScreen> {
     return SizedBox(
       width: 140,
       height: 50,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: bgColor,
-          foregroundColor: textColor,
-          shape: RoundedRectangleBorder(
+      child: EffectButton(
+        onTap: onPressed,
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            color: bgColor,
             borderRadius: BorderRadius.circular(30),
           ),
+          alignment: Alignment.center,
+          child: Text(
+            label,
+            style: TextStyle(
+              color: textColor,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
-        child: Text(label, style: const TextStyle(fontSize: 16)),
       ),
     );
   }

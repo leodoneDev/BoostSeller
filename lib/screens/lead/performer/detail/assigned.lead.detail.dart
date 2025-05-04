@@ -1,3 +1,5 @@
+// Assigned Lead Detail Page : made by Leo on 2025/05/03
+
 import 'package:flutter/material.dart';
 import 'package:boostseller/screens/profile/performer/profile.panel.dart';
 import 'package:boostseller/widgets/button.effect.dart';
@@ -132,18 +134,18 @@ class _AssignedLeadDetailScreenState extends State<AssignedLeadDetailScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      // _actionButton(
-                      //   "Accept",
-                      //   const Color(0xFF1E90FF),
-                      //   Colors.white,
-                      //   () => showAcceptedOverlay(context),
-                      // ),
-                      // _actionButton(
-                      //   "Close",
-                      //   Color(0xFF2A2A2A),
-                      //   Colors.white,
-                      //   () => showCloseReasonNotification(context),
-                      // ),
+                      _actionButton(
+                        "Accept",
+                        const Color(0xFF1E90FF),
+                        Colors.white,
+                        () => showAcceptedOverlay(context),
+                      ),
+                      _actionButton(
+                        "Close",
+                        Color(0xFF2A2A2A),
+                        Colors.white,
+                        () => showCloseReasonNotification(context),
+                      ),
                     ],
                   ),
 
@@ -178,6 +180,30 @@ class _AssignedLeadDetailScreenState extends State<AssignedLeadDetailScreen> {
     );
   }
 
+  // Widget _actionButton(
+  //   String label,
+  //   Color bgColor,
+  //   Color textColor,
+  //   VoidCallback onPressed,
+  // ) {
+  //   return SizedBox(
+  //     width: 140,
+  //     height: 50,
+  //     child: ElevatedButton(
+  //       onPressed: onPressed,
+  //       style: ElevatedButton.styleFrom(
+  //         backgroundColor: bgColor,
+  //         foregroundColor: textColor,
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(30),
+  //         ),
+  //         elevation: 5,
+  //       ),
+  //       child: Text(label, style: const TextStyle(fontSize: 16)),
+  //     ),
+  //   );
+  // }
+
   Widget _actionButton(
     String label,
     Color bgColor,
@@ -187,17 +213,25 @@ class _AssignedLeadDetailScreenState extends State<AssignedLeadDetailScreen> {
     return SizedBox(
       width: 140,
       height: 50,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: bgColor,
-          foregroundColor: textColor,
-          shape: RoundedRectangleBorder(
+      child: EffectButton(
+        onTap: onPressed,
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            color: bgColor,
             borderRadius: BorderRadius.circular(30),
           ),
-          elevation: 5,
+          alignment: Alignment.center,
+          child: Text(
+            label,
+            style: TextStyle(
+              color: textColor,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
-        child: Text(label, style: const TextStyle(fontSize: 16)),
       ),
     );
   }
@@ -400,21 +434,26 @@ void showCloseReasonNotification(BuildContext context) {
                       // Submit Button
                       SizedBox(
                         width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
+                        child: EffectButton(
+                          onTap: () {
                             Navigator.pop(context);
                             _showCloseSuccessOverlay(context);
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF1E90FF),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF1E90FF),
                               borderRadius: BorderRadius.circular(30),
                             ),
-                          ),
-                          child: const Text(
-                            "Add",
-                            style: TextStyle(fontSize: 16, color: Colors.white),
+                            alignment: Alignment.center,
+                            child: const Text(
+                              "Add",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         ),
                       ),
