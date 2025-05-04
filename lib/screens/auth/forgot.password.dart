@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:boostseller/screens/auth/change.password.dart';
 import 'package:boostseller/widgets/button.effect.dart';
-import 'package:boostseller/utils/validation.dart';
+import 'package:boostseller/widgets/custom.phone.field.dart';
+import 'package:boostseller/widgets/custom.input.text.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -86,41 +86,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               const SizedBox(height: 6),
 
               usePhone
-                  ? IntlPhoneField(
-                    decoration: InputDecoration(
-                      labelStyle: const TextStyle(color: Colors.white54),
-                      filled: true,
-                      fillColor: Colors.grey[800],
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                    initialCountryCode: 'US',
-                    style: const TextStyle(color: Colors.white),
-                    dropdownTextStyle: const TextStyle(color: Colors.white),
-                    dropdownIcon: const Icon(
-                      Icons.arrow_drop_down,
-                      color: Colors.white,
-                    ),
-                    onChanged: (phone) {
-                      fullPhoneNumber = phone.completeNumber;
+                  ? CustomPhoneField(
+                    controller: phoneController,
+                    onChanged: (value) {
+                      fullPhoneNumber = value;
                     },
                   )
-                  : TextField(
+                  : CustomTextField(
                     controller: emailController,
+                    hint: 'Email',
                     keyboardType: TextInputType.emailAddress,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.grey[800],
-                      hintText: 'Email',
-                      hintStyle: const TextStyle(color: Colors.white38),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
                   ),
 
               const SizedBox(height: 30),

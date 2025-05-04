@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:boostseller/widgets/button.effect.dart';
 import 'package:boostseller/utils/validation.dart';
-import 'package:boostseller/screens/auth/login.dart';
+import 'package:boostseller/widgets/custom.password.field.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -13,9 +13,6 @@ class ChangePasswordScreen extends StatefulWidget {
 }
 
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
-  bool _obscureNew = true;
-  bool _obscureConfirm = true;
-
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
@@ -89,20 +86,17 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               const SizedBox(height: 30),
 
               _buildLabel('Enter your new password'),
-              _buildPasswordField(
+              const SizedBox(height: 6),
+              PasswordField(
                 controller: newPasswordController,
-                obscureText: _obscureNew,
-                onToggle: () => setState(() => _obscureNew = !_obscureNew),
+                hint: 'Password',
               ),
-
               _buildLabel('Enter your confirmation password'),
-              _buildPasswordField(
+              const SizedBox(height: 6),
+              PasswordField(
                 controller: confirmPasswordController,
-                obscureText: _obscureConfirm,
-                onToggle:
-                    () => setState(() => _obscureConfirm = !_obscureConfirm),
+                hint: 'Password Confirm',
               ),
-
               const SizedBox(height: 30),
 
               SizedBox(

@@ -7,6 +7,7 @@ import 'package:boostseller/screens/auth/send.otp.dart';
 import 'package:boostseller/widgets/custom.input.text.dart';
 import 'package:boostseller/widgets/custom.phone.field.dart';
 import 'package:boostseller/widgets/custom.password.field.dart';
+import 'package:boostseller/constants.dart';
 
 class RegisterScreen extends StatefulWidget {
   final String role;
@@ -24,19 +25,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController pwdController = TextEditingController();
   final TextEditingController pwdConfirmController = TextEditingController();
   String phoneNumber = '';
-
   void handleRegister() {
     final name = nameController.text.trim();
     final email = emailController.text.trim();
     final password = pwdController.text.trim();
     final passwordConfirm = pwdConfirmController.text.trim();
+    final phone = phoneController.text.trim();
 
     if ((name.isNotEmpty) &&
         (email.isNotEmpty) &&
         (phoneNumber.isNotEmpty) &&
         (password.isNotEmpty) &&
         (passwordConfirm.isNotEmpty) &&
-        (phoneNumber.isNotEmpty)) {
+        (phoneNumber.isNotEmpty) &&
+        (phone.isNotEmpty)) {
       if (isValidEmail(email)) {
         if (isValidPassword(password)) {
           if (password == passwordConfirm) {
@@ -85,11 +87,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final height = size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF333333),
+      backgroundColor: Config.backgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF3C3C3C),
+        backgroundColor: Config.appbarColor,
         elevation: 0,
-        surfaceTintColor: Colors.transparent,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
           padding: const EdgeInsets.all(0),
@@ -98,15 +99,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
             height: 25,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
-              color: Color(0xFF42A5F5), // light blue
+              color: Config.activeButtonColor, // light blue
             ),
-            child: const Icon(Icons.arrow_back, size: 14, color: Colors.white),
+            child: const Icon(
+              Icons.arrow_back,
+              size: 14,
+              color: Config.iconDefaultColor,
+            ),
           ),
         ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: width * 0.08),
+
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -117,15 +123,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const Text(
                 'Register',
                 style: TextStyle(
-                  fontSize: 26,
+                  fontSize: Config.titleFontSize,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Config.titleFontColor,
                 ),
               ),
               const SizedBox(height: 4),
               const Text(
                 'Create a new account',
-                style: TextStyle(fontSize: 16, color: Colors.white60),
+                style: TextStyle(
+                  fontSize: Config.subTitleFontSize,
+                  color: Config.subTitleFontColor,
+                ),
               ),
 
               const SizedBox(height: 30),
@@ -166,14 +175,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
               // Password
               _buildLabel('Password'),
               const SizedBox(height: 6),
-              PasswordField(controller: pwdController, hint: 'Passwrod'),
+              PasswordField(controller: pwdController, hint: 'Password'),
 
               const SizedBox(height: 6),
 
               // paswird confirm
               _buildLabel('Password Confirm'),
               const SizedBox(height: 6),
-              PasswordField(controller: pwdConfirmController, hint: 'Passwrod'),
+              PasswordField(
+                controller: pwdConfirmController,
+                hint: 'Password Confirm',
+              ),
 
               const SizedBox(height: 30),
 
@@ -186,13 +198,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1E90FF),
+                      color: Config.activeButtonColor,
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: const Center(
                       child: Text(
                         'Register',
-                        style: TextStyle(fontSize: 18, color: Colors.white),
+                        style: TextStyle(
+                          fontSize: Config.buttonTextFontSize,
+                          color: Config.buttonTextColor,
+                        ),
                       ),
                     ),
                   ),
@@ -206,7 +221,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 children: [
                   const Text(
                     "Already have account? ",
-                    style: TextStyle(color: Colors.white38),
+                    style: TextStyle(color: Config.guideTextColor),
                   ),
                   SizedBox(width: 10),
                   EffectButton(

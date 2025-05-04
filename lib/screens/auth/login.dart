@@ -114,7 +114,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Email',
-                  style: TextStyle(color: Colors.white, fontSize: 14),
+                  style: TextStyle(
+                    color: Config.inputLabelColor,
+                    fontSize: Config.inputLabelFontSize,
+                  ),
                 ),
               ),
               const SizedBox(height: 6),
@@ -130,7 +133,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Password',
-                  style: TextStyle(color: Colors.white, fontSize: 14),
+                  style: TextStyle(
+                    color: Config.inputLabelColor,
+                    fontSize: Config.inputLabelFontSize,
+                  ),
                 ),
               ),
               const SizedBox(height: 6),
@@ -152,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   child: const Text(
                     'Forgot Password?',
-                    style: TextStyle(color: Color(0xFFEA4335)),
+                    style: TextStyle(color: Config.stressColor),
                   ),
                 ),
               ),
@@ -168,13 +174,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1E90FF),
+                      color: Config.activeButtonColor,
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: const Center(
                       child: Text(
                         'Login',
-                        style: TextStyle(fontSize: 16, color: Colors.white),
+                        style: TextStyle(
+                          fontSize: Config.buttonTextFontSize,
+                          color: Config.buttonTextColor,
+                        ),
                       ),
                     ),
                   ),
