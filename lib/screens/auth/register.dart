@@ -8,6 +8,8 @@ import 'package:boostseller/widgets/custom.input.text.dart';
 import 'package:boostseller/widgets/custom.phone.field.dart';
 import 'package:boostseller/widgets/custom.password.field.dart';
 import 'package:boostseller/constants.dart';
+import 'package:boostseller/utils/toast.dart';
+import 'package:boostseller/services/api.services.dart';
 
 class RegisterScreen extends StatefulWidget {
   final String role;
@@ -25,6 +27,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController pwdController = TextEditingController();
   final TextEditingController pwdConfirmController = TextEditingController();
   String phoneNumber = '';
+
+  void registerUser({
+    required BuildContext context,
+    required String name,
+    required String email,
+    required String password,
+    required String phone,
+  }) async {
+    final api = ApiService();
+
+    try {
+      final response = await api.post('/api/auth/register', {
+        'name': name,
+        'email': email,
+        'phoneNumber': phone,
+        'password': password,
+      });
+
+      if (response?.statusCode == 200 || response?.statusCode == 201) {
+        showToast(context, "Success");
+      }
+    } catch (e) {
+      showToast(context, "error", isError: true);
+    }
+  }
+
   void handleRegister() {
     final name = nameController.text.trim();
     final email = emailController.text.trim();
@@ -42,41 +70,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (isValidEmail(email)) {
         if (isValidPassword(password)) {
           if (password == passwordConfirm) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("register successfully.")),
+            registerUser(
+              context: context,
+              name: name,
+              email: email,
+              phone: phoneNumber,
+              password: password,
             );
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder:
-                    (context) => SendOTPScreen(
-                      email: email,
-                      phoneNumber: phoneNumber,
-                      role: widget.role,
-                    ),
-              ),
-            );
+            // showToast(context, "Successfully Sign Up!");
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder:
+            //         (context) => SendOTPScreen(
+            //           email: email,
+            //           phoneNumber: phoneNumber,
+            //           role: widget.role,
+            //         ),
+            //   ),
+            // );
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Passwords do not match.")),
-            );
+            showToast(context, "Passwords do not match.", isError: true);
           }
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Password must be at least 6 characters."),
-            ),
+          showToast(
+            context,
+            "Password must be at least 6 characters.",
+            isError: true,
           );
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Please enter a valid email address.")),
-        );
+        showToast(context, "Please enter a valid email.", isError: true);
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please filled all fileds.")),
-      );
+      showToast(context, "Please fill all fields.", isError: true);
     }
   }
 

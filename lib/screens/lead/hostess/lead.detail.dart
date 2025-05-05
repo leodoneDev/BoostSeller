@@ -1,7 +1,9 @@
 // Lead Detail Page : made by Leo on 2025/05/04
 
+import 'package:boostseller/widgets/button.effect.dart';
 import 'package:flutter/material.dart';
 import 'package:boostseller/screens/profile/hostess/profile.panel.dart';
+import 'package:boostseller/constants.dart';
 
 class LeadDetailScreen extends StatefulWidget {
   const LeadDetailScreen({super.key});
@@ -22,9 +24,9 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
     return Stack(
       children: [
         Scaffold(
-          backgroundColor: const Color(0xFF333333),
+          backgroundColor: Config.backgroundColor,
           appBar: AppBar(
-            backgroundColor: const Color(0xFF3C3C3C),
+            backgroundColor: Config.appbarColor,
             elevation: 0,
             leading: IconButton(
               onPressed: () => Navigator.pop(context),
@@ -34,17 +36,17 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                 height: 25,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Color(0xFF42A5F5),
+                  color: Config.activeButtonColor,
                 ),
                 child: const Icon(
                   Icons.arrow_back,
                   size: 14,
-                  color: Colors.white,
+                  color: Config.iconDefaultColor,
                 ),
               ),
             ),
             actions: [
-              GestureDetector(
+              EffectButton(
                 onTap: () => _profileController.toggle(),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -62,9 +64,9 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                   const Text(
                     "Lead Detail",
                     style: TextStyle(
-                      fontSize: 22,
+                      fontSize: Config.titleFontSize,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Config.titleFontColor,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -72,7 +74,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.grey[800],
+                      color: Config.leadDetailBackroudColor,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Column(
@@ -81,12 +83,15 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                         const Text(
                           "Oleh",
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: Config.leadNameFontSize,
                             fontWeight: FontWeight.bold,
-                            color: Colors.lightBlueAccent,
+                            color: Config.leadNameColor,
                           ),
                         ),
-                        const Divider(color: Colors.white24, height: 20),
+                        const Divider(
+                          color: Config.leadDivederColor,
+                          height: 20,
+                        ),
                         _buildDetailRow("Phone", "1-234-567-890"),
                         _buildDetailRow("Interest", "Interest 1"),
                         _buildDetailRow("Register ID", "1234-1234-1234"),
@@ -108,7 +113,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                             child: Text(
                               _showMore ? "less ..." : "more ...",
                               style: const TextStyle(
-                                fontSize: 13,
+                                fontSize: Config.leadTextFontSize,
                                 color: Colors.white60,
                                 fontStyle: FontStyle.italic,
                               ),

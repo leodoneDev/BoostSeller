@@ -8,6 +8,7 @@ import 'package:boostseller/widgets/button.effect.dart';
 import 'package:boostseller/constants.dart';
 import 'package:boostseller/widgets/custom.input.text.dart';
 import 'package:boostseller/widgets/custom.password.field.dart';
+import 'package:boostseller/utils/toast.dart';
 
 class LoginScreen extends StatefulWidget {
   final String role;
@@ -27,20 +28,17 @@ class _LoginScreenState extends State<LoginScreen> {
     final password = pwdController.text.trim();
 
     if (email.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Please enter your email.")));
+      showToast(context, "Please enter a email.", isError: true);
     } else if (!isValidEmail(email)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please enter a valid email address.")),
-      );
+      showToast(context, "Please enter a valid email.", isError: true);
     } else if (!isValidPassword(password)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Password must be at least 6 characters."),
-        ),
+      showToast(
+        context,
+        "Password must be at least 6 characters.",
+        isError: true,
       );
     } else {
+      showToast(context, 'Successfully Sign In!');
       // Navigator.push(
       //   context,
       //   MaterialPageRoute(

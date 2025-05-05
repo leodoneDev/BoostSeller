@@ -6,6 +6,7 @@ import 'package:boostseller/screens/profile/hostess/profile.panel.dart';
 import 'package:boostseller/widgets/button.effect.dart';
 import 'package:boostseller/widgets/custom.input.text.dart';
 import 'package:boostseller/widgets/custom.phone.field.dart';
+import 'package:boostseller/constants.dart';
 
 class AddLeadScreen extends StatefulWidget {
   const AddLeadScreen({super.key});
@@ -45,9 +46,9 @@ class _AddLeadScreenState extends State<AddLeadScreen> {
     return Stack(
       children: [
         Scaffold(
-          backgroundColor: const Color(0xFF333333),
+          backgroundColor: Config.backgroundColor,
           appBar: AppBar(
-            backgroundColor: const Color(0xFF3C3C3C),
+            backgroundColor: Config.appbarColor,
             elevation: 0,
             surfaceTintColor: Colors.transparent,
             leading: IconButton(
@@ -58,17 +59,17 @@ class _AddLeadScreenState extends State<AddLeadScreen> {
                 height: 25,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Color(0xFF42A5F5),
+                  color: Config.activeButtonColor,
                 ),
                 child: const Icon(
                   Icons.arrow_back,
                   size: 14,
-                  color: Colors.white,
+                  color: Config.iconDefaultColor,
                 ),
               ),
             ),
             actions: [
-              GestureDetector(
+              EffectButton(
                 onTap: () => _profileController.toggle(),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -92,9 +93,9 @@ class _AddLeadScreenState extends State<AddLeadScreen> {
                           const Text(
                             'New Lead',
                             style: TextStyle(
-                              fontSize: 24,
+                              fontSize: Config.titleFontSize,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: Config.titleFontColor,
                             ),
                           ),
                           const SizedBox(height: 20),
@@ -218,15 +219,15 @@ class _AddLeadScreenState extends State<AddLeadScreen> {
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF1E90FF),
+                              color: Config.activeButtonColor,
                               borderRadius: BorderRadius.circular(30),
                             ),
                             alignment: Alignment.center,
                             child: const Text(
                               "Add",
                               style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
+                                color: Config.buttonTextColor,
+                                fontSize: Config.buttonTextFontSize,
                               ),
                             ),
                           ),
@@ -240,15 +241,15 @@ class _AddLeadScreenState extends State<AddLeadScreen> {
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             decoration: BoxDecoration(
-                              color: Colors.black,
+                              color: Config.deactiveButtonColor,
                               borderRadius: BorderRadius.circular(30),
                             ),
                             alignment: Alignment.center,
                             child: const Text(
                               'Reset',
                               style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
+                                color: Config.buttonTextColor,
+                                fontSize: Config.buttonTextFontSize,
                               ),
                             ),
                           ),

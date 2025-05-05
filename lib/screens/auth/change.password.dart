@@ -5,6 +5,7 @@ import 'package:boostseller/widgets/button.effect.dart';
 import 'package:boostseller/utils/validation.dart';
 import 'package:boostseller/widgets/custom.password.field.dart';
 import 'package:boostseller/constants.dart';
+import 'package:boostseller/utils/toast.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -24,19 +25,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
     if (isValidPassword(password)) {
       if (password == passwordConfirm) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Changed password successfullly.")),
-        );
+        showToast(context, "Successfully passwrod changed!");
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Passwords do not match.")),
-        );
+        showToast(context, "Passwords do not match.", isError: true);
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Password must be at least 6 characters."),
-        ),
+      showToast(
+        context,
+        "Password must be at least 6 characters.",
+        isError: true,
       );
     }
   }

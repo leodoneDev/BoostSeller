@@ -5,6 +5,8 @@ import 'package:boostseller/screens/lead/hostess/add.lead.dart';
 import 'package:boostseller/screens/lead/hostess/lead.detail.dart';
 import 'package:boostseller/screens/profile/hostess/profile.panel.dart';
 import 'package:boostseller/widgets/button.effect.dart';
+import 'package:boostseller/constants.dart';
+import 'package:boostseller/services/api.services.dart';
 
 class LeadListScreen extends StatefulWidget {
   const LeadListScreen({super.key});
@@ -18,15 +20,20 @@ class _LeadListScreenState extends State<LeadListScreen> {
       ProfileHostessPanelController();
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
 
     return Stack(
       children: [
         Scaffold(
-          backgroundColor: const Color(0xFF333333),
+          backgroundColor: Config.backgroundColor,
           appBar: AppBar(
-            backgroundColor: const Color(0xFF3C3C3C),
+            backgroundColor: Config.appbarColor,
             elevation: 0,
             leading: IconButton(
               onPressed: () => Navigator.pop(context),
@@ -36,17 +43,17 @@ class _LeadListScreenState extends State<LeadListScreen> {
                 height: 25,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Color(0xFF42A5F5),
+                  color: Config.activeButtonColor,
                 ),
                 child: const Icon(
                   Icons.arrow_back,
                   size: 14,
-                  color: Colors.white,
+                  color: Config.iconDefaultColor,
                 ),
               ),
             ),
             actions: [
-              GestureDetector(
+              EffectButton(
                 onTap: () => _profileController.toggle(),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -64,15 +71,18 @@ class _LeadListScreenState extends State<LeadListScreen> {
                   const Text(
                     "Leads",
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: Config.titleFontSize,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Config.titleFontColor,
                     ),
                   ),
                   const SizedBox(height: 4),
                   const Text(
                     "Please add a new lead or check previous leads",
-                    style: TextStyle(fontSize: 14, color: Colors.white60),
+                    style: TextStyle(
+                      fontSize: Config.subTitleFontSize,
+                      color: Config.subTitleFontColor,
+                    ),
                   ),
                   const SizedBox(height: 20),
 
@@ -117,13 +127,16 @@ class _LeadListScreenState extends State<LeadListScreen> {
                         width: double.infinity,
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF1E90FF),
+                          color: Config.activeButtonColor,
                           borderRadius: BorderRadius.circular(30),
                         ),
                         alignment: Alignment.center,
                         child: const Text(
                           "Add Lead",
-                          style: TextStyle(fontSize: 16, color: Colors.white),
+                          style: TextStyle(
+                            fontSize: Config.buttonTextFontSize,
+                            color: Config.buttonTextColor,
+                          ),
                         ),
                       ),
                     ),
@@ -194,7 +207,7 @@ class _LeadListScreenState extends State<LeadListScreen> {
         statusColor = Colors.white70;
     }
 
-    return GestureDetector(
+    return EffectButton(
       onTap: () {
         Navigator.push(
           context,
@@ -204,7 +217,7 @@ class _LeadListScreenState extends State<LeadListScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.grey[900],
+          color: Config.leadCardColor,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
@@ -216,15 +229,15 @@ class _LeadListScreenState extends State<LeadListScreen> {
                 Text(
                   name,
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: Config.leadNameFontSize,
                     fontWeight: FontWeight.bold,
-                    color: Colors.lightBlueAccent,
+                    color: Config.leadNameColor,
                   ),
                 ),
                 Text(
                   status,
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: Config.leadTextFontSize,
                     fontWeight: FontWeight.w500,
                     color: statusColor,
                   ),

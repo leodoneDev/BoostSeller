@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:boostseller/screens/profile/hostess/profile.panel.dart';
+import 'package:boostseller/constants.dart';
 
 class AddSuccessScreen extends StatefulWidget {
   const AddSuccessScreen({super.key});
@@ -22,9 +23,9 @@ class _AddSuccessScreenState extends State<AddSuccessScreen> {
     return Stack(
       children: [
         Scaffold(
-          backgroundColor: const Color(0xFF333333),
+          backgroundColor: Config.backgroundColor,
           appBar: AppBar(
-            backgroundColor: const Color(0xFF3C3C3C),
+            backgroundColor: Config.appbarColor,
             elevation: 0,
             leading: IconButton(
               onPressed: () => Navigator.pop(context),
@@ -34,12 +35,12 @@ class _AddSuccessScreenState extends State<AddSuccessScreen> {
                 height: 25,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Color(0xFF42A5F5),
+                  color: Config.activeButtonColor,
                 ),
                 child: const Icon(
                   Icons.arrow_back,
                   size: 14,
-                  color: Colors.white,
+                  color: Config.iconDefaultColor,
                 ),
               ),
             ),
@@ -68,9 +69,9 @@ class _AddSuccessScreenState extends State<AddSuccessScreen> {
                     const Text(
                       'Congratulations!',
                       style: TextStyle(
-                        fontSize: 22,
+                        fontSize: Config.titleFontSize,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Config.titleFontColor,
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -79,8 +80,8 @@ class _AddSuccessScreenState extends State<AddSuccessScreen> {
                     const Text(
                       'Your lead has been added\nsuccessfully!\n\nLet’s connect\nwith them soon!',
                       style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white70,
+                        fontSize: Config.subTitleFontSize,
+                        color: Config.subTitleFontColor,
                         height: 1.5,
                       ),
                       textAlign: TextAlign.center,
