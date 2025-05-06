@@ -30,15 +30,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_launcher_icons: ^0.13.1
-
-# flutter_icons:
-#   android: true
-#   ios: true
-#   image_path: "assets/logo.png"
-#   background_color: "#110A0AFF"
-  # adaptive_icon_background: "#DBE5EEFF" # dark background
-  # adaptive_icon_foreground: "assets/logo.png"
   
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -46,6 +37,9 @@ dependencies:
   intl_phone_field: ^3.2.0
   delightful_toast: ^1.1.0
   dio: ^5.8.0+1
+  shared_preferences: ^2.5.3
+ 
+
 
 dev_dependencies:
   flutter_test:

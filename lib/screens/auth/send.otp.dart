@@ -8,13 +8,11 @@ import 'package:boostseller/constants.dart';
 class SendOTPScreen extends StatefulWidget {
   final String email;
   final String phoneNumber;
-  final String role;
 
   const SendOTPScreen({
     super.key,
     required this.email,
     required this.phoneNumber,
-    required this.role,
   });
 
   @override
@@ -32,9 +30,7 @@ class _SendOTPScreenState extends State<SendOTPScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder:
-            (context) =>
-                VerificationScreen(role: widget.role, otpType: otpType),
+        builder: (context) => VerificationScreen(otpType: otpType),
       ),
     );
   }
@@ -73,7 +69,7 @@ class _SendOTPScreenState extends State<SendOTPScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.asset('assets/logo.png', height: height * 0.2),
+              Image.asset('assets/logo.ico', height: height * 0.2),
               SizedBox(height: height * 0.04),
 
               const Text(

@@ -1,6 +1,7 @@
 // Register Page : made by Leo on 2025/04/30
 
 import 'package:flutter/material.dart';
+
 import 'package:boostseller/widgets/button.effect.dart';
 import 'package:boostseller/utils/validation.dart';
 import 'package:boostseller/screens/auth/send.otp.dart';
@@ -10,11 +11,13 @@ import 'package:boostseller/widgets/custom.password.field.dart';
 import 'package:boostseller/constants.dart';
 import 'package:boostseller/utils/toast.dart';
 import 'package:boostseller/services/api.services.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:boostseller/screens/auth/login.dart';
+import 'package:boostseller/screens/welcome.dart';
 
 class RegisterScreen extends StatefulWidget {
-  final String role;
-
-  const RegisterScreen({super.key, required this.role});
+  const RegisterScreen({super.key});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -27,6 +30,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController pwdController = TextEditingController();
   final TextEditingController pwdConfirmController = TextEditingController();
   String phoneNumber = '';
+  String role = '';
+
+  Future<String?> getUserRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('userRole');
+  }
 
   void registerUser({
     required BuildContext context,
@@ -36,20 +45,53 @@ class _RegisterScreenState extends State<RegisterScreen> {
     required String phone,
   }) async {
     final api = ApiService();
-
+    String? role = await getUserRole();
+    if ((role == '') && (role == null)) {
+      showToast(
+        context,
+        "Your role do not selected. Please your select role.",
+        isError: true,
+      );
+      await Future.delayed(Duration(seconds: 1));
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+      );
+    }
     try {
-      final response = await api.post('/api/auth/register', {
+      final response = await api.post(context, '/api/auth/register', {
         'name': name,
         'email': email,
         'phoneNumber': phone,
         'password': password,
+        'role': role,
       });
 
-      if (response?.statusCode == 200 || response?.statusCode == 201) {
-        showToast(context, "Success");
+      Map<String, dynamic> jsonData = jsonDecode(response?.data);
+
+      if ((response?.statusCode == 200 || response?.statusCode == 201) &&
+          !jsonData['error']) {
+        showToast(context, jsonData['message']);
+        Navigator.push(
+          context,
+          // MaterialPageRoute(
+          //   builder:
+          //       (context) => SendOTPScreen(
+          //         email: jsonData['user']['email'],
+          //         phoneNumber: jsonData['user']['phoneNumber'],
+          //       ),
+          // ),
+          MaterialPageRoute(builder: (context) => LoginScreen()),
+        );
+      } else {
+        showToast(context, jsonData['message'], isError: true);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const RegisterScreen()),
+        );
       }
     } catch (e) {
-      showToast(context, "error", isError: true);
+      showToast(context, "Server not found. Please try again", isError: true);
     }
   }
 
@@ -59,7 +101,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final password = pwdController.text.trim();
     final passwordConfirm = pwdConfirmController.text.trim();
     final phone = phoneController.text.trim();
-
     if ((name.isNotEmpty) &&
         (email.isNotEmpty) &&
         (phoneNumber.isNotEmpty) &&
@@ -77,18 +118,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
               phone: phoneNumber,
               password: password,
             );
-            // showToast(context, "Successfully Sign Up!");
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder:
-            //         (context) => SendOTPScreen(
-            //           email: email,
-            //           phoneNumber: phoneNumber,
-            //           role: widget.role,
-            //         ),
-            //   ),
-            // );
           } else {
             showToast(context, "Passwords do not match.", isError: true);
           }
@@ -119,7 +148,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
         backgroundColor: Config.appbarColor,
         elevation: 0,
         leading: IconButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed:
+              () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+              ),
           padding: const EdgeInsets.all(0),
           icon: Container(
             width: 25,
@@ -144,7 +177,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Logo
-              Image.asset('assets/logo.png', height: height * 0.2),
+              Image.asset('assets/logo.ico', height: height * 0.2),
               SizedBox(height: height * 0.04),
 
               const Text(
@@ -252,7 +285,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   SizedBox(width: 10),
                   EffectButton(
-                    onTap: () => Navigator.pop(context),
+                    onTap:
+                        () => Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginScreen(),
+                          ),
+                        ),
                     child: const Text(
                       "Login",
                       style: TextStyle(

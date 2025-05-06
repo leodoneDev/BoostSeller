@@ -7,6 +7,7 @@ import 'package:boostseller/screens/profile/hostess/profile.panel.dart';
 import 'package:boostseller/widgets/button.effect.dart';
 import 'package:boostseller/constants.dart';
 import 'package:boostseller/services/api.services.dart';
+import 'package:boostseller/screens/auth/login.dart';
 
 class LeadListScreen extends StatefulWidget {
   const LeadListScreen({super.key});
@@ -36,7 +37,13 @@ class _LeadListScreenState extends State<LeadListScreen> {
             backgroundColor: Config.appbarColor,
             elevation: 0,
             leading: IconButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed:
+                  () => Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LoginScreen(),
+                    ),
+                  ),
               padding: const EdgeInsets.all(0),
               icon: Container(
                 width: 25,

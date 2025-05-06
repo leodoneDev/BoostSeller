@@ -62,7 +62,7 @@ class _AddSuccessScreenState extends State<AddSuccessScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Logo
-                    Image.asset('assets/logo.png', height: height * 0.2),
+                    Image.asset('assets/logo.ico', height: height * 0.2),
                     const SizedBox(height: 30),
 
                     // Title

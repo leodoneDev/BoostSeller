@@ -9,11 +9,15 @@ import 'package:boostseller/constants.dart';
 import 'package:boostseller/widgets/custom.input.text.dart';
 import 'package:boostseller/widgets/custom.password.field.dart';
 import 'package:boostseller/utils/toast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:boostseller/services/api.services.dart';
+import 'dart:convert';
+import 'package:boostseller/screens/lead/hostess/lead.list.dart';
+import 'package:boostseller/screens/lead/performer/lead.list.dart';
+import 'package:boostseller/screens/welcome.dart';
 
 class LoginScreen extends StatefulWidget {
-  final String role;
-
-  const LoginScreen({super.key, required this.role});
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -22,6 +26,77 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController pwdController = TextEditingController();
+
+  Future<String?> getUserRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('userRole');
+  }
+
+  void loginUser({
+    required BuildContext context,
+    required String email,
+    required String password,
+  }) async {
+    final api = ApiService();
+    String? role = await getUserRole();
+    if ((role == '') && (role == null)) {
+      showToast(
+        context,
+        "Your role do not selected.\n Please your select role.",
+        isError: true,
+      );
+      await Future.delayed(Duration(seconds: 1));
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+      );
+    }
+    try {
+      final response = await api.post(context, '/api/auth/login', {
+        'email': email,
+        'password': password,
+      });
+      Map<String, dynamic> jsonData = jsonDecode(response?.data);
+
+      if ((response?.statusCode == 200 || response?.statusCode == 201) &&
+          !jsonData['error']) {
+        if (role == jsonData['user']['role']) {
+          showToast(context, jsonData['message']);
+          if (jsonData['user']['role'] == 'hostess') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => LeadListScreen()),
+            );
+          } else if (jsonData['user']['role'] == 'performer') {
+            await Future.delayed(Duration(seconds: 1));
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => LeadAssignedScreen()),
+            );
+          }
+        } else {
+          showToast(
+            context,
+            "This is not your role.\n Please select your correct role.",
+            isError: true,
+          );
+          await Future.delayed(Duration(seconds: 1));
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+          );
+        }
+      } else {
+        showToast(context, jsonData['message'], isError: true);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+        );
+      }
+    } catch (e) {
+      showToast(context, "Server not found. Please try again", isError: true);
+    }
+  }
 
   void handleLogin() {
     final email = emailController.text.trim();
@@ -38,14 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
         isError: true,
       );
     } else {
-      showToast(context, 'Successfully Sign In!');
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder:
-      //         (context) => VerificationScreen(role: widget.role, email: email),
-      //   ),
-      // );
+      loginUser(context: context, email: email, password: password);
     }
   }
 
@@ -61,7 +129,11 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: Config.appbarColor,
         elevation: 0,
         leading: IconButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed:
+              () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+              ),
           padding: const EdgeInsets.all(0),
           icon: Container(
             width: 25,
@@ -85,7 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Logo
-              Image.asset('assets/logo.png', height: height * 0.2),
+              Image.asset('assets/logo.ico', height: height * 0.2),
               SizedBox(height: height * 0.04), // add more breathing space
               // Welcome Text
               const Text(
@@ -203,8 +275,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder:
-                              (context) => RegisterScreen(role: widget.role),
+                          builder: (context) => RegisterScreen(),
                         ),
                       );
                     },

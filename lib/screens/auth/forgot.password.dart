@@ -3,7 +3,9 @@ import 'package:boostseller/screens/auth/change.password.dart';
 import 'package:boostseller/widgets/button.effect.dart';
 import 'package:boostseller/widgets/custom.phone.field.dart';
 import 'package:boostseller/widgets/custom.input.text.dart';
+import 'package:boostseller/screens/auth/login.dart';
 import 'package:boostseller/constants.dart';
+import 'package:boostseller/utils/toast.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -19,10 +21,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   String fullPhoneNumber = '';
 
   void handleSendOTP() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const ChangePasswordScreen()),
-    );
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(builder: (context) => const ChangePasswordScreen()),
+    // );
+    showToast(context, "Developing...");
   }
 
   @override
@@ -37,7 +40,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         backgroundColor: Config.appbarColor,
         elevation: 0,
         leading: IconButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed:
+              () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+              ),
           padding: EdgeInsets.zero,
           icon: Container(
             width: 25,
@@ -60,7 +67,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.asset('assets/logo.png', height: height * 0.2),
+              Image.asset('assets/logo.ico', height: height * 0.2),
               SizedBox(height: height * 0.04),
 
               const Text(

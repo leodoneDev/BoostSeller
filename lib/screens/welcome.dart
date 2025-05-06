@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:boostseller/screens/auth/login.dart';
 import 'package:boostseller/widgets/button.effect.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:boostseller/constants.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -12,6 +14,11 @@ class WelcomeScreen extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     final width = size.width;
     final height = size.height;
+
+    Future<void> saveUserRole(String role) async {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('userRole', role);
+    }
 
     return Scaffold(
       backgroundColor: const Color(0xFF333333),
@@ -24,18 +31,25 @@ class WelcomeScreen extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(height: height * 0.08), // Top padding
+                  SizedBox(height: height * 0.06), // Top padding
                   // Logo
                   Image.asset(
-                    'assets/logo.png',
+                    'assets/logo.ico',
                     height: height * 0.2, // 12% of screen height
                     fit: BoxFit.contain,
                   ),
-
-                  const SizedBox(height: 10),
+                  SizedBox(height: height * 0.06),
+                  const Text(
+                    'Please select your role!',
+                    style: TextStyle(
+                      fontSize: Config.titleFontSize,
+                      fontWeight: FontWeight.bold,
+                      color: Config.titleFontColor,
+                    ),
+                  ),
 
                   SizedBox(
-                    height: height * 0.08,
+                    height: height * 0.06,
                   ), // Space between logo and roles
                   // Role selection
                   Row(
@@ -43,11 +57,11 @@ class WelcomeScreen extends StatelessWidget {
                     children: [
                       EffectButton(
                         onTap: () {
+                          saveUserRole('hostess');
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder:
-                                  (context) => LoginScreen(role: 'hostess'),
+                              builder: (context) => LoginScreen(),
                             ),
                           );
                         },
@@ -59,6 +73,14 @@ class WelcomeScreen extends StatelessWidget {
                               fit: BoxFit.contain,
                             ),
                             const SizedBox(height: 8),
+                            const Text(
+                              'Hostess',
+                              style: TextStyle(
+                                fontSize: Config.subTitleFontSize,
+                                color: Config.subTitleFontColor,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -67,11 +89,11 @@ class WelcomeScreen extends StatelessWidget {
 
                       EffectButton(
                         onTap: () {
+                          saveUserRole('performer');
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder:
-                                  (context) => LoginScreen(role: 'performer'),
+                              builder: (context) => LoginScreen(),
                             ),
                           );
                         },
@@ -83,6 +105,14 @@ class WelcomeScreen extends StatelessWidget {
                               fit: BoxFit.contain,
                             ),
                             const SizedBox(height: 8),
+                            const Text(
+                              'Performer',
+                              style: TextStyle(
+                                fontSize: Config.subTitleFontSize,
+                                color: Config.subTitleFontColor,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ],
                         ),
                       ),

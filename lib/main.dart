@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'screens/welcome.dart';
+import 'package:boostseller/utils/http.override.dart';
+import 'dart:io';
 
 void main() {
+  HttpOverrides.global = MyHttpOverrides();
   runApp(const BoostSellerApp());
 }
 

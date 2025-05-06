@@ -1,38 +1,15 @@
 // Verification Page : made by Leo on 2025/04/30
 
 import 'package:flutter/material.dart';
-import 'package:boostseller/screens/lead/hostess/lead.list.dart';
-import 'package:boostseller/screens/lead/performer/lead.list.dart';
 import 'package:boostseller/widgets/button.effect.dart';
 import 'package:boostseller/constants.dart';
 
 class VerificationScreen extends StatelessWidget {
-  final String role;
   final int otpType;
 
-  const VerificationScreen({
-    super.key,
-    required this.role,
-    required this.otpType,
-  });
+  const VerificationScreen({super.key, required this.otpType});
 
-  void handleVerify(context) {
-    if (role == 'hostess') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const LeadListScreen()),
-      );
-    } else if (role == 'performer') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const LeadAssignedScreen()),
-      );
-    } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Unknown role")));
-    }
-  }
+  void handleVerify(context) {}
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +47,7 @@ class VerificationScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Logo
-              Image.asset('assets/logo.png', height: height * 0.2),
+              Image.asset('assets/logo.ico', height: height * 0.2),
               const SizedBox(height: 16),
 
               // Title

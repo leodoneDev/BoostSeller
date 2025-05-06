@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:boostseller/screens/profile/performer/profile.panel.dart';
 import 'package:boostseller/screens/lead/performer/lead.detail.dart';
 import 'package:boostseller/constants.dart';
+import 'package:boostseller/screens/auth/login.dart';
 
 class LeadAssignedScreen extends StatefulWidget {
   const LeadAssignedScreen({super.key});
@@ -28,7 +29,13 @@ class _LeadAssignedScreenState extends State<LeadAssignedScreen> {
             backgroundColor: Config.appbarColor,
             elevation: 0,
             leading: IconButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed:
+                  () => Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LoginScreen(),
+                    ),
+                  ),
               icon: Container(
                 width: 25,
                 height: 25,

@@ -73,7 +73,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Logo
-              Image.asset('assets/logo.png', height: height * 0.18),
+              Image.asset('assets/logo.ico', height: height * 0.18),
               const SizedBox(height: 20),
 
               const Text(
