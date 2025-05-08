@@ -61,6 +61,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const SizedBox(height: 6),
                   const Text(
                     "Lead Detail",
                     style: TextStyle(
@@ -80,14 +81,39 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Oleh",
-                          style: TextStyle(
-                            fontSize: Config.leadNameFontSize,
-                            fontWeight: FontWeight.bold,
-                            color: Config.leadNameColor,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              "Oleh",
+                              style: TextStyle(
+                                fontSize: Config.leadNameFontSize,
+                                fontWeight: FontWeight.bold,
+                                color: Config.leadNameColor,
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color:
+                                    Colors.blue, // Replace with dynamic status
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: const Text(
+                                "Assigned",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
+
                         const Divider(
                           color: Config.leadDivederColor,
                           height: 20,

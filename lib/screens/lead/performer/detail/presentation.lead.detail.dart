@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:boostseller/screens/profile/performer/profile.panel.dart';
 import 'package:boostseller/widgets/button.effect.dart';
 import 'package:boostseller/constants.dart';
+import 'package:boostseller/utils/toast.dart';
 
 class PresentationLeadDetailScreen extends StatefulWidget {
   const PresentationLeadDetailScreen({super.key});
@@ -20,7 +21,7 @@ class _PresentationLeadDetailScreenState
   bool _clientInterested = false;
   String _presentationSent = "Yes";
 
-  void _showSuccessAdvanceOverlay(BuildContext context) {
+  void _showLeadInfoOverlay(BuildContext context) {
     final overlay = Overlay.of(context);
     late OverlayEntry overlayEntry;
 
@@ -355,7 +356,8 @@ class _PresentationLeadDetailScreenState
             backgroundColor: Config.appbarColor,
             elevation: 0,
             leading: IconButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(context, 'refresh'),
+              splashRadius: 30,
               icon: Container(
                 width: 25,
                 height: 25,
@@ -435,47 +437,6 @@ class _PresentationLeadDetailScreenState
               },
             ),
           ),
-
-          // body: SafeArea(
-          //   child: Column(
-          //     children: [
-          //       // Content Area
-          //       Expanded(
-          //         child: SingleChildScrollView(
-          //           padding: EdgeInsets.only(
-          //             left: 20,
-          //             right: 20,
-          //             top: 10,
-          //             bottom: MediaQuery.of(context).viewInsets.bottom,
-          //           ),
-          //           child: Container(
-          //             padding: const EdgeInsets.all(16),
-          //             decoration: BoxDecoration(
-          //               color: const Color(0xFF2A2A2A),
-          //               borderRadius: BorderRadius.circular(16),
-          //             ),
-          //             child: Column(
-          //               crossAxisAlignment: CrossAxisAlignment.start,
-          //               children: [
-          //                 _buildHeader(),
-          //                 const SizedBox(height: 10),
-          //                 const Divider(color: Colors.white30, height: 1),
-          //                 const SizedBox(height: 20),
-          //                 _buildForm(),
-          //               ],
-          //             ),
-          //           ),
-          //         ),
-          //       ),
-
-          //       // Action Buttons (Fixed at bottom)
-          //       Padding(
-          //         padding: const EdgeInsets.fromLTRB(20, 10, 20, 16),
-          //         child: _buildActions(context),
-          //       ),
-          //     ],
-          //   ),
-          // ),
         ),
         PerformerProfilePanel(controller: _profileController),
       ],
@@ -503,16 +464,34 @@ class _PresentationLeadDetailScreenState
         ),
         Row(
           children: [
-            Text(
-              "Presentation",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.orange,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                "Presentation",
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
             SizedBox(width: 20),
-            Icon(Icons.info_outline, color: Color(0xFF1E90FF), size: 30),
+            // Icon(Icons.info_outline, color: Color(0xFF1E90FF), size: 30),
+            IconButton(
+              icon: Icon(
+                Icons.info_outline,
+                color: Color(0xFF1E90FF),
+                size: 30,
+              ),
+              onPressed: () {
+                _showLeadInfoOverlay(context);
+              },
+              splashRadius: 30, // Optional: size of ripple effect
+            ),
           ],
         ),
       ],
@@ -616,7 +595,7 @@ class _PresentationLeadDetailScreenState
           Config.activeButtonColor,
           Config.buttonTextColor,
           () {
-            _showSuccessAdvanceOverlay(context);
+            ToastUtil.success(context, "Developing...");
           },
         ),
         _actionButton(

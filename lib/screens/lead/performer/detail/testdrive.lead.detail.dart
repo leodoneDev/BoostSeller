@@ -1,3 +1,4 @@
+import 'package:boostseller/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:boostseller/screens/profile/performer/profile.panel.dart';
 import 'package:boostseller/widgets/button.effect.dart';
@@ -40,7 +41,7 @@ class _TestDriveLeadDetailScreenState extends State<TestDriveLeadDetailScreen> {
             backgroundColor: Config.appbarColor,
             elevation: 0,
             leading: IconButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(context, 'refresh'),
               icon: Container(
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
@@ -125,7 +126,7 @@ class _TestDriveLeadDetailScreenState extends State<TestDriveLeadDetailScreen> {
   Widget _leadHeader() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: const [
+      children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -143,16 +144,33 @@ class _TestDriveLeadDetailScreenState extends State<TestDriveLeadDetailScreen> {
         ),
         Row(
           children: [
-            Text(
-              "Test Drive",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.cyan,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                "Test Drive",
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
             SizedBox(width: 20),
-            Icon(Icons.info_outline, color: Color(0xFF1E90FF), size: 30),
+            IconButton(
+              icon: Icon(
+                Icons.info_outline,
+                color: Color(0xFF1E90FF),
+                size: 30,
+              ),
+              onPressed: () {
+                _showLeadInfoOverlay(context);
+              },
+              splashRadius: 30, // Optional: size of ripple effect
+            ),
           ],
         ),
       ],
@@ -370,13 +388,17 @@ class _TestDriveLeadDetailScreenState extends State<TestDriveLeadDetailScreen> {
           "Advance",
           Config.activeButtonColor,
           Config.buttonTextColor,
-          () {},
+          () {
+            ToastUtil.success(context, "Developing...");
+          },
         ),
         _actionButton(
           "Close",
           Config.deactiveButtonColor,
           Config.buttonTextColor,
-          () {},
+          () {
+            showCloseReasonNotification(context);
+          },
         ),
       ],
     );
@@ -435,6 +457,350 @@ class _TestDriveLeadDetailScreenState extends State<TestDriveLeadDetailScreen> {
           // const SizedBox(height: 8),
           child,
         ],
+      ),
+    );
+  }
+}
+
+void _showLeadInfoOverlay(BuildContext context) {
+  final overlay = Overlay.of(context);
+  late OverlayEntry overlayEntry;
+
+  overlayEntry = OverlayEntry(
+    builder:
+        (context) => Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+              decoration: BoxDecoration(
+                color: const Color(0xFF2C2C2C),
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black45,
+                    blurRadius: 8,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Stack(
+                children: [
+                  // Close button
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: GestureDetector(
+                      onTap: () => overlayEntry.remove(),
+                      child: const Icon(
+                        Icons.close,
+                        color: Config.activeButtonColor,
+                      ),
+                    ),
+                  ),
+
+                  // Left-aligned content
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      SizedBox(height: 10),
+                      Text(
+                        "Maxim",
+                        style: TextStyle(
+                          fontSize: Config.leadNameFontSize,
+                          fontWeight: FontWeight.bold,
+                          color: Config.leadNameColor,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      _LeadInfoRow(label: "Phone", value: "1-234-567-890"),
+                      _LeadInfoRow(label: "Interest", value: "Interest 1"),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 4),
+                        child: Text(
+                          "Register",
+                          style: TextStyle(fontSize: 14, color: Colors.white),
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            "ID : 1234-1234-1234   ",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          Text(
+                            "Date : 28/04/2025",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ],
+                      ),
+                      _LeadInfoRow(label: "Gender", value: "Male"),
+                      _LeadInfoRow(label: "Age", value: "38"),
+                      _LeadInfoRow(label: "Budget", value: "\$500"),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+  );
+
+  overlay.insert(overlayEntry);
+}
+
+void showCloseReasonNotification(BuildContext context) {
+  final TextEditingController commentReasonController = TextEditingController();
+  String? selectedReason;
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) {
+      return Padding(
+        // Adjust height when keyboard appears
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: StatefulBuilder(
+          builder: (context, setModalState) {
+            return Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
+              decoration: const BoxDecoration(
+                color: Color(0xFF2C2C2C),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+              ),
+              child: Stack(
+                children: [
+                  // Close Icon
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: const Icon(
+                        Icons.close,
+                        color: Config.activeButtonColor,
+                      ),
+                    ),
+                  ),
+
+                  // Main Content
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 20),
+                      const Center(
+                        child: Text(
+                          "Add reason & comment",
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white70,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // Reason Dropdown
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[700],
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            dropdownColor: Colors.grey[800],
+                            value: selectedReason,
+                            hint: const Text(
+                              "Reason",
+                              style: TextStyle(color: Colors.white54),
+                            ),
+                            icon: const Icon(
+                              Icons.keyboard_arrow_down,
+                              color: Colors.white54,
+                            ),
+                            items:
+                                ["Rejected", "Unqualified", "Deal closed"]
+                                    .map(
+                                      (reason) => DropdownMenuItem(
+                                        value: reason,
+                                        child: Text(
+                                          reason,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                            onChanged:
+                                (val) => setModalState(() {
+                                  selectedReason = val;
+                                }),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Comment Field
+                      TextField(
+                        controller: commentReasonController,
+                        minLines: 1,
+                        maxLines: null, // expands automatically
+                        keyboardType: TextInputType.multiline,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                          hintText: "Comment",
+                          hintStyle: const TextStyle(color: Colors.white54),
+                          filled: true,
+                          fillColor: Colors.grey[700],
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // Submit Button
+                      SizedBox(
+                        width: double.infinity,
+                        child: EffectButton(
+                          onTap: () {
+                            Navigator.pop(context);
+                            _showCloseSuccessOverlay(context);
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            decoration: BoxDecoration(
+                              color: Config.activeButtonColor,
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            alignment: Alignment.center,
+                            child: const Text(
+                              "Add",
+                              style: TextStyle(
+                                fontSize: Config.buttonTextFontSize,
+                                color: Config.buttonTextColor,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      );
+    },
+  );
+}
+
+void _showCloseSuccessOverlay(BuildContext context) {
+  final overlay = Overlay.of(context);
+  late OverlayEntry overlayEntry;
+
+  overlayEntry = OverlayEntry(
+    builder:
+        (context) => Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: const Color(0xFF333333),
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black45,
+                    blurRadius: 8,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: GestureDetector(
+                      onTap: () => overlayEntry.remove(),
+                      child: const Icon(Icons.close, color: Colors.blueAccent),
+                    ),
+                  ),
+                  Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: const [
+                        SizedBox(height: 20),
+                        Text(
+                          "Successfully Closed!",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(height: 16),
+                        Text(
+                          "Now, you can work with other lead.\nPlease check and work on the list:\n“Assigned” and “In progress”",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.white70),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+  );
+
+  overlay.insert(overlayEntry);
+}
+
+class _LeadInfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _LeadInfoRow({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: RichText(
+        text: TextSpan(
+          text: "$label : ",
+          style: const TextStyle(color: Colors.white60, fontSize: 14),
+          children: [
+            TextSpan(
+              text: value,
+              style: const TextStyle(color: Colors.white, fontSize: 14),
+            ),
+          ],
+        ),
       ),
     );
   }

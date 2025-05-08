@@ -3,135 +3,254 @@
 import 'package:boostseller/widgets/button.effect.dart';
 import 'package:flutter/material.dart';
 import 'package:boostseller/screens/profile/performer/profile.panel.dart';
-import 'package:boostseller/screens/lead/performer/lead.detail.dart';
 import 'package:boostseller/constants.dart';
 import 'package:boostseller/screens/auth/login.dart';
+import 'package:boostseller/widgets/lead.card.dart';
+import 'package:boostseller/utils/toast.dart';
+import 'package:boostseller/utils/loading.overlay.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:boostseller/model/lead.dart';
+import 'package:boostseller/utils/back.override.wrapper.dart';
+import 'package:boostseller/widgets/exit.dialog.dart';
+import 'package:boostseller/screens/welcome.dart';
 
-class LeadAssignedScreen extends StatefulWidget {
-  const LeadAssignedScreen({super.key});
+class PerformerDashboardScreen extends StatefulWidget {
+  const PerformerDashboardScreen({super.key});
 
   @override
-  State<LeadAssignedScreen> createState() => _LeadAssignedScreenState();
+  State<PerformerDashboardScreen> createState() =>
+      _PerformerDashboardScreenState();
 }
 
-class _LeadAssignedScreenState extends State<LeadAssignedScreen> {
+class _PerformerDashboardScreenState extends State<PerformerDashboardScreen> {
   int selectedTab = 0;
+  bool isLoading = true; // for overlay
+  List<Map<String, String>> assignedLeads = [];
+  List<Map<String, String>> acceptedLeads = [];
   final ProfilePerformerPanelController _profileController =
       ProfilePerformerPanelController();
 
+  Future<String?> getUserRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('userRole');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchLeads();
+  }
+
+  Future<void> _fetchLeads() async {
+    setState(() => isLoading = true);
+    try {
+      // Simulate backend call
+      await Future.delayed(const Duration(seconds: 2));
+      // Replace below with your real API logic
+      assignedLeads = [
+        {
+          "name": "Maxim",
+          "interest": "Interest 2",
+          "phone": "1234-1234-1235",
+          "date": "25/04/2025",
+          "status": "Assigned",
+        },
+        {
+          "name": "Tom",
+          "interest": "Interest 1",
+          "phone": "1234-1234-1235",
+          "date": "26/04/2025",
+          "status": "Assigned",
+        },
+        {
+          "name": "Jone",
+          "interest": "Interest 1",
+          "phone": "1234-1234-1235",
+          "date": "26/04/2025",
+          "status": "Assigned",
+        },
+      ];
+      acceptedLeads = [
+        {
+          "name": "Oleh",
+          "interest": "Interest 1",
+          "phone": "1234-1234-1235",
+          "date": "27/04/2025",
+          "status": "Presentation",
+        },
+        {
+          "name": "John",
+          "interest": "Interest 3",
+          "phone": "1234-1234-1235",
+          "date": "28/04/2025",
+          "status": "Completed",
+        },
+        {
+          "name": "Maxim",
+          "interest": "Interest 2",
+          "phone": "1234-1234-1235",
+          "date": "28/04/2025",
+          "status": "Test Drive",
+        },
+        {
+          "name": "Tom",
+          "interest": "Interest 3",
+          "phone": "1234-1234-1235",
+          "date": "28/04/2025",
+          "status": "Closed",
+        },
+      ];
+    } catch (e) {
+      ToastUtil.error(context, "Failed to load leads");
+    }
+    setState(() => isLoading = false);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Scaffold(
-          backgroundColor: Config.backgroundColor,
-          appBar: AppBar(
-            backgroundColor: Config.appbarColor,
-            elevation: 0,
-            leading: IconButton(
-              onPressed:
-                  () => Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginScreen(),
-                    ),
+    return BackOverrideWrapper(
+      onBack: () async {
+        final prefs = await SharedPreferences.getInstance();
+        final role = prefs.getString('auth_token')?.toLowerCase() ?? '';
+        if (role.isNotEmpty) {
+          await ExitDialog.show(context);
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => WelcomeScreen()),
+          );
+        }
+      },
+      child: Stack(
+        children: [
+          Scaffold(
+            backgroundColor: Config.backgroundColor,
+            appBar: AppBar(
+              backgroundColor: Config.appbarColor,
+              elevation: 0,
+              leading: IconButton(
+                onPressed: () async {
+                  final prefs = await SharedPreferences.getInstance();
+                  final role =
+                      prefs.getString('auth_token')?.toLowerCase() ?? '';
+                  if (role.isNotEmpty) {
+                    await ExitDialog.show(context);
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => WelcomeScreen()),
+                    );
+                  }
+                },
+                icon: Container(
+                  width: 25,
+                  height: 25,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Config.activeButtonColor,
                   ),
-              icon: Container(
-                width: 25,
-                height: 25,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Config.activeButtonColor,
-                ),
-                child: const Icon(
-                  Icons.arrow_back,
-                  size: 14,
-                  color: Config.iconDefaultColor,
+                  child: const Icon(
+                    Icons.arrow_back,
+                    size: 14,
+                    color: Config.iconDefaultColor,
+                  ),
                 ),
               ),
+              actions: [
+                EffectButton(
+                  onTap: () => _profileController.toggle(),
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: Image.asset(
+                      'assets/list.png',
+                      width: 24,
+                      height: 24,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            actions: [
-              EffectButton(
-                onTap: () => _profileController.toggle(),
+            body: LoadingOverlay(
+              isLoading: isLoading,
+              child: SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.only(right: 12),
-                  child: Image.asset('assets/list.png', width: 24, height: 24),
-                ),
-              ),
-            ],
-          ),
-          body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Leads",
-                    style: TextStyle(
-                      fontSize: Config.titleFontSize,
-                      fontWeight: FontWeight.bold,
-                      color: Config.titleFontColor,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    "Work with leads!",
-                    style: TextStyle(
-                      fontSize: Config.subTitleFontSize,
-                      color: Config.subTitleFontColor,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Tabs
-                  Row(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildTab("Assigned(1)", selectedTab == 0, () {
-                        setState(() => selectedTab = 0);
-                      }),
-                      const SizedBox(width: 12),
-                      _buildTab("In progress(2)", selectedTab == 1, () {
-                        setState(() => selectedTab = 1);
-                      }),
+                      const Text(
+                        "Leads",
+                        style: TextStyle(
+                          fontSize: Config.titleFontSize,
+                          fontWeight: FontWeight.bold,
+                          color: Config.titleFontColor,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        "Work with leads!",
+                        style: TextStyle(
+                          fontSize: Config.subTitleFontSize,
+                          color: Config.subTitleFontColor,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Tabs
+                      Row(
+                        children: [
+                          _buildTab(
+                            "Assigned(${assignedLeads.length})",
+                            selectedTab == 0,
+                            () {
+                              setState(() => selectedTab = 0);
+                            },
+                          ),
+                          const SizedBox(width: 12),
+                          _buildTab(
+                            "Accepted(${acceptedLeads.length})",
+                            selectedTab == 1,
+                            () {
+                              setState(() => selectedTab = 1);
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Expanded(
+                        child: ListView(
+                          children:
+                              (selectedTab == 0 ? assignedLeads : acceptedLeads)
+                                  .map(
+                                    (lead) => LeadCard(
+                                      // name: lead['name']!,
+                                      // interest: lead['interest']!,
+                                      // phone: lead['phone']!,
+                                      // date: lead['date']!,
+                                      // status: lead['status']!,
+                                      lead: Lead(
+                                        name: lead['name']!,
+                                        interest: lead['interest']!,
+                                        phone: lead['phone']!,
+                                        date: lead['date']!,
+                                        status: lead['status']!,
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                        ),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 20),
-
-                  if (selectedTab == 0) ...[
-                    _buildLeadCard(
-                      name: "Maxim",
-                      interest: "Interest 2",
-                      phone: "1234-1234-1235",
-                      date: "25/04/2025",
-                      status: "Assigned",
-                    ),
-                  ] else ...[
-                    _buildLeadCard(
-                      name: "Oleh",
-                      interest: "Interest 1",
-                      phone: "1234-1234-1234",
-                      date: "28/04/2025",
-                      status: "Presentation",
-                    ),
-                    const SizedBox(height: 12),
-                    _buildLeadCard(
-                      name: "Maxim",
-                      interest: "Interest 2",
-                      phone: "1234-1234-1235",
-                      date: "25/04/2025",
-                      status: "Test Drive",
-                    ),
-                  ],
-                ],
+                ),
               ),
             ),
           ),
-        ),
 
-        /// Toggleable Profile Panel
-        PerformerProfilePanel(controller: _profileController),
-      ],
+          /// Toggleable Profile Panel
+          PerformerProfilePanel(controller: _profileController),
+        ],
+      ),
     );
   }
 
@@ -167,80 +286,6 @@ class _LeadAssignedScreenState extends State<LeadAssignedScreen> {
               ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLeadCard({
-    required String name,
-    required String interest,
-    required String phone,
-    required String date,
-    required String status,
-  }) {
-    return EffectButton(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder:
-                (context) =>
-                    LeadDetailScreen(status: status), // <-- Your detail page
-          ),
-        );
-      },
-      child: Container(
-        width: double.infinity,
-        margin: const EdgeInsets.only(top: 12),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Config.leadCardColor,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black45,
-              blurRadius: 6,
-              offset: Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Name and status
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontSize: Config.leadNameFontSize,
-                    fontWeight: FontWeight.bold,
-                    color: Config.leadNameColor,
-                  ),
-                ),
-                Text(
-                  status,
-                  style: const TextStyle(
-                    fontSize: Config.leadTextFontSize,
-                    fontWeight: FontWeight.w500,
-                    color: Config.leadTextFontSizeColor,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Text(interest, style: const TextStyle(color: Colors.white)),
-            const SizedBox(height: 4),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(phone, style: const TextStyle(color: Colors.white60)),
-                Text(date, style: const TextStyle(color: Colors.white60)),
-              ],
-            ),
-          ],
         ),
       ),
     );

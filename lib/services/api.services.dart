@@ -7,8 +7,7 @@ import 'package:boostseller/utils/toast.dart';
 class ApiService {
   final Dio _dio = Dio(
     BaseOptions(
-      baseUrl:
-          'https://boost-seller-web.netlify.app', // Replace with your base URL
+      baseUrl: 'https://boost-seller-web.netlify.app',
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
       headers: {'Content-Type': 'application/json'},
@@ -24,19 +23,14 @@ class ApiService {
       final response = await _dio.post(path, data: data);
       return response;
     } on DioException catch (e) {
-      showToast(
+      ToastUtil.error(
         context,
         'Network error occured. Please check WiFi Connection.',
-        isError: true,
       );
 
       rethrow;
     } catch (e) {
-      showToast(
-        context,
-        'Some issues occurred. Please try again.',
-        isError: true,
-      );
+      ToastUtil.error(context, 'Some issues occurred. Please try again.');
       rethrow;
     }
   }

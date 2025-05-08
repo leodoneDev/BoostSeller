@@ -5,6 +5,8 @@ import 'package:boostseller/screens/auth/login.dart';
 import 'package:boostseller/widgets/button.effect.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:boostseller/constants.dart';
+import 'package:boostseller/widgets/exit.dialog.dart';
+import 'package:boostseller/utils/back.override.wrapper.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -20,107 +22,113 @@ class WelcomeScreen extends StatelessWidget {
       await prefs.setString('userRole', role);
     }
 
-    return Scaffold(
-      backgroundColor: const Color(0xFF333333),
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: width * 0.08),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(height: height * 0.06), // Top padding
-                  // Logo
-                  Image.asset(
-                    'assets/logo.ico',
-                    height: height * 0.2, // 12% of screen height
-                    fit: BoxFit.contain,
-                  ),
-                  SizedBox(height: height * 0.06),
-                  const Text(
-                    'Please select your role!',
-                    style: TextStyle(
-                      fontSize: Config.titleFontSize,
-                      fontWeight: FontWeight.bold,
-                      color: Config.titleFontColor,
+    return BackOverrideWrapper(
+      onBack: () async {
+        await ExitDialog.show(context);
+      },
+
+      child: Scaffold(
+        backgroundColor: const Color(0xFF333333),
+        body: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: width * 0.08),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(height: height * 0.06), // Top padding
+                    // Logo
+                    Image.asset(
+                      'assets/logo_dark.png',
+                      height: height * 0.2, // 12% of screen height
+                      fit: BoxFit.contain,
                     ),
-                  ),
-
-                  SizedBox(
-                    height: height * 0.06,
-                  ), // Space between logo and roles
-                  // Role selection
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      EffectButton(
-                        onTap: () {
-                          saveUserRole('hostess');
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginScreen(),
-                            ),
-                          );
-                        },
-                        child: Column(
-                          children: [
-                            Image.asset(
-                              'assets/hostess.png',
-                              height: height * 0.15,
-                              fit: BoxFit.contain,
-                            ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              'Hostess',
-                              style: TextStyle(
-                                fontSize: Config.subTitleFontSize,
-                                color: Config.subTitleFontColor,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
+                    SizedBox(height: height * 0.06),
+                    const Text(
+                      'Please select your role!',
+                      style: TextStyle(
+                        fontSize: Config.titleFontSize,
+                        fontWeight: FontWeight.bold,
+                        color: Config.subTitleFontColor,
                       ),
+                    ),
 
-                      SizedBox(width: width * 0.1),
-
-                      EffectButton(
-                        onTap: () {
-                          saveUserRole('performer');
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginScreen(),
-                            ),
-                          );
-                        },
-                        child: Column(
-                          children: [
-                            Image.asset(
-                              'assets/performer.png',
-                              height: height * 0.15,
-                              fit: BoxFit.contain,
-                            ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              'Performer',
-                              style: TextStyle(
-                                fontSize: Config.subTitleFontSize,
-                                color: Config.subTitleFontColor,
-                                fontWeight: FontWeight.w500,
+                    SizedBox(
+                      height: height * 0.06,
+                    ), // Space between logo and roles
+                    // Role selection
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        EffectButton(
+                          onTap: () {
+                            saveUserRole('hostess');
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginScreen(),
                               ),
-                            ),
-                          ],
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              Image.asset(
+                                'assets/hostess.png',
+                                height: height * 0.15,
+                                fit: BoxFit.contain,
+                              ),
+                              const SizedBox(height: 8),
+                              const Text(
+                                'Hostess',
+                                style: TextStyle(
+                                  fontSize: Config.subTitleFontSize,
+                                  color: Config.subTitleFontColor,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
 
-                  SizedBox(height: height * 0.08), // Bottom breathing space
-                ],
+                        SizedBox(width: width * 0.1),
+
+                        EffectButton(
+                          onTap: () {
+                            saveUserRole('performer');
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginScreen(),
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              Image.asset(
+                                'assets/performer.png',
+                                height: height * 0.15,
+                                fit: BoxFit.contain,
+                              ),
+                              const SizedBox(height: 8),
+                              const Text(
+                                'Performer',
+                                style: TextStyle(
+                                  fontSize: Config.subTitleFontSize,
+                                  color: Config.subTitleFontColor,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    SizedBox(height: height * 0.08), // Bottom breathing space
+                  ],
+                ),
               ),
             ),
           ),

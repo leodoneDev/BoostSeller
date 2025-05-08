@@ -27,10 +27,16 @@ class _SendOTPScreenState extends State<SendOTPScreen> {
     if (usePhone) {
       otpType = 2;
     }
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => VerificationScreen(otpType: otpType),
+        builder:
+            (context) => VerificationScreen(
+              otpType: otpType,
+              email: widget.email,
+              phoneNumber: widget.phoneNumber,
+              verifyType: 1,
+            ),
       ),
     );
   }
@@ -69,7 +75,8 @@ class _SendOTPScreenState extends State<SendOTPScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.asset('assets/logo.ico', height: height * 0.2),
+              SizedBox(height: height * 0.04),
+              Image.asset('assets/logo_dark.png', height: height * 0.2),
               SizedBox(height: height * 0.04),
 
               const Text(

@@ -7,6 +7,7 @@ import 'package:boostseller/widgets/button.effect.dart';
 import 'package:boostseller/widgets/custom.input.text.dart';
 import 'package:boostseller/widgets/custom.phone.field.dart';
 import 'package:boostseller/constants.dart';
+import 'package:boostseller/utils/toast.dart';
 
 class AddLeadScreen extends StatefulWidget {
   const AddLeadScreen({super.key});
@@ -206,13 +207,14 @@ class _AddLeadScreenState extends State<AddLeadScreen> {
                         child: EffectButton(
                           onTap: () {
                             if (_formKey.currentState!.validate()) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) => const AddSuccessScreen(),
-                                ),
-                              );
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder:
+                              //         (context) => const AddSuccessScreen(),
+                              //   ),
+                              // );
+                              ToastUtil.success(context, "Developing...");
                             }
                           },
                           child: Container(
@@ -268,36 +270,4 @@ class _AddLeadScreenState extends State<AddLeadScreen> {
       ],
     );
   }
-
-  // Widget _buildLabel(String label, {bool required = false}) {
-  //   return Padding(
-  //     padding: const EdgeInsets.only(top: 16, bottom: 6),
-  //     child: Text(
-  //       required ? '$label *' : label,
-  //       style: const TextStyle(color: Colors.white, fontSize: 14),
-  //     ),
-  //   );
-  // }
-
-  // Widget _buildTextField({
-  //   required TextEditingController controller,
-  //   required String hint,
-  //   TextInputType? keyboardType,
-  // }) {
-  //   return TextField(
-  //     controller: controller,
-  //     keyboardType: keyboardType,
-  //     style: const TextStyle(color: Colors.white),
-  //     decoration: InputDecoration(
-  //       filled: true,
-  //       fillColor: Colors.grey[800],
-  //       hintText: hint,
-  //       hintStyle: const TextStyle(color: Colors.white38),
-  //       border: OutlineInputBorder(
-  //         borderRadius: BorderRadius.circular(8),
-  //         borderSide: BorderSide.none,
-  //       ),
-  //     ),
-  //   );
-  // }
 }

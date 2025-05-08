@@ -1,15 +1,92 @@
-// Verification Page : made by Leo on 2025/04/30
+// OTP Verification page : made and update by Leo on 2025/05/07
 
 import 'package:flutter/material.dart';
 import 'package:boostseller/widgets/button.effect.dart';
 import 'package:boostseller/constants.dart';
+import 'package:boostseller/services/api.services.dart';
+import 'dart:convert';
+import 'package:boostseller/utils/toast.dart';
+import 'package:boostseller/screens/auth/change.password.dart';
 
-class VerificationScreen extends StatelessWidget {
+class VerificationScreen extends StatefulWidget {
   final int otpType;
+  final int verifyType;
+  final String email;
+  final String phoneNumber;
 
-  const VerificationScreen({super.key, required this.otpType});
+  const VerificationScreen({
+    super.key,
+    required this.otpType,
+    required this.verifyType,
+    required this.email,
+    required this.phoneNumber,
+  });
 
-  void handleVerify(context) {}
+  @override
+  State<VerificationScreen> createState() => _VerificationScreenState();
+}
+
+class _VerificationScreenState extends State<VerificationScreen> {
+  final List<TextEditingController> _otpControllers = List.generate(
+    6,
+    (_) => TextEditingController(),
+  );
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    for (final controller in _otpControllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+  String getOtpCode() {
+    return _otpControllers.map((c) => c.text).join();
+  }
+
+  void sendVerifyCode({
+    required BuildContext context,
+    required String otpCode,
+    required String email,
+  }) async {
+    setState(() => _isLoading = true);
+    final api = ApiService();
+    // final token = getAuthToken();
+    try {
+      final response = await api.post(context, '/api/auth/verify-otp', {
+        'code': otpCode,
+        'email': email,
+        // 'token': token,
+      });
+      Map<String, dynamic> jsonData = jsonDecode(response?.data);
+
+      if ((response?.statusCode == 200 || response?.statusCode == 201) &&
+          !jsonData['error']) {
+        ToastUtil.success(context, jsonData['message']);
+        if (widget.verifyType == 1) {
+        } else if (widget.verifyType == 2) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChangePasswordScreen(email: email),
+            ),
+          );
+        }
+      } else {
+        ToastUtil.error(context, jsonData['message']);
+      }
+    } catch (e) {
+      ToastUtil.error(context, "Server not found. Please try again");
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  void handleVerify(BuildContext context) {
+    final otpCode = getOtpCode();
+    sendVerifyCode(context: context, otpCode: otpCode, email: widget.email);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +107,7 @@ class VerificationScreen extends StatelessWidget {
             height: 25,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
-              color: Config.activeButtonColor, // light blue
+              color: Config.activeButtonColor,
             ),
             child: const Icon(
               Icons.arrow_back,
@@ -46,11 +123,9 @@ class VerificationScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Logo
-              Image.asset('assets/logo.ico', height: height * 0.2),
+              SizedBox(height: height * 0.04),
+              Image.asset('assets/logo_dark.png', height: height * 0.2),
               const SizedBox(height: 16),
-
-              // Title
               const Text(
                 'Verification',
                 style: TextStyle(
@@ -59,8 +134,7 @@ class VerificationScreen extends StatelessWidget {
                   color: Config.titleFontColor,
                 ),
               ),
-
-              if (otpType == 1) ...[
+              if (widget.otpType == 1) ...[
                 const SizedBox(height: 6),
                 const Text(
                   'Please enter the verification code sent \n to your email',
@@ -78,9 +152,7 @@ class VerificationScreen extends StatelessWidget {
                     style: TextStyle(color: Colors.white, fontSize: 14),
                   ),
                 ),
-                const SizedBox(height: 10),
-                _buildOtpRow(),
-              ] else if (otpType == 2) ...[
+              ] else ...[
                 const SizedBox(height: 6),
                 const Text(
                   'Please enter the verification code sent \n to your phone number',
@@ -98,19 +170,15 @@ class VerificationScreen extends StatelessWidget {
                     style: TextStyle(color: Colors.white, fontSize: 14),
                   ),
                 ),
-                const SizedBox(height: 10),
-                _buildOtpRow(),
               ],
-
+              const SizedBox(height: 10),
+              _buildOtpRow(),
               const SizedBox(height: 40),
-
-              // Verify button
               SizedBox(
                 width: double.infinity,
                 child: EffectButton(
                   onTap: () => handleVerify(context),
                   child: Container(
-                    width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
                       color: Config.activeButtonColor,
@@ -128,9 +196,7 @@ class VerificationScreen extends StatelessWidget {
                   ),
                 ),
               ),
-
               const SizedBox(height: 20),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -141,9 +207,11 @@ class VerificationScreen extends StatelessWidget {
                       fontSize: 16,
                     ),
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   EffectButton(
-                    onTap: () {},
+                    onTap: () {
+                      // TODO: Implement resend
+                    },
                     child: const Text(
                       "Resend",
                       style: TextStyle(
@@ -162,7 +230,6 @@ class VerificationScreen extends StatelessWidget {
     );
   }
 
-  // Reusable OTP Row Widget
   Widget _buildOtpRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -170,6 +237,7 @@ class VerificationScreen extends StatelessWidget {
         return SizedBox(
           width: 44,
           child: TextField(
+            controller: _otpControllers[index],
             maxLength: 1,
             textAlign: TextAlign.center,
             keyboardType: TextInputType.number,
@@ -187,6 +255,11 @@ class VerificationScreen extends StatelessWidget {
                 borderSide: BorderSide.none,
               ),
             ),
+            onChanged: (value) {
+              if (value.isNotEmpty && index < 5) {
+                FocusScope.of(context).nextFocus();
+              }
+            },
           ),
         );
       }),

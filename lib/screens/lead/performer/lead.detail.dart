@@ -5,10 +5,27 @@ import 'package:boostseller/screens/lead/performer/detail/assigned.lead.detail.d
 import 'package:boostseller/screens/lead/performer/detail//presentation.lead.detail.dart';
 import 'package:boostseller/screens/lead/performer/detail//testdrive.lead.detail.dart';
 import 'package:boostseller/constants.dart';
+import 'package:boostseller/utils/toast.dart';
+import 'package:boostseller/screens/lead/performer/lead.list.dart';
+import 'package:boostseller/model/lead.dart';
 
 class LeadDetailScreen extends StatefulWidget {
-  final String status;
-  const LeadDetailScreen({super.key, required this.status});
+  // final String status;
+  // final String name;
+  // final String interest;
+  // final String phone;
+  // final String date;
+  final Lead lead;
+
+  const LeadDetailScreen({
+    super.key,
+    // required this.status,
+    // required this.name,
+    // required this.interest,
+    // required this.phone,
+    // required this.date,
+    required this.lead,
+  });
 
   @override
   State<LeadDetailScreen> createState() => _LeadDetailScreenState();
@@ -20,26 +37,41 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.status == "Assigned") {
+      if (widget.lead.status == "Assigned") {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => const AssignedLeadDetailScreen()),
         );
-      } else if (widget.status == "Presentation") {
+      } else if (widget.lead.status == "Presentation") {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (_) => const PresentationLeadDetailScreen(),
           ),
         );
-      } else if (widget.status == "Test Drive") {
+      } else if (widget.lead.status == "Test Drive") {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => const TestDriveLeadDetailScreen()),
         );
+      } else if (widget.lead.status == "Completed") {
+        ToastUtil.success(context, "Developing...");
+        Future.delayed(const Duration(seconds: 2), () {
+          Navigator.pop(context);
+        });
+      } else if (widget.lead.status == "Closed") {
+        ToastUtil.success(context, "Developing...");
+        Future.delayed(const Duration(seconds: 2), () {
+          Navigator.pop(context);
+        });
+      } else if (widget.lead.status == "Accepted") {
+        ToastUtil.success(context, "Developing...");
+        Future.delayed(const Duration(seconds: 2), () {
+          Navigator.pop(context);
+        });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Unknown status: ${widget.status}")),
+          SnackBar(content: Text("Unknown status: ${widget.lead.status}")),
         );
       }
     });

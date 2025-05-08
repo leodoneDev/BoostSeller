@@ -1,6 +1,9 @@
 // Hostess Profile Panel Page : made by Leo on 2025/05/01
 
 import 'package:flutter/material.dart';
+import 'package:boostseller/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:boostseller/screens/auth/login.dart';
 
 class ProfileHostessPanelController extends ChangeNotifier {
   bool _isVisible = false;
@@ -32,6 +35,7 @@ class ProfileHostessPanel extends StatelessWidget {
 
         return Stack(
           children: [
+            // Overlay background
             GestureDetector(
               onTap: controller.toggle,
               child: Container(
@@ -41,6 +45,7 @@ class ProfileHostessPanel extends StatelessWidget {
               ),
             ),
 
+            // Sliding panel
             Positioned(
               top: 0,
               right: 0,
@@ -52,109 +57,123 @@ class ProfileHostessPanel extends StatelessWidget {
                   topLeft: Radius.circular(24),
                   bottomLeft: Radius.circular(24),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: 30.0,
-                          ), // Top padding
-                          child: Center(
-                            child: CircleAvatar(
-                              radius: 70, // Increased size (default ~40)
-                              backgroundColor: Colors.white,
-                              backgroundImage: AssetImage(
-                                'assets/profile.jpg',
-                              ), // Replace with your image path
-                            ),
+                child: Column(
+                  children: [
+                    // Scrollable content
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 30),
+                              const Center(
+                                child: CircleAvatar(
+                                  radius: 70,
+                                  backgroundColor: Colors.white,
+                                  backgroundImage: AssetImage(
+                                    'assets/profile.jpg',
+                                  ), // Replace with your image
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _infoRow(Icons.home, "Maxim"),
+                                  const SizedBox(height: 10),
+                                  _infoRow(Icons.phone, "1-232-234-2345"),
+                                  const SizedBox(height: 10),
+                                  _infoRow(Icons.check, "Hostess"),
+                                ],
+                              ),
+                              const Divider(color: Colors.white24),
+                              const Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "Leads",
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              _stat("Total", 15),
+                              _stat("Pending", 3),
+                              _stat("Assigned", 8),
+                              _stat("Closed", 4),
+                            ],
                           ),
                         ),
-
-                        const SizedBox(height: 20),
-
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(Icons.home, color: Colors.white, size: 20),
-                                SizedBox(width: 8),
-                                Text(
-                                  "Maxim",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 10),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.phone,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
-                                SizedBox(width: 8),
-                                Text(
-                                  "1-232-234-2345",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 10),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.check,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
-                                SizedBox(width: 8),
-                                Text(
-                                  "Performer",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 10),
-                          ],
-                        ),
-
-                        const Divider(color: Colors.white24),
-                        const Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "Leads",
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        _stat("Total", 15),
-                        _stat("Pending", 3),
-                        _stat("Assigned", 8),
-                        _stat("Closed", 4),
-                      ],
+                      ),
                     ),
-                  ),
+
+                    // Logout Button
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Config.activeButtonColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                          ),
+                          icon: const Icon(Icons.logout, color: Colors.white),
+                          label: const Text(
+                            "Logout",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          onPressed: () async {
+                            final prefs = await SharedPreferences.getInstance();
+                            await prefs.remove('auth_token');
+                            // controller.close();
+                            // Navigator.of(context).pushAndRemoveUntil(
+                            //   MaterialPageRoute(
+                            //     builder: (_) => const LoginScreen(),
+                            //   ),
+                            //   (route) => false,
+                            // );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
           ],
         );
       },
+    );
+  }
+
+  static Widget _infoRow(IconData icon, String text) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.white, size: 20),
+        const SizedBox(width: 8),
+        Text(
+          text,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:boostseller/screens/profile/performer/profile.panel.dart';
 import 'package:boostseller/widgets/button.effect.dart';
 import 'package:boostseller/constants.dart';
+import 'package:boostseller/model/lead.dart';
 
 class AssignedLeadDetailScreen extends StatefulWidget {
   const AssignedLeadDetailScreen({super.key});
@@ -28,7 +29,7 @@ class _AssignedLeadDetailScreenState extends State<AssignedLeadDetailScreen> {
             backgroundColor: Config.appbarColor,
             elevation: 0,
             leading: IconButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(context, 'refresh'),
               icon: Container(
                 width: 25,
                 height: 25,
@@ -93,13 +94,38 @@ class _AssignedLeadDetailScreenState extends State<AssignedLeadDetailScreen> {
                             horizontal: 16,
                             vertical: 12,
                           ),
-                          child: const Text(
-                            "Oleh",
-                            style: TextStyle(
-                              fontSize: Config.leadNameFontSize,
-                              fontWeight: FontWeight.bold,
-                              color: Config.leadNameColor,
-                            ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                "Oleh",
+                                style: TextStyle(
+                                  fontSize: Config.leadNameFontSize,
+                                  fontWeight: FontWeight.bold,
+                                  color: Config.leadNameColor,
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color:
+                                      Colors
+                                          .blue, // Replace with dynamic status
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: const Text(
+                                  "Assigned",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         const Divider(

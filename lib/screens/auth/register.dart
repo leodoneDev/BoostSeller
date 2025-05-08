@@ -15,6 +15,8 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:boostseller/screens/auth/login.dart';
 import 'package:boostseller/screens/welcome.dart';
+import 'package:boostseller/utils/loading.overlay.dart';
+import 'package:boostseller/utils/back.override.wrapper.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -31,10 +33,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController pwdConfirmController = TextEditingController();
   String phoneNumber = '';
   String role = '';
+  bool _isLoading = false;
 
-  Future<String?> getUserRole() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('userRole');
+  void reset() {
+    nameController.clear();
+    emailController.clear();
+    phoneController.clear();
+    pwdController.clear();
+    pwdConfirmController.clear();
   }
 
   void registerUser({
@@ -44,19 +50,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
     required String password,
     required String phone,
   }) async {
+    setState(() => _isLoading = true);
     final api = ApiService();
-    String? role = await getUserRole();
-    if ((role == '') && (role == null)) {
-      showToast(
+    final prefs = await SharedPreferences.getInstance();
+    final role = prefs.getString('userRole')?.toLowerCase() ?? '';
+
+    if (role.isEmpty) {
+      ToastUtil.error(
         context,
         "Your role do not selected. Please your select role.",
-        isError: true,
       );
-      await Future.delayed(Duration(seconds: 1));
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const WelcomeScreen()),
-      );
+      Navigator.pushReplacementNamed(context, '/welcome');
     }
     try {
       final response = await api.post(context, '/api/auth/register', {
@@ -71,27 +75,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       if ((response?.statusCode == 200 || response?.statusCode == 201) &&
           !jsonData['error']) {
-        showToast(context, jsonData['message']);
-        Navigator.push(
-          context,
-          // MaterialPageRoute(
-          //   builder:
-          //       (context) => SendOTPScreen(
-          //         email: jsonData['user']['email'],
-          //         phoneNumber: jsonData['user']['phoneNumber'],
-          //       ),
-          // ),
-          MaterialPageRoute(builder: (context) => LoginScreen()),
-        );
+        if (!mounted) return;
+        ToastUtil.success(context, jsonData['message']);
+        Navigator.pushReplacementNamed(context, '/login');
       } else {
-        showToast(context, jsonData['message'], isError: true);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const RegisterScreen()),
-        );
+        ToastUtil.error(context, jsonData['message']);
+        reset();
       }
     } catch (e) {
-      showToast(context, "Server not found. Please try again", isError: true);
+      ToastUtil.error(context, "Server not found. Please try again");
+    } finally {
+      setState(() => _isLoading = false);
     }
   }
 
@@ -119,20 +113,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
               password: password,
             );
           } else {
-            showToast(context, "Passwords do not match.", isError: true);
+            ToastUtil.error(context, "Passwords do not match.");
           }
         } else {
-          showToast(
-            context,
-            "Password must be at least 6 characters.",
-            isError: true,
-          );
+          ToastUtil.error(context, "Password must be at least 6 characters.");
         }
       } else {
-        showToast(context, "Please enter a valid email.", isError: true);
+        ToastUtil.error(context, "Please enter a valid email.");
       }
     } else {
-      showToast(context, "Please fill all fields.", isError: true);
+      ToastUtil.error(context, "Please fill all fields.");
     }
   }
 
@@ -142,169 +132,180 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final width = size.width;
     final height = size.height;
 
-    return Scaffold(
-      backgroundColor: Config.backgroundColor,
-      appBar: AppBar(
-        backgroundColor: Config.appbarColor,
-        elevation: 0,
-        leading: IconButton(
-          onPressed:
-              () => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
+    return BackOverrideWrapper(
+      onBack: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LoginScreen()),
+        );
+      },
+      child: LoadingOverlay(
+        isLoading: _isLoading,
+        child: Scaffold(
+          backgroundColor: Config.backgroundColor,
+          appBar: AppBar(
+            backgroundColor: Config.appbarColor,
+            elevation: 0,
+            leading: IconButton(
+              onPressed:
+                  () => Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LoginScreen(),
+                    ),
+                  ),
+              padding: const EdgeInsets.all(0),
+              icon: Container(
+                width: 25,
+                height: 25,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Config.activeButtonColor, // light blue
+                ),
+                child: const Icon(
+                  Icons.arrow_back,
+                  size: 14,
+                  color: Config.iconDefaultColor,
+                ),
               ),
-          padding: const EdgeInsets.all(0),
-          icon: Container(
-            width: 25,
-            height: 25,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: Config.activeButtonColor, // light blue
-            ),
-            child: const Icon(
-              Icons.arrow_back,
-              size: 14,
-              color: Config.iconDefaultColor,
             ),
           ),
-        ),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: width * 0.08),
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: width * 0.08),
 
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Logo
-              Image.asset('assets/logo.ico', height: height * 0.2),
-              SizedBox(height: height * 0.04),
-
-              const Text(
-                'Register',
-                style: TextStyle(
-                  fontSize: Config.titleFontSize,
-                  fontWeight: FontWeight.bold,
-                  color: Config.titleFontColor,
-                ),
-              ),
-              const SizedBox(height: 4),
-              const Text(
-                'Create a new account',
-                style: TextStyle(
-                  fontSize: Config.subTitleFontSize,
-                  color: Config.subTitleFontColor,
-                ),
-              ),
-
-              const SizedBox(height: 30),
-
-              // Username
-              const SizedBox(height: 12),
-
-              // Email
-              _buildLabel('Name'),
-              const SizedBox(height: 6),
-              CustomTextField(
-                controller: nameController,
-                hint: 'Name',
-                keyboardType: TextInputType.text,
-              ),
-              const SizedBox(height: 6),
-              // Email
-              _buildLabel('Email'),
-              const SizedBox(height: 6),
-              CustomTextField(
-                controller: emailController,
-                hint: 'Email',
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const SizedBox(height: 6),
-              // Phone Number
-              _buildLabel('Phone Number'),
-              const SizedBox(height: 6),
-              CustomPhoneField(
-                controller: phoneController,
-                onChanged: (value) {
-                  phoneNumber = value;
-                },
-              ),
-
-              const SizedBox(height: 6),
-
-              // Password
-              _buildLabel('Password'),
-              const SizedBox(height: 6),
-              PasswordField(controller: pwdController, hint: 'Password'),
-
-              const SizedBox(height: 6),
-
-              // paswird confirm
-              _buildLabel('Password Confirm'),
-              const SizedBox(height: 6),
-              PasswordField(
-                controller: pwdConfirmController,
-                hint: 'Password Confirm',
-              ),
-
-              const SizedBox(height: 30),
-
-              // Register Button
-              SizedBox(
-                width: double.infinity,
-                child: EffectButton(
-                  onTap: handleRegister,
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    decoration: BoxDecoration(
-                      color: Config.activeButtonColor,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'Register',
-                        style: TextStyle(
-                          fontSize: Config.buttonTextFontSize,
-                          color: Config.buttonTextColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  SizedBox(height: height * 0.04),
+                  // Logo
+                  Image.asset('assets/logo_dark.png', height: height * 0.2),
+                  SizedBox(height: height * 0.04),
+
                   const Text(
-                    "Already have account? ",
-                    style: TextStyle(color: Config.guideTextColor),
+                    'Register',
+                    style: TextStyle(
+                      fontSize: Config.titleFontSize,
+                      fontWeight: FontWeight.bold,
+                      color: Config.titleFontColor,
+                    ),
                   ),
-                  SizedBox(width: 10),
-                  EffectButton(
-                    onTap:
-                        () => Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LoginScreen(),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Create a new account',
+                    style: TextStyle(
+                      fontSize: Config.subTitleFontSize,
+                      color: Config.subTitleFontColor,
+                    ),
+                  ),
+
+                  const SizedBox(height: 30),
+
+                  // Username
+                  const SizedBox(height: 12),
+
+                  // Email
+                  _buildLabel('Name'),
+                  const SizedBox(height: 6),
+                  CustomTextField(
+                    controller: nameController,
+                    hint: 'Name',
+                    keyboardType: TextInputType.text,
+                  ),
+                  const SizedBox(height: 6),
+                  // Email
+                  _buildLabel('Email'),
+                  const SizedBox(height: 6),
+                  CustomTextField(
+                    controller: emailController,
+                    hint: 'Email',
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                  const SizedBox(height: 6),
+                  // Phone Number
+                  _buildLabel('Phone Number'),
+                  const SizedBox(height: 6),
+                  CustomPhoneField(
+                    controller: phoneController,
+                    onChanged: (value) {
+                      phoneNumber = value;
+                    },
+                  ),
+
+                  const SizedBox(height: 6),
+
+                  // Password
+                  _buildLabel('Password'),
+                  const SizedBox(height: 6),
+                  PasswordField(controller: pwdController, hint: 'Password'),
+
+                  const SizedBox(height: 6),
+
+                  // paswird confirm
+                  _buildLabel('Password Confirm'),
+                  const SizedBox(height: 6),
+                  PasswordField(
+                    controller: pwdConfirmController,
+                    hint: 'Password Confirm',
+                  ),
+
+                  const SizedBox(height: 30),
+
+                  // Register Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: EffectButton(
+                      onTap: handleRegister,
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        decoration: BoxDecoration(
+                          color: Config.activeButtonColor,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            'Register',
+                            style: TextStyle(
+                              fontSize: Config.buttonTextFontSize,
+                              color: Config.buttonTextColor,
+                            ),
                           ),
                         ),
-                    child: const Text(
-                      "Login",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
+
+                  const SizedBox(height: 16),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Already have account? ",
+                        style: TextStyle(color: Config.guideTextColor),
+                      ),
+                      SizedBox(width: 10),
+                      EffectButton(
+                        onTap: () {
+                          Navigator.pushReplacementNamed(context, '/login');
+                        },
+
+                        child: const Text(
+                          "Login",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 30),
                 ],
               ),
-
-              const SizedBox(height: 30),
-            ],
+            ),
           ),
         ),
       ),
