@@ -42,16 +42,16 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
       if ((response?.statusCode == 200 || response?.statusCode == 201) &&
           !jsonData['error']) {
-        ToastUtil.success(context, jsonData['message']);
+        ToastUtil.success(jsonData['message']);
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => LoginScreen()),
         );
       } else {
-        ToastUtil.error(context, jsonData['message']);
+        ToastUtil.error(jsonData['message']);
       }
     } catch (e) {
-      ToastUtil.error(context, "Server not found. Please try again");
+      ToastUtil.error("Server not found. Please try again");
     } finally {
       setState(() => _isLoading = false);
     }
@@ -63,17 +63,17 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
     if (isValidPassword(password)) {
       if (password == passwordConfirm) {
-        // ToastUtil.success(context, "Successfully passwrod changed!");
+        // ToastUtil.success("Successfully passwrod changed!");
         changePassword(
           context: context,
           email: widget.email,
           password: password,
         );
       } else {
-        ToastUtil.error(context, "Passwords do not match.");
+        ToastUtil.error("Passwords do not match.");
       }
     } else {
-      ToastUtil.error(context, "Password must be at least 6 characters.");
+      ToastUtil.error("Password must be at least 6 characters.");
     }
   }
 

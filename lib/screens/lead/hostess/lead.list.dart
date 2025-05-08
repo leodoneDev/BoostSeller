@@ -87,7 +87,7 @@ class _HostessDashboardScreenState extends State<HostessDashboardScreen> {
         },
       ];
     } catch (e) {
-      ToastUtil.error(context, "Failed to load leads");
+      ToastUtil.error("Failed to load leads");
     }
     setState(() => isLoading = false);
   }

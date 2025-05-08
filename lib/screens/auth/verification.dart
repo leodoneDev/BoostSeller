@@ -63,10 +63,10 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
       if ((response?.statusCode == 200 || response?.statusCode == 201) &&
           !jsonData['error']) {
-        ToastUtil.success(context, jsonData['message']);
+        ToastUtil.success(jsonData['message']);
         if (widget.verifyType == 1) {
         } else if (widget.verifyType == 2) {
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => ChangePasswordScreen(email: email),
@@ -74,10 +74,10 @@ class _VerificationScreenState extends State<VerificationScreen> {
           );
         }
       } else {
-        ToastUtil.error(context, jsonData['message']);
+        ToastUtil.error(jsonData['message']);
       }
     } catch (e) {
-      ToastUtil.error(context, "Server not found. Please try again");
+      ToastUtil.error("Server not found. Please try again");
     } finally {
       setState(() => _isLoading = false);
     }

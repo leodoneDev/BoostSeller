@@ -56,11 +56,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final role = prefs.getString('userRole')?.toLowerCase() ?? '';
 
     if (role.isEmpty) {
-      ToastUtil.error(
-        context,
-        "Your role do not selected. Please your select role.",
-      );
-      Navigator.pushReplacementNamed(context, '/welcome');
+      ToastUtil.error("Your role do not selected. Please your select role.");
+      navigatorKey.currentState?.pushReplacementNamed('/welcome');
     }
     try {
       final response = await api.post(context, '/api/auth/register', {
@@ -76,14 +73,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if ((response?.statusCode == 200 || response?.statusCode == 201) &&
           !jsonData['error']) {
         if (!mounted) return;
-        ToastUtil.success(context, jsonData['message']);
-        Navigator.pushReplacementNamed(context, '/login');
+        ToastUtil.success(jsonData['message']);
+        navigatorKey.currentState?.pushReplacementNamed('/login');
       } else {
-        ToastUtil.error(context, jsonData['message']);
+        ToastUtil.error(jsonData['message']);
         reset();
       }
     } catch (e) {
-      ToastUtil.error(context, "Server not found. Please try again");
+      ToastUtil.error("Server not found. Please try again");
     } finally {
       setState(() => _isLoading = false);
     }
@@ -113,16 +110,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
               password: password,
             );
           } else {
-            ToastUtil.error(context, "Passwords do not match.");
+            ToastUtil.error("Passwords do not match.");
           }
         } else {
-          ToastUtil.error(context, "Password must be at least 6 characters.");
+          ToastUtil.error("Password must be at least 6 characters.");
         }
       } else {
-        ToastUtil.error(context, "Please enter a valid email.");
+        ToastUtil.error("Please enter a valid email.");
       }
     } else {
-      ToastUtil.error(context, "Please fill all fields.");
+      ToastUtil.error("Please fill all fields.");
     }
   }
 
@@ -288,7 +285,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       SizedBox(width: 10),
                       EffectButton(
                         onTap: () {
-                          Navigator.pushReplacementNamed(context, '/login');
+                          navigatorKey.currentState?.pushReplacementNamed(
+                            '/login',
+                          );
                         },
 
                         child: const Text(

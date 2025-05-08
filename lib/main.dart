@@ -12,6 +12,8 @@ import 'package:boostseller/screens/auth/login.dart';
 import 'package:boostseller/screens/auth/register.dart';
 import 'package:boostseller/screens/auth/forgot.password.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,6 +51,7 @@ class BoostSellerApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
         useMaterial3: true,
       ),
+      navigatorKey: navigatorKey,
       initialRoute: '/',
       routes: {
         '/onboarding': (context) => WelcomeScreen(),

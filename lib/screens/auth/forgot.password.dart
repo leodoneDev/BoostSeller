@@ -46,7 +46,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
       if ((response?.statusCode == 200 || response?.statusCode == 201) &&
           !jsonData['error']) {
-        ToastUtil.success(context, jsonData['message']);
+        ToastUtil.success(jsonData['message']);
         if (usePhone) {
           otpType = 2;
         }
@@ -63,10 +63,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           ),
         );
       } else {
-        ToastUtil.error(context, jsonData['message']);
+        ToastUtil.error(jsonData['message']);
       }
     } catch (e) {
-      ToastUtil.error(context, "Server not found. Please try again");
+      ToastUtil.error("Server not found. Please try again");
     } finally {
       setState(() => _isLoading = false);
     }
@@ -75,9 +75,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   void handleSendOTP() {
     final email = emailController.text.trim();
     if (email.isEmpty) {
-      ToastUtil.error(context, "Please enter a email.");
+      ToastUtil.error("Please enter a email.");
     } else if (!isValidEmail(email)) {
-      ToastUtil.error(context, "Please enter a valid email.");
+      ToastUtil.error("Please enter a valid email.");
     } else {
       sendOTP(context: context, email: email);
     }
@@ -205,7 +205,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   EffectButton(
                     onTap: () {
                       //setState(() => usePhone = !usePhone);
-                      ToastUtil.success(context, "Developing...");
+                      ToastUtil.success("Developing...");
                     },
                     child: Text(
                       usePhone ? 'Use Email Instead' : 'Use Phone Instead',

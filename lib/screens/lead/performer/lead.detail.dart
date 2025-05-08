@@ -55,17 +55,17 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
           MaterialPageRoute(builder: (_) => const TestDriveLeadDetailScreen()),
         );
       } else if (widget.lead.status == "Completed") {
-        ToastUtil.success(context, "Developing...");
+        ToastUtil.success("Developing...");
         Future.delayed(const Duration(seconds: 2), () {
           Navigator.pop(context);
         });
       } else if (widget.lead.status == "Closed") {
-        ToastUtil.success(context, "Developing...");
+        ToastUtil.success("Developing...");
         Future.delayed(const Duration(seconds: 2), () {
           Navigator.pop(context);
         });
       } else if (widget.lead.status == "Accepted") {
-        ToastUtil.success(context, "Developing...");
+        ToastUtil.success("Developing...");
         Future.delayed(const Duration(seconds: 2), () {
           Navigator.pop(context);
         });

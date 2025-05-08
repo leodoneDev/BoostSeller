@@ -47,12 +47,9 @@ class _LoginScreenState extends State<LoginScreen> {
     final prefs = await SharedPreferences.getInstance();
     final role = prefs.getString('userRole')?.toLowerCase() ?? '';
     if (role.isEmpty) {
-      ToastUtil.error(
-        context,
-        "Your role do not selected.\n Please your select role.",
-      );
+      ToastUtil.error("Your role do not selected.\n Please your select role.");
       await Future.delayed(Duration(seconds: 1));
-      Navigator.pushReplacementNamed(context, '/welcome');
+      navigatorKey.currentState?.pushReplacementNamed('/welcome');
     }
     try {
       final response = await api.post(context, '/api/auth/login', {
@@ -64,28 +61,31 @@ class _LoginScreenState extends State<LoginScreen> {
       if ((response?.statusCode == 200 || response?.statusCode == 201) &&
           !jsonData['error']) {
         if (role == jsonData['user']['role']) {
-          ToastUtil.success(context, jsonData['message']);
+          ToastUtil.success(jsonData['message']);
           saveToken(jsonData['token']);
           if (jsonData['user']['role'] == 'hostess') {
-            Navigator.pushReplacementNamed(context, '/hostess-dashboard');
+            navigatorKey.currentState?.pushReplacementNamed(
+              '/hostess-dashboard',
+            );
           } else if (jsonData['user']['role'] == 'performer') {
             await Future.delayed(Duration(seconds: 1));
-            Navigator.pushReplacementNamed(context, '/performer-dashboard');
+            navigatorKey.currentState?.pushReplacementNamed(
+              '/performer-dashboard',
+            );
           }
         } else {
           ToastUtil.error(
-            context,
             "This is not your role.\n Please select your correct role.",
           );
           await Future.delayed(Duration(seconds: 1));
-          Navigator.pushReplacementNamed(context, '/welcome');
+          navigatorKey.currentState?.pushReplacementNamed('/welcome');
         }
       } else {
-        ToastUtil.error(context, jsonData['message']);
+        ToastUtil.error(jsonData['message']);
         reset();
       }
     } catch (e) {
-      ToastUtil.error(context, "Server not found. Please try again");
+      ToastUtil.error("Server not found. Please try again");
     } finally {
       setState(() => _isLoading = false);
     }
@@ -96,11 +96,11 @@ class _LoginScreenState extends State<LoginScreen> {
     final password = pwdController.text.trim();
 
     if (email.isEmpty) {
-      ToastUtil.error(context, "Please enter a email.");
+      ToastUtil.error("Please enter a email.");
     } else if (!isValidEmail(email)) {
-      ToastUtil.error(context, "Please enter a valid email.");
+      ToastUtil.error("Please enter a valid email.");
     } else if (!isValidPassword(password)) {
-      ToastUtil.error(context, "Password must be at least 6 characters.");
+      ToastUtil.error("Password must be at least 6 characters.");
     } else {
       loginUser(context: context, email: email, password: password);
     }
@@ -119,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (role.isNotEmpty) {
           await ExitDialog.show(context);
         } else {
-          Navigator.pushReplacementNamed(context, '/welcome');
+          navigatorKey.currentState?.pushReplacementNamed('/welcome');
         }
       },
       child: LoadingOverlay(
@@ -136,7 +136,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 if (role.isNotEmpty) {
                   await ExitDialog.show(context);
                 } else {
-                  Navigator.pushReplacementNamed(context, '/welcome');
+                  navigatorKey.currentState?.pushReplacementNamed('/welcome');
                 }
               },
               padding: const EdgeInsets.all(0),
@@ -276,7 +276,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       SizedBox(width: 10),
                       EffectButton(
                         onTap: () {
-                          Navigator.pushReplacementNamed(context, '/register');
+                          navigatorKey.currentState?.pushReplacementNamed(
+                            '/register',
+                          );
                         },
                         child: const Text(
                           "Create Now",

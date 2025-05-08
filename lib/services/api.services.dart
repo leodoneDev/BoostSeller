@@ -23,14 +23,11 @@ class ApiService {
       final response = await _dio.post(path, data: data);
       return response;
     } on DioException catch (e) {
-      ToastUtil.error(
-        context,
-        'Network error occured. Please check WiFi Connection.',
-      );
+      ToastUtil.error('Network error occured. Please check WiFi Connection.');
 
       rethrow;
     } catch (e) {
-      ToastUtil.error(context, 'Some issues occurred. Please try again.');
+      ToastUtil.error('Some issues occurred. Please try again.');
       rethrow;
     }
   }

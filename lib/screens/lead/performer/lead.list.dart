@@ -101,7 +101,7 @@ class _PerformerDashboardScreenState extends State<PerformerDashboardScreen> {
         },
       ];
     } catch (e) {
-      ToastUtil.error(context, "Failed to load leads");
+      ToastUtil.error("Failed to load leads");
     }
     setState(() => isLoading = false);
   }

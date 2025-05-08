@@ -214,7 +214,7 @@ class _AddLeadScreenState extends State<AddLeadScreen> {
                               //         (context) => const AddSuccessScreen(),
                               //   ),
                               // );
-                              ToastUtil.success(context, "Developing...");
+                              ToastUtil.success("Developing...");
                             }
                           },
                           child: Container(

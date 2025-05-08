@@ -595,7 +595,7 @@ class _PresentationLeadDetailScreenState
           Config.activeButtonColor,
           Config.buttonTextColor,
           () {
-            ToastUtil.success(context, "Developing...");
+            ToastUtil.success("Developing...");
           },
         ),
         _actionButton(
