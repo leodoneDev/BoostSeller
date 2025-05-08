@@ -2,21 +2,22 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:boostseller/widgets/button.effect.dart';
+import 'package:boostseller/widgets/button_effect.dart';
 import 'package:boostseller/utils/validation.dart';
-import 'package:boostseller/screens/auth/send.otp.dart';
-import 'package:boostseller/widgets/custom.input.text.dart';
-import 'package:boostseller/widgets/custom.phone.field.dart';
-import 'package:boostseller/widgets/custom.password.field.dart';
-import 'package:boostseller/constants.dart';
+import 'package:boostseller/widgets/custom_input_text.dart';
+import 'package:boostseller/widgets/custom_phone_field.dart';
+import 'package:boostseller/widgets/custom_password_field.dart';
+import 'package:boostseller/config/constants.dart';
 import 'package:boostseller/utils/toast.dart';
-import 'package:boostseller/services/api.services.dart';
+import 'package:boostseller/services/api_services.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:boostseller/screens/auth/login.dart';
-import 'package:boostseller/screens/welcome.dart';
-import 'package:boostseller/utils/loading.overlay.dart';
-import 'package:boostseller/utils/back.override.wrapper.dart';
+import 'package:boostseller/utils/loading_overlay.dart';
+import 'package:boostseller/utils/back_override_wrapper.dart';
+import 'package:boostseller/services/navigation_services.dart';
+import 'package:provider/provider.dart';
+import 'package:boostseller/providers/loading.provider.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -33,7 +34,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController pwdConfirmController = TextEditingController();
   String phoneNumber = '';
   String role = '';
-  bool _isLoading = false;
 
   void reset() {
     nameController.clear();
@@ -50,17 +50,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
     required String password,
     required String phone,
   }) async {
-    setState(() => _isLoading = true);
+    final loadingProvider = Provider.of<LoadingProvider>(
+      context,
+      listen: false,
+    );
+    loadingProvider.setLoading(true);
     final api = ApiService();
     final prefs = await SharedPreferences.getInstance();
     final role = prefs.getString('userRole')?.toLowerCase() ?? '';
 
     if (role.isEmpty) {
       ToastUtil.error("Your role do not selected. Please your select role.");
-      navigatorKey.currentState?.pushReplacementNamed('/welcome');
+      NavigationService.pushReplacementNamed('/onboarding');
     }
     try {
-      final response = await api.post(context, '/api/auth/register', {
+      final response = await api.post('/api/auth/register', {
         'name': name,
         'email': email,
         'phoneNumber': phone,
@@ -74,7 +78,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           !jsonData['error']) {
         if (!mounted) return;
         ToastUtil.success(jsonData['message']);
-        navigatorKey.currentState?.pushReplacementNamed('/login');
+        NavigationService.pushReplacementNamed('/login');
       } else {
         ToastUtil.error(jsonData['message']);
         reset();
@@ -82,7 +86,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     } catch (e) {
       ToastUtil.error("Server not found. Please try again");
     } finally {
-      setState(() => _isLoading = false);
+      loadingProvider.setLoading(false);
     }
   }
 
@@ -128,6 +132,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final size = MediaQuery.of(context).size;
     final width = size.width;
     final height = size.height;
+    final loadingProvider = Provider.of<LoadingProvider>(context);
 
     return BackOverrideWrapper(
       onBack: () {
@@ -137,7 +142,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
       },
       child: LoadingOverlay(
-        isLoading: _isLoading,
+        isLoading: loadingProvider.isLoading,
         child: Scaffold(
           backgroundColor: Config.backgroundColor,
           appBar: AppBar(
@@ -285,9 +290,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       SizedBox(width: 10),
                       EffectButton(
                         onTap: () {
-                          navigatorKey.currentState?.pushReplacementNamed(
-                            '/login',
-                          );
+                          NavigationService.pushReplacementNamed('/login');
                         },
 
                         child: const Text(

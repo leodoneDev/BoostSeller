@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:delightful_toast/delight_toast.dart';
 import 'package:delightful_toast/toast/utils/enums.dart';
+import 'package:boostseller/services/navigation_services.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -17,14 +18,17 @@ class ToastUtil {
 
   static void _showToast(String message, {bool isError = false}) {
     if (_isToastVisible) return;
-
     _isToastVisible = true;
 
-    final context = navigatorKey.currentContext;
-    if (context == null) return;
+    final context =
+        NavigationService.navigatorKey.currentState?.overlay?.context;
+    if (context == null) {
+      _isToastVisible = false;
+      return;
+    }
 
     DelightToastBar(
-      builder: (context) {
+      builder: (BuildContext context) {
         return Center(
           child: SizedBox(
             // width: MediaQuery.of(context).size.width * 0.9,

@@ -1,12 +1,15 @@
 // OTP Verification page : made and update by Leo on 2025/05/07
 
 import 'package:flutter/material.dart';
-import 'package:boostseller/widgets/button.effect.dart';
-import 'package:boostseller/constants.dart';
-import 'package:boostseller/services/api.services.dart';
+import 'package:boostseller/widgets/button_effect.dart';
+import 'package:boostseller/config/constants.dart';
+import 'package:boostseller/services/api_services.dart';
 import 'dart:convert';
 import 'package:boostseller/utils/toast.dart';
-import 'package:boostseller/screens/auth/change.password.dart';
+import 'package:boostseller/screens/auth/change_password.dart';
+import 'package:boostseller/utils/loading_overlay.dart';
+import 'package:boostseller/utils/back_override_wrapper.dart';
+import 'package:boostseller/services/navigation_services.dart';
 
 class VerificationScreen extends StatefulWidget {
   final int otpType;
@@ -54,7 +57,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
     final api = ApiService();
     // final token = getAuthToken();
     try {
-      final response = await api.post(context, '/api/auth/verify-otp', {
+      final response = await api.post('/api/auth/verify-otp', {
         'code': otpCode,
         'email': email,
         // 'token': token,
@@ -94,136 +97,149 @@ class _VerificationScreenState extends State<VerificationScreen> {
     final width = size.width;
     final height = size.height;
 
-    return Scaffold(
-      backgroundColor: Config.backgroundColor,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Config.appbarColor,
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          padding: const EdgeInsets.all(0),
-          icon: Container(
-            width: 25,
-            height: 25,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: Config.activeButtonColor,
-            ),
-            child: const Icon(
-              Icons.arrow_back,
-              size: 14,
-              color: Config.iconDefaultColor,
-            ),
-          ),
-        ),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: width * 0.08),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(height: height * 0.04),
-              Image.asset('assets/logo_dark.png', height: height * 0.2),
-              const SizedBox(height: 16),
-              const Text(
-                'Verification',
-                style: TextStyle(
-                  fontSize: Config.titleFontSize,
-                  fontWeight: FontWeight.bold,
-                  color: Config.titleFontColor,
+    return BackOverrideWrapper(
+      onBack: () {
+        if (widget.verifyType == 1) {
+        } else if (widget.verifyType == 2) {
+          NavigationService.pushReplacementNamed('/forgot-password');
+        }
+      },
+      child: LoadingOverlay(
+        isLoading: _isLoading,
+        child: Scaffold(
+          backgroundColor: Config.backgroundColor,
+          appBar: AppBar(
+            elevation: 0,
+            backgroundColor: Config.appbarColor,
+            leading: IconButton(
+              onPressed: () {
+                NavigationService.pushReplacementNamed('/forgot-password');
+              },
+              padding: const EdgeInsets.all(0),
+              icon: Container(
+                width: 25,
+                height: 25,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Config.activeButtonColor,
+                ),
+                child: const Icon(
+                  Icons.arrow_back,
+                  size: 14,
+                  color: Config.iconDefaultColor,
                 ),
               ),
-              if (widget.otpType == 1) ...[
-                const SizedBox(height: 6),
-                const Text(
-                  'Please enter the verification code sent \n to your email',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: Config.subTitleFontSize,
-                    color: Config.subTitleFontColor,
-                  ),
-                ),
-                const SizedBox(height: 30),
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Email OTP',
-                    style: TextStyle(color: Colors.white, fontSize: 14),
-                  ),
-                ),
-              ] else ...[
-                const SizedBox(height: 6),
-                const Text(
-                  'Please enter the verification code sent \n to your phone number',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: Config.subTitleFontSize,
-                    color: Config.subTitleFontColor,
-                  ),
-                ),
-                const SizedBox(height: 30),
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Mobile OTP',
-                    style: TextStyle(color: Colors.white, fontSize: 14),
-                  ),
-                ),
-              ],
-              const SizedBox(height: 10),
-              _buildOtpRow(),
-              const SizedBox(height: 40),
-              SizedBox(
-                width: double.infinity,
-                child: EffectButton(
-                  onTap: () => handleVerify(context),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    decoration: BoxDecoration(
-                      color: Config.activeButtonColor,
-                      borderRadius: BorderRadius.circular(30),
+            ),
+          ),
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: width * 0.08),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: height * 0.04),
+                  Image.asset('assets/logo_dark.png', height: height * 0.2),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Verification',
+                    style: TextStyle(
+                      fontSize: Config.titleFontSize,
+                      fontWeight: FontWeight.bold,
+                      color: Config.titleFontColor,
                     ),
-                    child: const Center(
+                  ),
+                  if (widget.otpType == 1) ...[
+                    const SizedBox(height: 6),
+                    const Text(
+                      'Please enter the verification code sent \n to your email',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: Config.subTitleFontSize,
+                        color: Config.subTitleFontColor,
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    const Align(
+                      alignment: Alignment.centerLeft,
                       child: Text(
-                        'Verify',
-                        style: TextStyle(
-                          fontSize: Config.buttonTextFontSize,
-                          color: Config.buttonTextColor,
+                        'Email OTP',
+                        style: TextStyle(color: Colors.white, fontSize: 14),
+                      ),
+                    ),
+                  ] else ...[
+                    const SizedBox(height: 6),
+                    const Text(
+                      'Please enter the verification code sent \n to your phone number',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: Config.subTitleFontSize,
+                        color: Config.subTitleFontColor,
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Mobile OTP',
+                        style: TextStyle(color: Colors.white, fontSize: 14),
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 10),
+                  _buildOtpRow(),
+                  const SizedBox(height: 40),
+                  SizedBox(
+                    width: double.infinity,
+                    child: EffectButton(
+                      onTap: () => handleVerify(context),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        decoration: BoxDecoration(
+                          color: Config.activeButtonColor,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            'Verify',
+                            style: TextStyle(
+                              fontSize: Config.buttonTextFontSize,
+                              color: Config.buttonTextColor,
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "If you didn't receive a code,",
-                    style: TextStyle(
-                      color: Config.guideTextColor,
-                      fontSize: 16,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  EffectButton(
-                    onTap: () {
-                      // TODO: Implement resend
-                    },
-                    child: const Text(
-                      "Resend",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "If you didn't receive a code,",
+                        style: TextStyle(
+                          color: Config.guideTextColor,
+                          fontSize: 16,
+                        ),
                       ),
-                    ),
+                      const SizedBox(width: 10),
+                      EffectButton(
+                        onTap: () {
+                          // TODO: Implement resend
+                        },
+                        child: const Text(
+                          "Resend",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
       ),

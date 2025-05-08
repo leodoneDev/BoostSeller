@@ -1,9 +1,9 @@
 // Lead Detail Page : made by Leo on 2025/05/04
 
-import 'package:boostseller/widgets/button.effect.dart';
+import 'package:boostseller/widgets/button_effect.dart';
 import 'package:flutter/material.dart';
-import 'package:boostseller/screens/profile/hostess/profile.panel.dart';
-import 'package:boostseller/constants.dart';
+import 'package:boostseller/screens/profile/hostess/profile_panel.dart';
+import 'package:boostseller/config/constants.dart';
 
 class LeadDetailScreen extends StatefulWidget {
   const LeadDetailScreen({super.key});

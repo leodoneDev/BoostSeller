@@ -1,17 +1,18 @@
+// Forgot Password Page : made by Leo on 2025/05/08
+
+import 'package:boostseller/services/navigation_services.dart';
 import 'package:flutter/material.dart';
-import 'package:boostseller/widgets/button.effect.dart';
-import 'package:boostseller/widgets/custom.phone.field.dart';
-import 'package:boostseller/widgets/custom.input.text.dart';
-import 'package:boostseller/screens/auth/login.dart';
-import 'package:boostseller/constants.dart';
+import 'package:boostseller/widgets/button_effect.dart';
+import 'package:boostseller/widgets/custom_phone_field.dart';
+import 'package:boostseller/widgets/custom_input_text.dart';
+import 'package:boostseller/config/constants.dart';
 import 'package:boostseller/utils/toast.dart';
-import 'package:boostseller/services/api.services.dart';
+import 'package:boostseller/services/api_services.dart';
 import 'package:boostseller/utils/validation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:boostseller/screens/auth/verification.dart';
-import 'package:boostseller/utils/loading.overlay.dart';
-import 'package:boostseller/utils/back.override.wrapper.dart';
+import 'package:boostseller/utils/loading_overlay.dart';
+import 'package:boostseller/utils/back_override_wrapper.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -28,20 +29,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   String fullPhoneNumber = '';
   bool _isLoading = false;
 
-  Future<String?> getAuthToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('auth_token');
-  }
-
   void sendOTP({required BuildContext context, required String email}) async {
     setState(() => _isLoading = true);
     final api = ApiService();
     // final token = getAuthToken();
     try {
-      final response = await api.post(context, '/api/auth/send-otp', {
-        'email': email,
-        // 'token': token,
-      });
+      final response = await api.post('/api/auth/send-otp', {'email': email});
       Map<String, dynamic> jsonData = jsonDecode(response?.data);
 
       if ((response?.statusCode == 200 || response?.statusCode == 201) &&
@@ -90,7 +83,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     final height = size.height;
 
     return BackOverrideWrapper(
-      onBack: () {},
+      onBack: () {
+        NavigationService.pushReplacementNamed('/login');
+      },
       child: LoadingOverlay(
         isLoading: _isLoading,
         child: Scaffold(
@@ -99,13 +94,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             backgroundColor: Config.appbarColor,
             elevation: 0,
             leading: IconButton(
-              onPressed:
-                  () => Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginScreen(),
-                    ),
-                  ),
+              onPressed: () {
+                NavigationService.pushReplacementNamed('/login');
+              },
               padding: EdgeInsets.zero,
               icon: Container(
                 width: 25,

@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:boostseller/constants.dart';
-import 'package:boostseller/widgets/button.effect.dart';
+import 'package:boostseller/config/constants.dart';
+import 'package:boostseller/widgets/button_effect.dart';
+import 'package:boostseller/services/navigation_services.dart';
 
 class ExitDialog {
-  static Future<void> show(BuildContext context) async {
+  static Future<void> show() async {
+    final context =
+        NavigationService.navigatorKey.currentState?.overlay?.context;
+
+    if (context == null) {
+      debugPrint('Cannot show exit dialog: context is null');
+      return;
+    }
+
     showDialog(
       context: context,
       barrierDismissible: true,

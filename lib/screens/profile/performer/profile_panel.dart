@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:boostseller/screens/auth/login.dart';
-import 'package:boostseller/constants.dart';
+import 'package:boostseller/config/constants.dart';
 
 class ProfilePerformerPanelController extends ChangeNotifier {
   bool _isVisible = false;

@@ -1,12 +1,12 @@
 // Lead Detail Page : made by Leo on 2025.05.03
 
 import 'package:flutter/material.dart';
-import 'package:boostseller/screens/lead/performer/detail/assigned.lead.detail.dart';
-import 'package:boostseller/screens/lead/performer/detail//presentation.lead.detail.dart';
-import 'package:boostseller/screens/lead/performer/detail//testdrive.lead.detail.dart';
-import 'package:boostseller/constants.dart';
+import 'package:boostseller/screens/lead/performer/detail/assigned_lead_detail.dart';
+import 'package:boostseller/screens/lead/performer/detail/presentation_lead_detail.dart';
+import 'package:boostseller/screens/lead/performer/detail/testdrive_lead_detail.dart';
+import 'package:boostseller/config/constants.dart';
 import 'package:boostseller/utils/toast.dart';
-import 'package:boostseller/screens/lead/performer/lead.list.dart';
+import 'package:boostseller/screens/lead/performer/lead_list.dart';
 import 'package:boostseller/model/lead.dart';
 
 class LeadDetailScreen extends StatefulWidget {

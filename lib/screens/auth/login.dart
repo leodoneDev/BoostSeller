@@ -2,17 +2,20 @@
 
 import 'package:flutter/material.dart';
 import 'package:boostseller/utils/validation.dart';
-import 'package:boostseller/widgets/button.effect.dart';
-import 'package:boostseller/constants.dart';
-import 'package:boostseller/widgets/custom.input.text.dart';
-import 'package:boostseller/widgets/custom.password.field.dart';
+import 'package:boostseller/widgets/button_effect.dart';
+import 'package:boostseller/config/constants.dart';
+import 'package:boostseller/widgets/custom_input_text.dart';
+import 'package:boostseller/widgets/custom_password_field.dart';
 import 'package:boostseller/utils/toast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:boostseller/services/api.services.dart';
+import 'package:boostseller/services/api_services.dart';
 import 'dart:convert';
-import 'package:boostseller/utils/loading.overlay.dart';
-import 'package:boostseller/utils/back.override.wrapper.dart';
-import 'package:boostseller/widgets/exit.dialog.dart';
+import 'package:boostseller/utils/loading_overlay.dart';
+import 'package:boostseller/utils/back_override_wrapper.dart';
+import 'package:boostseller/widgets/exit_dialog.dart';
+import 'package:boostseller/services/navigation_services.dart';
+import 'package:provider/provider.dart';
+import 'package:boostseller/providers/loading.provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -30,8 +33,6 @@ class _LoginScreenState extends State<LoginScreen> {
     await prefs.setString('auth_token', token);
   }
 
-  bool _isLoading = false;
-
   void reset() {
     emailController.clear();
     pwdController.clear();
@@ -42,17 +43,21 @@ class _LoginScreenState extends State<LoginScreen> {
     required String email,
     required String password,
   }) async {
-    setState(() => _isLoading = true);
+    final loadingProvider = Provider.of<LoadingProvider>(
+      context,
+      listen: false,
+    );
+    loadingProvider.setLoading(true);
     final api = ApiService();
     final prefs = await SharedPreferences.getInstance();
     final role = prefs.getString('userRole')?.toLowerCase() ?? '';
     if (role.isEmpty) {
       ToastUtil.error("Your role do not selected.\n Please your select role.");
       await Future.delayed(Duration(seconds: 1));
-      navigatorKey.currentState?.pushReplacementNamed('/welcome');
+      NavigationService.pushReplacementNamed('/onboarding');
     }
     try {
-      final response = await api.post(context, '/api/auth/login', {
+      final response = await api.post('/api/auth/login', {
         'email': email,
         'password': password,
       });
@@ -62,23 +67,19 @@ class _LoginScreenState extends State<LoginScreen> {
           !jsonData['error']) {
         if (role == jsonData['user']['role']) {
           ToastUtil.success(jsonData['message']);
-          saveToken(jsonData['token']);
+          await saveToken(jsonData['token']);
           if (jsonData['user']['role'] == 'hostess') {
-            navigatorKey.currentState?.pushReplacementNamed(
-              '/hostess-dashboard',
-            );
+            NavigationService.pushReplacementNamed('/hostess-dashboard');
           } else if (jsonData['user']['role'] == 'performer') {
             await Future.delayed(Duration(seconds: 1));
-            navigatorKey.currentState?.pushReplacementNamed(
-              '/performer-dashboard',
-            );
+            NavigationService.pushReplacementNamed('/performer-dashboard');
           }
         } else {
           ToastUtil.error(
             "This is not your role.\n Please select your correct role.",
           );
           await Future.delayed(Duration(seconds: 1));
-          navigatorKey.currentState?.pushReplacementNamed('/welcome');
+          NavigationService.pushReplacementNamed('/onboarding');
         }
       } else {
         ToastUtil.error(jsonData['message']);
@@ -87,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       ToastUtil.error("Server not found. Please try again");
     } finally {
-      setState(() => _isLoading = false);
+      loadingProvider.setLoading(false);
     }
   }
 
@@ -107,23 +108,31 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   @override
+  void dispose() {
+    emailController.dispose();
+    pwdController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final width = size.width;
     final height = size.height;
+    final loadingProvider = Provider.of<LoadingProvider>(context);
 
     return BackOverrideWrapper(
       onBack: () async {
         final prefs = await SharedPreferences.getInstance();
         final role = prefs.getString('userRole')?.toLowerCase() ?? '';
         if (role.isNotEmpty) {
-          await ExitDialog.show(context);
+          await ExitDialog.show();
         } else {
-          navigatorKey.currentState?.pushReplacementNamed('/welcome');
+          NavigationService.pushReplacementNamed('/onboarding');
         }
       },
       child: LoadingOverlay(
-        isLoading: _isLoading,
+        isLoading: loadingProvider.isLoading,
         child: Scaffold(
           backgroundColor: Config.backgroundColor,
           appBar: AppBar(
@@ -134,9 +143,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 final prefs = await SharedPreferences.getInstance();
                 final role = prefs.getString('userRole')?.toLowerCase() ?? '';
                 if (role.isNotEmpty) {
-                  await ExitDialog.show(context);
+                  await ExitDialog.show();
                 } else {
-                  navigatorKey.currentState?.pushReplacementNamed('/welcome');
+                  NavigationService.pushReplacementNamed('/onboarding');
                 }
               },
               padding: const EdgeInsets.all(0),
@@ -276,9 +285,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       SizedBox(width: 10),
                       EffectButton(
                         onTap: () {
-                          navigatorKey.currentState?.pushReplacementNamed(
-                            '/register',
-                          );
+                          NavigationService.pushReplacementNamed('/register');
                         },
                         child: const Text(
                           "Create Now",

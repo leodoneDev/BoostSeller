@@ -1,7 +1,7 @@
 // Hostess Profile Panel Page : made by Leo on 2025/05/01
 
 import 'package:flutter/material.dart';
-import 'package:boostseller/constants.dart';
+import 'package:boostseller/config/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:boostseller/screens/auth/login.dart';
 

@@ -1,12 +1,12 @@
 // Welcome Page : made by Leo on 2025/04/30
 
+import 'package:boostseller/services/navigation_services.dart';
 import 'package:flutter/material.dart';
-import 'package:boostseller/screens/auth/login.dart';
-import 'package:boostseller/widgets/button.effect.dart';
+import 'package:boostseller/widgets/button_effect.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:boostseller/constants.dart';
-import 'package:boostseller/widgets/exit.dialog.dart';
-import 'package:boostseller/utils/back.override.wrapper.dart';
+import 'package:boostseller/config/constants.dart';
+import 'package:boostseller/widgets/exit_dialog.dart';
+import 'package:boostseller/utils/back_override_wrapper.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -24,7 +24,7 @@ class WelcomeScreen extends StatelessWidget {
 
     return BackOverrideWrapper(
       onBack: () async {
-        await ExitDialog.show(context);
+        await ExitDialog.show();
       },
 
       child: Scaffold(
@@ -65,12 +65,7 @@ class WelcomeScreen extends StatelessWidget {
                         EffectButton(
                           onTap: () {
                             saveUserRole('hostess');
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => LoginScreen(),
-                              ),
-                            );
+                            NavigationService.pushReplacementNamed('/login');
                           },
                           child: Column(
                             children: [
@@ -97,12 +92,7 @@ class WelcomeScreen extends StatelessWidget {
                         EffectButton(
                           onTap: () {
                             saveUserRole('performer');
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => LoginScreen(),
-                              ),
-                            );
+                            NavigationService.pushReplacementNamed('/login');
                           },
                           child: Column(
                             children: [

@@ -1,12 +1,12 @@
 // Add Lead Page : made by Leo on 2025/05/03
 
 import 'package:flutter/material.dart';
-import 'package:boostseller/screens/lead/hostess/add.lead.success.dart';
-import 'package:boostseller/screens/profile/hostess/profile.panel.dart';
-import 'package:boostseller/widgets/button.effect.dart';
-import 'package:boostseller/widgets/custom.input.text.dart';
-import 'package:boostseller/widgets/custom.phone.field.dart';
-import 'package:boostseller/constants.dart';
+import 'package:boostseller/screens/lead/hostess/add_lead_success.dart';
+import 'package:boostseller/screens/profile/hostess/profile_panel.dart';
+import 'package:boostseller/widgets/button_effect.dart';
+import 'package:boostseller/widgets/custom_input_text.dart';
+import 'package:boostseller/widgets/custom_phone_field.dart';
+import 'package:boostseller/config/constants.dart';
 import 'package:boostseller/utils/toast.dart';
 
 class AddLeadScreen extends StatefulWidget {

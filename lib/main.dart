@@ -1,18 +1,19 @@
 // updated by Leo on 2025/05/07
 
+import 'package:boostseller/providers/loading.provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
 import 'package:boostseller/screens/welcome.dart';
-import 'package:boostseller/screens/lead/hostess/lead.list.dart';
-import 'package:boostseller/screens/lead/performer/lead.list.dart';
-import 'package:boostseller/utils/http.override.dart';
+import 'package:boostseller/screens/lead/hostess/lead_list.dart';
+import 'package:boostseller/screens/lead/performer/lead_list.dart';
+import 'package:boostseller/utils/http_override.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:boostseller/screens/auth/login.dart';
 import 'package:boostseller/screens/auth/register.dart';
-import 'package:boostseller/screens/auth/forgot.password.dart';
-
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+import 'package:boostseller/screens/auth/forgot_password.dart';
+import 'package:boostseller/services/navigation_services.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   HttpOverrides.global = MyHttpOverrides();
@@ -27,7 +28,12 @@ void main() async {
   final token = prefs.getString('auth_token') ?? '';
   final role = prefs.getString('userRole')?.toLowerCase();
   final isLoggedIn = token.isNotEmpty;
-  runApp(BoostSellerApp(isLoggedIn: isLoggedIn, role: role));
+  runApp(
+    MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => LoadingProvider())],
+      child: BoostSellerApp(isLoggedIn: isLoggedIn, role: role),
+    ),
+  );
 }
 
 class BoostSellerApp extends StatelessWidget {
@@ -51,7 +57,7 @@ class BoostSellerApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
         useMaterial3: true,
       ),
-      navigatorKey: navigatorKey,
+      navigatorKey: NavigationService.navigatorKey,
       initialRoute: '/',
       routes: {
         '/onboarding': (context) => WelcomeScreen(),

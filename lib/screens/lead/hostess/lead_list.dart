@@ -1,21 +1,20 @@
 // Lead List Page : made by Leo on 2025/05/04
 
 import 'package:flutter/material.dart';
-import 'package:boostseller/screens/lead/hostess/add.lead.dart';
-import 'package:boostseller/screens/lead/hostess/lead.detail.dart';
-import 'package:boostseller/screens/profile/hostess/profile.panel.dart';
-import 'package:boostseller/widgets/button.effect.dart';
-import 'package:boostseller/constants.dart';
-import 'package:boostseller/services/api.services.dart';
-import 'package:boostseller/screens/auth/login.dart';
+import 'package:boostseller/screens/lead/hostess/add_lead.dart';
+import 'package:boostseller/screens/lead/hostess/lead_detail.dart';
+import 'package:boostseller/screens/profile/hostess/profile_panel.dart';
+import 'package:boostseller/widgets/button_effect.dart';
+import 'package:boostseller/config/constants.dart';
+import 'package:boostseller/services/api_services.dart';
 import 'package:boostseller/utils/toast.dart';
-import 'package:boostseller/utils/loading.overlay.dart';
-import 'package:boostseller/widgets/lead.card.dart';
+import 'package:boostseller/utils/loading_overlay.dart';
+import 'package:boostseller/widgets/lead_card.dart';
 import 'package:boostseller/model/lead.dart';
-import 'package:boostseller/utils/back.override.wrapper.dart';
-import 'package:boostseller/widgets/exit.dialog.dart';
-import 'package:boostseller/screens/welcome.dart';
+import 'package:boostseller/utils/back_override_wrapper.dart';
+import 'package:boostseller/widgets/exit_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:boostseller/services/navigation_services.dart';
 
 class HostessDashboardScreen extends StatefulWidget {
   const HostessDashboardScreen({super.key});
@@ -101,12 +100,9 @@ class _HostessDashboardScreenState extends State<HostessDashboardScreen> {
         final prefs = await SharedPreferences.getInstance();
         final role = prefs.getString('auth_token')?.toLowerCase() ?? '';
         if (role.isNotEmpty) {
-          await ExitDialog.show(context);
+          await ExitDialog.show();
         } else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => WelcomeScreen()),
-          );
+          NavigationService.pushReplacementNamed('/onboarding');
         }
       },
       child: Stack(
@@ -122,12 +118,9 @@ class _HostessDashboardScreenState extends State<HostessDashboardScreen> {
                   final role =
                       prefs.getString('auth_token')?.toLowerCase() ?? '';
                   if (role.isNotEmpty) {
-                    await ExitDialog.show(context);
+                    await ExitDialog.show();
                   } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => WelcomeScreen()),
-                    );
+                    NavigationService.pushReplacementNamed('/onboarding');
                   }
                 },
                 padding: const EdgeInsets.all(0),

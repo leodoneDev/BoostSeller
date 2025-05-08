@@ -1,8 +1,8 @@
 // Add Lead Success Page : made by Leo on 2025/04/30
 
 import 'package:flutter/material.dart';
-import 'package:boostseller/screens/profile/hostess/profile.panel.dart';
-import 'package:boostseller/constants.dart';
+import 'package:boostseller/screens/profile/hostess/profile_panel.dart';
+import 'package:boostseller/config/constants.dart';
 
 class AddSuccessScreen extends StatefulWidget {
   const AddSuccessScreen({super.key});

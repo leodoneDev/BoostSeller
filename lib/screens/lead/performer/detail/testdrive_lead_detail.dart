@@ -1,8 +1,8 @@
 import 'package:boostseller/utils/toast.dart';
 import 'package:flutter/material.dart';
-import 'package:boostseller/screens/profile/performer/profile.panel.dart';
-import 'package:boostseller/widgets/button.effect.dart';
-import 'package:boostseller/constants.dart';
+import 'package:boostseller/screens/profile/performer/profile_panel.dart';
+import 'package:boostseller/widgets/button_effect.dart';
+import 'package:boostseller/config/constants.dart';
 
 class TestDriveLeadDetailScreen extends StatefulWidget {
   const TestDriveLeadDetailScreen({super.key});

@@ -1,18 +1,17 @@
 // // Lead List Page : made by Leo on 2025/05/04
 
-import 'package:boostseller/widgets/button.effect.dart';
+import 'package:boostseller/widgets/button_effect.dart';
 import 'package:flutter/material.dart';
-import 'package:boostseller/screens/profile/performer/profile.panel.dart';
-import 'package:boostseller/constants.dart';
-import 'package:boostseller/screens/auth/login.dart';
-import 'package:boostseller/widgets/lead.card.dart';
+import 'package:boostseller/screens/profile/performer/profile_panel.dart';
+import 'package:boostseller/config/constants.dart';
+import 'package:boostseller/widgets/lead_card.dart';
 import 'package:boostseller/utils/toast.dart';
-import 'package:boostseller/utils/loading.overlay.dart';
+import 'package:boostseller/utils/loading_overlay.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:boostseller/model/lead.dart';
-import 'package:boostseller/utils/back.override.wrapper.dart';
-import 'package:boostseller/widgets/exit.dialog.dart';
-import 'package:boostseller/screens/welcome.dart';
+import 'package:boostseller/utils/back_override_wrapper.dart';
+import 'package:boostseller/widgets/exit_dialog.dart';
+import 'package:boostseller/services/navigation_services.dart';
 
 class PerformerDashboardScreen extends StatefulWidget {
   const PerformerDashboardScreen({super.key});
@@ -113,12 +112,9 @@ class _PerformerDashboardScreenState extends State<PerformerDashboardScreen> {
         final prefs = await SharedPreferences.getInstance();
         final role = prefs.getString('auth_token')?.toLowerCase() ?? '';
         if (role.isNotEmpty) {
-          await ExitDialog.show(context);
+          await ExitDialog.show();
         } else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => WelcomeScreen()),
-          );
+          NavigationService.pushReplacementNamed('/onboarding');
         }
       },
       child: Stack(
@@ -134,12 +130,9 @@ class _PerformerDashboardScreenState extends State<PerformerDashboardScreen> {
                   final role =
                       prefs.getString('auth_token')?.toLowerCase() ?? '';
                   if (role.isNotEmpty) {
-                    await ExitDialog.show(context);
+                    await ExitDialog.show();
                   } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => WelcomeScreen()),
-                    );
+                    NavigationService.pushReplacementNamed('/onboarding');
                   }
                 },
                 icon: Container(
@@ -218,26 +211,26 @@ class _PerformerDashboardScreenState extends State<PerformerDashboardScreen> {
                       ),
                       const SizedBox(height: 20),
                       Expanded(
-                        child: ListView(
-                          children:
-                              (selectedTab == 0 ? assignedLeads : acceptedLeads)
-                                  .map(
-                                    (lead) => LeadCard(
-                                      // name: lead['name']!,
-                                      // interest: lead['interest']!,
-                                      // phone: lead['phone']!,
-                                      // date: lead['date']!,
-                                      // status: lead['status']!,
-                                      lead: Lead(
-                                        name: lead['name']!,
-                                        interest: lead['interest']!,
-                                        phone: lead['phone']!,
-                                        date: lead['date']!,
-                                        status: lead['status']!,
-                                      ),
-                                    ),
-                                  )
-                                  .toList(),
+                        child: ListView.builder(
+                          itemCount:
+                              selectedTab == 0
+                                  ? assignedLeads.length
+                                  : acceptedLeads.length,
+                          itemBuilder: (context, index) {
+                            final lead =
+                                selectedTab == 0
+                                    ? assignedLeads[index]
+                                    : acceptedLeads[index];
+                            return LeadCard(
+                              lead: Lead(
+                                name: lead['name']!,
+                                interest: lead['interest']!,
+                                phone: lead['phone']!,
+                                date: lead['date']!,
+                                status: lead['status']!,
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ],

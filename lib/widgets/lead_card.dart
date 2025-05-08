@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:boostseller/constants.dart';
-import 'package:boostseller/screens/lead/performer/lead.detail.dart';
-import 'package:boostseller/widgets/button.effect.dart';
+import 'package:boostseller/config/constants.dart';
+import 'package:boostseller/screens/lead/performer/lead_detail.dart';
+import 'package:boostseller/widgets/button_effect.dart';
 import 'package:boostseller/model/lead.dart';
 
 class LeadCard extends StatelessWidget {
