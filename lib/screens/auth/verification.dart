@@ -74,7 +74,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
           );
         }
       } else {
-        ToastUtil.error(context, jsonData['message12345']);
+        ToastUtil.error(context, jsonData['message123']);
       }
     } catch (e) {
       ToastUtil.error(context, "Server not found. Please try again");
