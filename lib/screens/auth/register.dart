@@ -9,9 +9,9 @@ import 'package:boostseller/widgets/custom_phone_field.dart';
 import 'package:boostseller/widgets/custom_password_field.dart';
 import 'package:boostseller/config/constants.dart';
 import 'package:boostseller/utils/toast.dart';
-import 'package:boostseller/services/api_services.dart';
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:boostseller/services/api_services.dart';
+// import 'dart:convert';
+// import 'package:shared_preferences/shared_preferences.dart';
 import 'package:boostseller/screens/auth/login.dart';
 import 'package:boostseller/utils/loading_overlay.dart';
 import 'package:boostseller/utils/back_override_wrapper.dart';
@@ -43,53 +43,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     pwdConfirmController.clear();
   }
 
-  void registerUser({
-    required BuildContext context,
-    required String name,
-    required String email,
-    required String password,
-    required String phone,
-  }) async {
-    final loadingProvider = Provider.of<LoadingProvider>(
-      context,
-      listen: false,
-    );
-    loadingProvider.setLoading(true);
-    final api = ApiService();
-    final prefs = await SharedPreferences.getInstance();
-    final role = prefs.getString('userRole')?.toLowerCase() ?? '';
-
-    if (role.isEmpty) {
-      ToastUtil.error("Your role do not selected. Please your select role.");
-      NavigationService.pushReplacementNamed('/onboarding');
-    }
-    try {
-      final response = await api.post('/api/auth/register', {
-        'name': name,
-        'email': email,
-        'phoneNumber': phone,
-        'password': password,
-        'role': role,
-      });
-
-      Map<String, dynamic> jsonData = jsonDecode(response?.data);
-
-      if ((response?.statusCode == 200 || response?.statusCode == 201) &&
-          !jsonData['error']) {
-        if (!mounted) return;
-        ToastUtil.success(jsonData['message']);
-        NavigationService.pushReplacementNamed('/login');
-      } else {
-        ToastUtil.error(jsonData['message']);
-        reset();
-      }
-    } catch (e) {
-      ToastUtil.error("Server not found. Please try again");
-    } finally {
-      loadingProvider.setLoading(false);
-    }
-  }
-
   void handleRegister() {
     final name = nameController.text.trim();
     final email = emailController.text.trim();
@@ -106,12 +59,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (isValidEmail(email)) {
         if (isValidPassword(password)) {
           if (password == passwordConfirm) {
-            registerUser(
-              context: context,
-              name: name,
-              email: email,
-              phone: phoneNumber,
-              password: password,
+            NavigationService.pushReplacementNamed(
+              '/send-otp',
+              arguments: {
+                'name': name,
+                'email': email,
+                'phone': phoneNumber,
+                'password': password,
+              },
             );
           } else {
             ToastUtil.error("Passwords do not match.");

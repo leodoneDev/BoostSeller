@@ -49,7 +49,8 @@ class WelcomeScreen extends StatelessWidget {
                     const Text(
                       'Please select your role!',
                       style: TextStyle(
-                        fontSize: Config.titleFontSize,
+                        // fontSize: Config.titleFontSize,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Config.subTitleFontColor,
                       ),
@@ -103,7 +104,7 @@ class WelcomeScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 8),
                               const Text(
-                                'Performer',
+                                'Sales Person',
                                 style: TextStyle(
                                   fontSize: Config.subTitleFontSize,
                                   color: Config.subTitleFontColor,

@@ -21,6 +21,9 @@ class _AssignedLeadDetailScreenState extends State<AssignedLeadDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final Lead lead = args['lead'] as Lead;
     return Stack(
       children: [
         Scaffold(
@@ -97,8 +100,8 @@ class _AssignedLeadDetailScreenState extends State<AssignedLeadDetailScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
-                                "Oleh",
+                              Text(
+                                lead.name,
                                 style: TextStyle(
                                   fontSize: Config.leadNameFontSize,
                                   fontWeight: FontWeight.bold,
@@ -116,8 +119,8 @@ class _AssignedLeadDetailScreenState extends State<AssignedLeadDetailScreen> {
                                           .blue, // Replace with dynamic status
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                child: const Text(
-                                  "Assigned",
+                                child: Text(
+                                  lead.status,
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 12,
@@ -132,10 +135,10 @@ class _AssignedLeadDetailScreenState extends State<AssignedLeadDetailScreen> {
                           color: Config.leadDivederColor,
                           height: 1,
                         ),
-                        _infoRow("Phone", "1-234-567-890"),
-                        _infoRow("Interest", "Interest 1"),
+                        _infoRow("Phone", lead.phone),
+                        _infoRow("Interest", lead.interest),
                         _infoRow("Register ID", "1234-1234-1234"),
-                        _infoRow("Register Date", "28/04/2025"),
+                        _infoRow("Register Date", lead.date),
                         if (_showMore) ...[
                           _infoRow("Gender", "Male"),
                           _infoRow("Age", "38"),
@@ -169,13 +172,13 @@ class _AssignedLeadDetailScreenState extends State<AssignedLeadDetailScreen> {
                     children: [
                       _actionButton(
                         "Accept",
-                        const Color(0xFF1E90FF),
+                        Config.activeButtonColor,
                         Colors.white,
                         () => showAcceptedOverlay(context),
                       ),
                       _actionButton(
                         "Close",
-                        Color(0xFF2A2A2A),
+                        Config.deactiveButtonColor,
                         Colors.white,
                         () => showCloseReasonNotification(context),
                       ),

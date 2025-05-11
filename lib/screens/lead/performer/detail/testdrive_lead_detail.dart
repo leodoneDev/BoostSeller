@@ -147,7 +147,7 @@ class _TestDriveLeadDetailScreenState extends State<TestDriveLeadDetailScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.cyan,
+                color: Colors.indigo,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(

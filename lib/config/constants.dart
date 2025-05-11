@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Config {
   static const backgroundColor = Color(0xFF333333);
   static const appbarColor = Color(0xFF3C3C3C);
-  static const activeButtonColor = Color(0xFF1E90FF);
+  static const activeButtonColor = Color(0xFF465FFF);
   static const iconDefaultColor = Colors.white;
   static const titleFontColor = Colors.white;
   static const double titleFontSize = 26;
@@ -28,4 +28,6 @@ class Config {
   static const leadDetailInfoColor = Colors.white;
   static const containerColor = Color(0xFF2A2A2A);
   static const deactiveButtonColor = Color(0xFF2A2A2A);
+  static const String realBackendURL = 'https://boost-seller-web.netlify.app';
+  static const String testBackendURL = 'http://192.168.1.227:3000';
 }

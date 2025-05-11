@@ -151,16 +151,27 @@ class _PerformerDashboardScreenState extends State<PerformerDashboardScreen> {
               ),
               actions: [
                 EffectButton(
-                  onTap: () => _profileController.toggle(),
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 12),
-                    child: Image.asset(
-                      'assets/list.png',
-                      width: 24,
-                      height: 24,
-                    ),
+                  onTap: () {
+                    NavigationService.pushNamed('/notifications');
+                  },
+                  child: const Icon(
+                    Icons.notifications,
+                    size: 35,
+                    color: Config.containerColor,
                   ),
                 ),
+
+                EffectButton(
+                  onTap: () {
+                    _profileController.toggle();
+                  },
+                  child: const Icon(
+                    Icons.account_circle,
+                    size: 35,
+                    color: Config.containerColor,
+                  ),
+                ),
+                const SizedBox(width: 20),
               ],
             ),
             body: LoadingOverlay(
@@ -222,6 +233,7 @@ class _PerformerDashboardScreenState extends State<PerformerDashboardScreen> {
                                     ? assignedLeads[index]
                                     : acceptedLeads[index];
                             return LeadCard(
+                              role: 'performer',
                               lead: Lead(
                                 name: lead['name']!,
                                 interest: lead['interest']!,

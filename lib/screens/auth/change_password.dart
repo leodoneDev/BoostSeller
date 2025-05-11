@@ -13,8 +13,8 @@ import 'package:boostseller/utils/back_override_wrapper.dart';
 import 'package:boostseller/services/navigation_services.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
-  final String email;
-  const ChangePasswordScreen({super.key, required this.email});
+  // final String email;
+  const ChangePasswordScreen({super.key});
 
   @override
   State<ChangePasswordScreen> createState() => _ChangePasswordScreenState();
@@ -27,8 +27,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   bool _isLoading = false;
 
   void changePassword({
-    required BuildContext context,
-    required String email,
+    required int otpType,
+    required String address,
     required String password,
   }) async {
     setState(() => _isLoading = true);
@@ -36,7 +36,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     // final token = getAuthToken();
     try {
       final response = await api.post('/api/auth/change-password', {
-        'email': email,
+        'otpType': otpType,
+        'address': address,
         "password": password,
         // 'token': token,
       });
@@ -50,23 +51,19 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         ToastUtil.error(jsonData['message']);
       }
     } catch (e) {
-      ToastUtil.error("Server not found. Please try again");
+      ToastUtil.error("Server not found.\nPlease try again.");
     } finally {
       setState(() => _isLoading = false);
     }
   }
 
-  void handleChangePwd() {
+  void handleChangePwd({required int otpType, required String address}) {
     final password = newPasswordController.text.trim();
     final passwordConfirm = confirmPasswordController.text.trim();
 
     if (isValidPassword(password)) {
       if (password == passwordConfirm) {
-        changePassword(
-          context: context,
-          email: widget.email,
-          password: password,
-        );
+        changePassword(otpType: otpType, address: address, password: password);
       } else {
         ToastUtil.error("Passwords do not match.");
       }
@@ -79,6 +76,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    int otpType = args['otpType'];
+    String address = args['address'];
 
     return BackOverrideWrapper(
       onBack: () {},
@@ -146,7 +147,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: EffectButton(
-                      onTap: handleChangePwd,
+                      onTap:
+                          () => handleChangePwd(
+                            otpType: otpType,
+                            address: address,
+                          ),
                       child: Container(
                         width: double.infinity,
                         padding: const EdgeInsets.symmetric(vertical: 10),

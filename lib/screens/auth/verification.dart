@@ -6,24 +6,15 @@ import 'package:boostseller/config/constants.dart';
 import 'package:boostseller/services/api_services.dart';
 import 'dart:convert';
 import 'package:boostseller/utils/toast.dart';
-import 'package:boostseller/screens/auth/change_password.dart';
 import 'package:boostseller/utils/loading_overlay.dart';
 import 'package:boostseller/utils/back_override_wrapper.dart';
 import 'package:boostseller/services/navigation_services.dart';
+import 'package:boostseller/providers/loading.provider.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class VerificationScreen extends StatefulWidget {
-  final int otpType;
-  final int verifyType;
-  final String email;
-  final String phoneNumber;
-
-  const VerificationScreen({
-    super.key,
-    required this.otpType,
-    required this.verifyType,
-    required this.email,
-    required this.phoneNumber,
-  });
+  const VerificationScreen({super.key});
 
   @override
   State<VerificationScreen> createState() => _VerificationScreenState();
@@ -34,7 +25,6 @@ class _VerificationScreenState extends State<VerificationScreen> {
     6,
     (_) => TextEditingController(),
   );
-  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -48,18 +38,32 @@ class _VerificationScreenState extends State<VerificationScreen> {
     return _otpControllers.map((c) => c.text).join();
   }
 
-  void sendVerifyCode({
-    required BuildContext context,
-    required String otpCode,
-    required String email,
+  void reset() {
+    for (final c in _otpControllers) {
+      c.clear();
+    }
+  }
+
+  Future<void> handleVerify({
+    required int otpType,
+    required int verifyType,
+    required String address,
+    required Map<String, dynamic>? userData,
   }) async {
-    setState(() => _isLoading = true);
+    final otpCode = getOtpCode();
+    final loadingProvider = Provider.of<LoadingProvider>(
+      context,
+      listen: false,
+    );
+    loadingProvider.setLoading(true);
     final api = ApiService();
     // final token = getAuthToken();
+
     try {
       final response = await api.post('/api/auth/verify-otp', {
         'code': otpCode,
-        'email': email,
+        'otpType': otpType,
+        'address': address,
         // 'token': token,
       });
       Map<String, dynamic> jsonData = jsonDecode(response?.data);
@@ -67,28 +71,57 @@ class _VerificationScreenState extends State<VerificationScreen> {
       if ((response?.statusCode == 200 || response?.statusCode == 201) &&
           !jsonData['error']) {
         ToastUtil.success(jsonData['message']);
-        if (widget.verifyType == 1) {
-        } else if (widget.verifyType == 2) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ChangePasswordScreen(email: email),
-            ),
+        if (verifyType == 1) {
+          final api = ApiService();
+          final prefs = await SharedPreferences.getInstance();
+          final role = prefs.getString('userRole')?.toLowerCase() ?? '';
+
+          if (role.isEmpty) {
+            ToastUtil.error(
+              "Your role do not selected. Please your select role.",
+            );
+            NavigationService.pushReplacementNamed('/onboarding');
+          }
+          try {
+            final response = await api.post('/api/auth/register', {
+              'name': userData?['name'],
+              'email': userData?['email'],
+              'phoneNumber': userData?['phoneNumber'],
+              'password': userData?['password'],
+              'role': role,
+            });
+
+            Map<String, dynamic> jsonData = jsonDecode(response?.data);
+
+            if ((response?.statusCode == 200 || response?.statusCode == 201) &&
+                !jsonData['error']) {
+              ToastUtil.success(jsonData['message']);
+            } else {
+              ToastUtil.error(jsonData['message']);
+              NavigationService.pushReplacementNamed('/register');
+            }
+          } catch (e) {
+            ToastUtil.error("Server not found.\nPlease try again");
+          } finally {
+            loadingProvider.setLoading(false);
+          }
+        } else if (verifyType == 2) {
+          NavigationService.pushReplacementNamed(
+            '/change-password',
+            arguments: {'otpType': otpType, 'address': address},
           );
         }
+      } else if (jsonData['expire']) {
+        ToastUtil.info('Please send your code again.');
+        reset();
       } else {
         ToastUtil.error(jsonData['message']);
       }
     } catch (e) {
-      ToastUtil.error("Server not found. Please try again");
+      ToastUtil.error("Server not found.\nPlease try again");
     } finally {
-      setState(() => _isLoading = false);
+      loadingProvider.setLoading(false);
     }
-  }
-
-  void handleVerify(BuildContext context) {
-    final otpCode = getOtpCode();
-    sendVerifyCode(context: context, otpCode: otpCode, email: widget.email);
   }
 
   @override
@@ -96,16 +129,34 @@ class _VerificationScreenState extends State<VerificationScreen> {
     final size = MediaQuery.of(context).size;
     final width = size.width;
     final height = size.height;
+    final loadingProvider = Provider.of<LoadingProvider>(context);
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
+    // argunments validation check
+    if (args.isEmpty ||
+        args['otpType'] == null ||
+        args['verifyType'] == null ||
+        args['address'] == null ||
+        args['userData'] == null) {
+      ToastUtil.error("Missing required information.\nPlease try again.");
+      NavigationService.pushReplacementNamed('/send-otp');
+    }
+
+    int otpType = args['otpType'];
+    int verifyType = args['verifyType'];
+    String address = args['address'];
+    Map<String, dynamic>? userData = args['userData'];
     return BackOverrideWrapper(
       onBack: () {
-        if (widget.verifyType == 1) {
-        } else if (widget.verifyType == 2) {
+        if (verifyType == 1) {
+          NavigationService.pushReplacementNamed('/send-otp');
+        } else if (verifyType == 2) {
           NavigationService.pushReplacementNamed('/forgot-password');
         }
       },
       child: LoadingOverlay(
-        isLoading: _isLoading,
+        isLoading: loadingProvider.isLoading,
         child: Scaffold(
           backgroundColor: Config.backgroundColor,
           appBar: AppBar(
@@ -113,7 +164,11 @@ class _VerificationScreenState extends State<VerificationScreen> {
             backgroundColor: Config.appbarColor,
             leading: IconButton(
               onPressed: () {
-                NavigationService.pushReplacementNamed('/forgot-password');
+                if (verifyType == 1) {
+                  NavigationService.pushReplacementNamed('/send-otp');
+                } else if (verifyType == 2) {
+                  NavigationService.pushReplacementNamed('/forgot-password');
+                }
               },
               padding: const EdgeInsets.all(0),
               icon: Container(
@@ -148,7 +203,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                       color: Config.titleFontColor,
                     ),
                   ),
-                  if (widget.otpType == 1) ...[
+                  if (otpType == 1) ...[
                     const SizedBox(height: 6),
                     const Text(
                       'Please enter the verification code sent \n to your email',
@@ -191,7 +246,13 @@ class _VerificationScreenState extends State<VerificationScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: EffectButton(
-                      onTap: () => handleVerify(context),
+                      onTap:
+                          () => handleVerify(
+                            otpType: otpType,
+                            verifyType: verifyType,
+                            address: address,
+                            userData: userData,
+                          ),
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         decoration: BoxDecoration(
@@ -223,8 +284,33 @@ class _VerificationScreenState extends State<VerificationScreen> {
                       ),
                       const SizedBox(width: 10),
                       EffectButton(
-                        onTap: () {
-                          // TODO: Implement resend
+                        onTap: () async {
+                          loadingProvider.setLoading(true);
+                          final api = ApiService();
+                          // final token = getAuthToken();
+                          try {
+                            final response = await api.post(
+                              '/api/auth/send-otp',
+                              {'address': address, 'otpType': otpType},
+                            );
+                            Map<String, dynamic> jsonData = jsonDecode(
+                              response?.data,
+                            );
+
+                            if ((response?.statusCode == 200 ||
+                                    response?.statusCode == 201) &&
+                                !jsonData['error']) {
+                              ToastUtil.success(jsonData['message']);
+                            } else {
+                              ToastUtil.error(jsonData['message']);
+                            }
+                          } catch (e) {
+                            ToastUtil.error(
+                              "Server not found. Please try again",
+                            );
+                          } finally {
+                            loadingProvider.setLoading(false);
+                          }
                         },
                         child: const Text(
                           "Resend",

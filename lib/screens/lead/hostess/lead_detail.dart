@@ -4,15 +4,17 @@ import 'package:boostseller/widgets/button_effect.dart';
 import 'package:flutter/material.dart';
 import 'package:boostseller/screens/profile/hostess/profile_panel.dart';
 import 'package:boostseller/config/constants.dart';
+import 'package:boostseller/model/lead.dart';
 
-class LeadDetailScreen extends StatefulWidget {
-  const LeadDetailScreen({super.key});
+class HostessLeadDetailScreen extends StatefulWidget {
+  const HostessLeadDetailScreen({super.key});
 
   @override
-  State<LeadDetailScreen> createState() => _LeadDetailScreenState();
+  State<HostessLeadDetailScreen> createState() =>
+      _HostessLeadDetailScreenState();
 }
 
-class _LeadDetailScreenState extends State<LeadDetailScreen> {
+class _HostessLeadDetailScreenState extends State<HostessLeadDetailScreen> {
   final ProfileHostessPanelController _profileController =
       ProfileHostessPanelController();
   bool _showMore = false;
@@ -20,7 +22,9 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final Lead lead = args['lead'] as Lead;
     return Stack(
       children: [
         Scaffold(
@@ -84,8 +88,8 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
-                              "Oleh",
+                            Text(
+                              lead.name,
                               style: TextStyle(
                                 fontSize: Config.leadNameFontSize,
                                 fontWeight: FontWeight.bold,
@@ -98,12 +102,11 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color:
-                                    Colors.blue, // Replace with dynamic status
+                                color: _getStatusColor(lead.status),
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              child: const Text(
-                                "Assigned",
+                              child: Text(
+                                lead.status,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 12,
@@ -118,10 +121,10 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                           color: Config.leadDivederColor,
                           height: 20,
                         ),
-                        _buildDetailRow("Phone", "1-234-567-890"),
-                        _buildDetailRow("Interest", "Interest 1"),
+                        _buildDetailRow("Phone", lead.phone),
+                        _buildDetailRow("Interest", lead.interest),
                         _buildDetailRow("Register ID", "1234-1234-1234"),
-                        _buildDetailRow("Register Date", "28/04/2025"),
+                        _buildDetailRow("Register Date", lead.date),
 
                         if (_showMore) ...[
                           _buildDetailRow("Gender", "Male"),
@@ -186,5 +189,24 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
         ),
       ),
     );
+  }
+}
+
+Color _getStatusColor(String status) {
+  switch (status.toLowerCase()) {
+    case 'assigned':
+      return Colors.blue;
+    case 'presentation':
+      return Colors.indigo;
+    case 'test drive':
+      return Colors.indigo;
+    case 'closed':
+      return Colors.red;
+    case 'completed':
+      return Colors.green;
+    case 'accepted':
+      return Colors.indigo;
+    default:
+      return Colors.grey;
   }
 }

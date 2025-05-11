@@ -12,6 +12,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:boostseller/screens/auth/login.dart';
 import 'package:boostseller/screens/auth/register.dart';
 import 'package:boostseller/screens/auth/forgot_password.dart';
+import 'package:boostseller/screens/auth/send_otp.dart';
+import 'package:boostseller/screens/auth/verification.dart';
+import 'package:boostseller/screens/auth/change_password.dart';
+import 'package:boostseller/screens/lead/performer/detail/assigned_lead_detail.dart';
+import 'package:boostseller/screens/lead/hostess/lead_detail.dart';
+import 'package:boostseller/screens/notification/notification.dart';
 import 'package:boostseller/services/navigation_services.dart';
 import 'package:provider/provider.dart';
 
@@ -66,6 +72,13 @@ class BoostSellerApp extends StatelessWidget {
         '/forgot-password': (context) => ForgotPasswordScreen(),
         '/performer-dashboard': (context) => PerformerDashboardScreen(),
         '/hostess-dashboard': (context) => HostessDashboardScreen(),
+        '/send-otp': (context) => SendOTPScreen(),
+        '/verification': (context) => VerificationScreen(),
+        '/change-password': (context) => ChangePasswordScreen(),
+        '/performer-assigned-lead-detail':
+            (context) => AssignedLeadDetailScreen(),
+        '/hostess-lead-detail': (context) => HostessLeadDetailScreen(),
+        '/notifications': (context) => NotificationPage(),
       },
       home: isLoggedIn ? getRolePage(role) : const WelcomeScreen(),
     );

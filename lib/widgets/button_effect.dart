@@ -11,7 +11,7 @@ class EffectButton extends StatefulWidget {
     required this.child,
     required this.onTap,
     this.duration = const Duration(milliseconds: 120),
-    this.pressedScale = 0.9,
+    this.pressedScale = 1.1,
   });
 
   @override

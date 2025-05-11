@@ -467,7 +467,7 @@ class _PresentationLeadDetailScreenState
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.orange,
+                color: Colors.indigo,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(

@@ -38,8 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
     pwdController.clear();
   }
 
-  void loginUser({
-    required BuildContext context,
+  Future<void> loginUser({
     required String email,
     required String password,
   }) async {
@@ -52,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final prefs = await SharedPreferences.getInstance();
     final role = prefs.getString('userRole')?.toLowerCase() ?? '';
     if (role.isEmpty) {
-      ToastUtil.error("Your role do not selected.\n Please your select role.");
+      ToastUtil.error("Your role do not selected.\nPlease your select role.");
       await Future.delayed(Duration(seconds: 1));
       NavigationService.pushReplacementNamed('/onboarding');
     }
@@ -86,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
         reset();
       }
     } catch (e) {
-      ToastUtil.error("Server not found. Please try again");
+      ToastUtil.error("Server not found.\nPlease try again");
     } finally {
       loadingProvider.setLoading(false);
     }
@@ -103,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } else if (!isValidPassword(password)) {
       ToastUtil.error("Password must be at least 6 characters.");
     } else {
-      loginUser(context: context, email: email, password: password);
+      loginUser(email: email, password: password);
     }
   }
 

@@ -2,11 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:boostseller/screens/lead/hostess/add_lead.dart';
-import 'package:boostseller/screens/lead/hostess/lead_detail.dart';
 import 'package:boostseller/screens/profile/hostess/profile_panel.dart';
 import 'package:boostseller/widgets/button_effect.dart';
 import 'package:boostseller/config/constants.dart';
-import 'package:boostseller/services/api_services.dart';
 import 'package:boostseller/utils/toast.dart';
 import 'package:boostseller/utils/loading_overlay.dart';
 import 'package:boostseller/widgets/lead_card.dart';
@@ -214,6 +212,7 @@ class _HostessDashboardScreenState extends State<HostessDashboardScreen> {
                         (lead) => Padding(
                           padding: const EdgeInsets.only(bottom: 12),
                           child: LeadCard(
+                            role: 'hostess',
                             lead: Lead(
                               name: lead['name']!,
                               interest: lead['interest']!,

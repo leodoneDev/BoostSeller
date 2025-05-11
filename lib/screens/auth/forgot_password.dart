@@ -10,9 +10,10 @@ import 'package:boostseller/utils/toast.dart';
 import 'package:boostseller/services/api_services.dart';
 import 'package:boostseller/utils/validation.dart';
 import 'dart:convert';
-import 'package:boostseller/screens/auth/verification.dart';
 import 'package:boostseller/utils/loading_overlay.dart';
 import 'package:boostseller/utils/back_override_wrapper.dart';
+import 'package:provider/provider.dart';
+import 'package:boostseller/providers/loading.provider.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -27,52 +28,70 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
   String fullPhoneNumber = '';
-  bool _isLoading = false;
 
-  void sendOTP({required BuildContext context, required String email}) async {
-    setState(() => _isLoading = true);
+  void sendOTP({required String address}) async {
+    if (usePhone) {
+      otpType = 2;
+    }
+    final loadingProvider = Provider.of<LoadingProvider>(
+      context,
+      listen: false,
+    );
+    loadingProvider.setLoading(true);
     final api = ApiService();
     // final token = getAuthToken();
     try {
-      final response = await api.post('/api/auth/send-otp', {'email': email});
+      final response = await api.post('/api/auth/send-otp', {
+        'address': address,
+        'otpType': otpType,
+      });
       Map<String, dynamic> jsonData = jsonDecode(response?.data);
 
       if ((response?.statusCode == 200 || response?.statusCode == 201) &&
           !jsonData['error']) {
         ToastUtil.success(jsonData['message']);
-        if (usePhone) {
-          otpType = 2;
-        }
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder:
-                (context) => VerificationScreen(
-                  otpType: otpType,
-                  email: email,
-                  phoneNumber: fullPhoneNumber,
-                  verifyType: 2,
-                ),
-          ),
+
+        NavigationService.pushReplacementNamed(
+          '/verification',
+          arguments: {
+            'verifyType': 2,
+            'otpType': otpType,
+            'address': address,
+            'userData': {
+              "name": '',
+              "email": "",
+              "phoneNumber": "",
+              "password": "",
+            },
+          },
         );
       } else {
         ToastUtil.error(jsonData['message']);
       }
     } catch (e) {
-      ToastUtil.error("Server not found. Please try again");
+      ToastUtil.error("Server not found.\nPlease try again");
     } finally {
-      setState(() => _isLoading = false);
+      loadingProvider.setLoading(false);
     }
   }
 
   void handleSendOTP() {
-    final email = emailController.text.trim();
-    if (email.isEmpty) {
-      ToastUtil.error("Please enter a email.");
-    } else if (!isValidEmail(email)) {
-      ToastUtil.error("Please enter a valid email.");
+    final phoneNumber = phoneController.text.trim();
+    if (usePhone) {
+      if (fullPhoneNumber.isEmpty || phoneNumber.isEmpty) {
+        ToastUtil.error("Please enter a phone number.");
+      } else {
+        sendOTP(address: fullPhoneNumber);
+      }
     } else {
-      sendOTP(context: context, email: email);
+      final email = emailController.text.trim();
+      if (email.isEmpty) {
+        ToastUtil.error("Please enter a email.");
+      } else if (!isValidEmail(email)) {
+        ToastUtil.error("Please enter a valid email.");
+      } else {
+        sendOTP(address: email);
+      }
     }
   }
 
@@ -81,13 +100,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     final size = MediaQuery.of(context).size;
     final width = size.width;
     final height = size.height;
+    final loadingProvider = Provider.of<LoadingProvider>(context);
 
     return BackOverrideWrapper(
       onBack: () {
         NavigationService.pushReplacementNamed('/login');
       },
       child: LoadingOverlay(
-        isLoading: _isLoading,
+        isLoading: loadingProvider.isLoading,
         child: Scaffold(
           backgroundColor: Config.backgroundColor,
           appBar: AppBar(
@@ -176,7 +196,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         width: double.infinity,
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF1E90FF),
+                          color: Config.activeButtonColor,
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: const Center(

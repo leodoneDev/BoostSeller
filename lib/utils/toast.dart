@@ -9,14 +9,22 @@ class ToastUtil {
   static bool _isToastVisible = false;
 
   static void success(String message) {
-    _showToast(message, isError: false);
+    _showToast(message, 'success');
   }
 
   static void error(String message) {
-    _showToast(message, isError: true);
+    _showToast(message, 'error');
   }
 
-  static void _showToast(String message, {bool isError = false}) {
+  static void info(String message) {
+    _showToast(message, 'info');
+  }
+
+  static void notification(String message) {
+    _showToast(message, 'notification');
+  }
+
+  static void _showToast(String message, String type) {
     if (_isToastVisible) return;
     _isToastVisible = true;
 
@@ -35,15 +43,12 @@ class ToastUtil {
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: isError ? Colors.redAccent : Colors.green,
+                color: _getTypeColor(type),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
-                  Icon(
-                    isError ? Icons.error : Icons.check_circle,
-                    color: Colors.white,
-                  ),
+                  _getTypeIcon(type),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
@@ -66,5 +71,35 @@ class ToastUtil {
     Future.delayed(const Duration(seconds: 2), () {
       _isToastVisible = false;
     });
+  }
+}
+
+Color _getTypeColor(String type) {
+  switch (type.toLowerCase()) {
+    case 'error':
+      return Colors.red;
+    case 'success':
+      return Colors.green;
+    case 'info':
+      return Colors.blue;
+    case 'notification':
+      return Colors.yellow;
+    default:
+      return Colors.grey;
+  }
+}
+
+Icon _getTypeIcon(String type) {
+  switch (type.toLowerCase()) {
+    case 'error':
+      return Icon(Icons.error, color: Colors.white);
+    case 'success':
+      return Icon(Icons.check_circle, color: Colors.white); {}
+    case 'info':
+      return Icon(Icons.info, color: Colors.white);
+    case 'notification':
+      return Icon(Icons.notifications, color: Colors.white);
+    default:
+      return Icon(Icons.width_normal, color: Colors.white);
   }
 }

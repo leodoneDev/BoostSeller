@@ -1,35 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:boostseller/config/constants.dart';
-import 'package:boostseller/screens/lead/performer/lead_detail.dart';
 import 'package:boostseller/widgets/button_effect.dart';
 import 'package:boostseller/model/lead.dart';
+import 'package:boostseller/services/navigation_services.dart';
+import 'package:boostseller/utils/toast.dart';
+import 'package:boostseller/screens/lead/performer/detail/presentation_lead_detail.dart';
+import 'package:boostseller/screens/lead/performer/detail/testdrive_lead_detail.dart';
 
 class LeadCard extends StatelessWidget {
-  // final String name;
-  // final String interest;
-  // final String phone;
-  // final String date;
-  // final String status;
+  final String role;
   final Lead lead;
 
-  const LeadCard({
-    super.key,
-    // required this.name,
-    // required this.interest,
-    // required this.phone,
-    // required this.date,
-    // required this.status,
-    required this.lead,
-  });
+  const LeadCard({super.key, required this.role, required this.lead});
 
   @override
   Widget build(BuildContext context) {
     return EffectButton(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => LeadDetailScreen(lead: lead)),
-        );
+        if (role == 'performer') {
+          if (lead.status == "Assigned") {
+            NavigationService.pushNamed(
+              '/performer-assigned-lead-detail',
+              arguments: {'lead': lead},
+            );
+          } else if (lead.status == "Presentation") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const PresentationLeadDetailScreen(),
+              ),
+            );
+          } else if (lead.status == "Test Drive") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const TestDriveLeadDetailScreen(),
+              ),
+            );
+          } else if (lead.status == "Completed") {
+            ToastUtil.success("Developing...");
+          } else if (lead.status == "Closed") {
+            ToastUtil.success("Developing...");
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Unknown status: ${lead.status}")),
+            );
+          }
+        } else {
+          NavigationService.pushNamed(
+            '/hostess-lead-detail',
+            arguments: {'lead': lead},
+          );
+        }
       },
       child: Container(
         width: double.infinity,
