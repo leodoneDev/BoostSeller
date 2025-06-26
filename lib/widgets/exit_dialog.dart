@@ -3,6 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:boostseller/config/constants.dart';
 import 'package:boostseller/widgets/button_effect.dart';
 import 'package:boostseller/services/navigation_services.dart';
+import 'package:boostseller/providers/language_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:boostseller/screens/localization/app_localizations.dart';
 
 class ExitDialog {
   static Future<void> show() async {
@@ -18,6 +21,7 @@ class ExitDialog {
       context: context,
       barrierDismissible: true,
       builder: (ctx) {
+        String langCode = context.watch<LanguageProvider>().languageCode;
         return Dialog(
           backgroundColor: const Color(0xFF2C2C2C),
           shape: RoundedRectangleBorder(
@@ -30,8 +34,9 @@ class ExitDialog {
               children: [
                 const Icon(Icons.exit_to_app, size: 50, color: Colors.white),
                 const SizedBox(height: 16),
-                const Text(
-                  'Exit App?',
+                Text(
+                  getText("Exit App?", langCode),
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: Config.titleFontSize,
                     color: Config.titleFontColor,
@@ -39,8 +44,11 @@ class ExitDialog {
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'Do you really want to close the application?',
+                Text(
+                  getText(
+                    "Do you really want to close the application?",
+                    langCode,
+                  ),
                   style: TextStyle(
                     fontSize: Config.subTitleFontSize,
                     color: Config.subTitleFontColor,
@@ -53,13 +61,13 @@ class ExitDialog {
                   children: [
                     _dialogButton(
                       context,
-                      label: 'Cancel',
+                      label: getText("Cancel", langCode),
                       color: Config.activeButtonColor,
                       onPressed: () => Navigator.of(ctx).pop(),
                     ),
                     _dialogButton(
                       context,
-                      label: 'Exit',
+                      label: getText("Exit", langCode),
                       color: Config.stressColor,
                       onPressed: () => SystemNavigator.pop(),
                     ),

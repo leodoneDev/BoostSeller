@@ -15,7 +15,12 @@ import 'package:boostseller/utils/back_override_wrapper.dart';
 import 'package:boostseller/widgets/exit_dialog.dart';
 import 'package:boostseller/services/navigation_services.dart';
 import 'package:provider/provider.dart';
-import 'package:boostseller/providers/loading.provider.dart';
+import 'package:boostseller/providers/loading_provider.dart';
+import 'package:boostseller/providers/user_provider.dart';
+import 'package:boostseller/model/user_model.dart';
+import 'package:boostseller/services/firebase_notification_service.dart';
+import 'package:boostseller/screens/localization/app_localizations.dart';
+import 'package:boostseller/providers/language_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -33,6 +38,11 @@ class _LoginScreenState extends State<LoginScreen> {
     await prefs.setString('auth_token', token);
   }
 
+  Future<void> saveIsApproved(bool isApproved) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isApproved', isApproved);
+  }
+
   void reset() {
     emailController.clear();
     pwdController.clear();
@@ -47,11 +57,18 @@ class _LoginScreenState extends State<LoginScreen> {
       listen: false,
     );
     loadingProvider.setLoading(true);
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final languageProvider = Provider.of<LanguageProvider>(
+      context,
+      listen: false,
+    );
+    String selectedLangCode = languageProvider.languageCode;
     final api = ApiService();
     final prefs = await SharedPreferences.getInstance();
     final role = prefs.getString('userRole')?.toLowerCase() ?? '';
+    final fcmToken = await FirebaseNotificationService().getDeviceToken();
     if (role.isEmpty) {
-      ToastUtil.error("Your role do not selected.\nPlease your select role.");
+      ToastUtil.error(getText("role_empty_message", selectedLangCode));
       await Future.delayed(Duration(seconds: 1));
       NavigationService.pushReplacementNamed('/onboarding');
     }
@@ -59,48 +76,69 @@ class _LoginScreenState extends State<LoginScreen> {
       final response = await api.post('/api/auth/login', {
         'email': email,
         'password': password,
+        'fcmToken': fcmToken,
       });
       Map<String, dynamic> jsonData = jsonDecode(response?.data);
 
       if ((response?.statusCode == 200 || response?.statusCode == 201) &&
           !jsonData['error']) {
         if (role == jsonData['user']['role']) {
-          ToastUtil.success(jsonData['message']);
+          final user = UserModel.fromJson(jsonData['user']);
+          userProvider.setUser(user);
           await saveToken(jsonData['token']);
-          if (jsonData['user']['role'] == 'hostess') {
-            NavigationService.pushReplacementNamed('/hostess-dashboard');
-          } else if (jsonData['user']['role'] == 'performer') {
-            await Future.delayed(Duration(seconds: 1));
-            NavigationService.pushReplacementNamed('/performer-dashboard');
+          await saveIsApproved(user.isApproved);
+          if (user.isApproved) {
+            ToastUtil.success(
+              getText("login_success_message", selectedLangCode),
+            );
+            if (user.role == 'hostess') {
+              NavigationService.pushReplacementNamed('/hostess-dashboard');
+            } else if (user.role == 'performer') {
+              NavigationService.pushReplacementNamed('/performer-dashboard');
+            }
+          } else {
+            ToastUtil.info(getText("pendding_message", selectedLangCode));
+            NavigationService.pushReplacementNamed('/pendding-approval');
           }
         } else {
-          ToastUtil.error(
-            "This is not your role.\n Please select your correct role.",
-          );
+          ToastUtil.error(getText("role_invalid_message", selectedLangCode));
           await Future.delayed(Duration(seconds: 1));
           NavigationService.pushReplacementNamed('/onboarding');
         }
       } else {
-        ToastUtil.error(jsonData['message']);
+        if (jsonData['message'] == 'user-not-found') {
+          ToastUtil.error(getText("user_not_found_message", selectedLangCode));
+        } else if (jsonData['message'] == 'password-mismatch') {
+          ToastUtil.error(
+            getText("password_mismatch_message", selectedLangCode),
+          );
+        }
         reset();
       }
     } catch (e) {
-      ToastUtil.error("Server not found.\nPlease try again");
+      debugPrint('Error: $e');
+      ToastUtil.error(getText("ajax_error_message", selectedLangCode));
     } finally {
       loadingProvider.setLoading(false);
     }
   }
 
   void handleLogin() {
+    final languageProvider = Provider.of<LanguageProvider>(
+      context,
+      listen: false,
+    );
+    String selectedLangCode = languageProvider.languageCode;
+
     final email = emailController.text.trim();
     final password = pwdController.text.trim();
 
     if (email.isEmpty) {
-      ToastUtil.error("Please enter a email.");
+      ToastUtil.error(getText("email_empty_message", selectedLangCode));
     } else if (!isValidEmail(email)) {
-      ToastUtil.error("Please enter a valid email.");
+      ToastUtil.error(getText("email_invalid_message", selectedLangCode));
     } else if (!isValidPassword(password)) {
-      ToastUtil.error("Password must be at least 6 characters.");
+      ToastUtil.error(getText("password_invalid_message", selectedLangCode));
     } else {
       loginUser(email: email, password: password);
     }
@@ -119,7 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final width = size.width;
     final height = size.height;
     final loadingProvider = Provider.of<LoadingProvider>(context);
-
+    String langCode = context.watch<LanguageProvider>().languageCode;
     return BackOverrideWrapper(
       onBack: () async {
         final prefs = await SharedPreferences.getInstance();
@@ -137,28 +175,31 @@ class _LoginScreenState extends State<LoginScreen> {
           appBar: AppBar(
             backgroundColor: Config.appbarColor,
             elevation: 0,
-            leading: IconButton(
-              onPressed: () async {
-                final prefs = await SharedPreferences.getInstance();
-                final role = prefs.getString('userRole')?.toLowerCase() ?? '';
-                if (role.isNotEmpty) {
-                  await ExitDialog.show();
-                } else {
-                  NavigationService.pushReplacementNamed('/onboarding');
-                }
-              },
-              padding: const EdgeInsets.all(0),
-              icon: Container(
-                width: 25,
-                height: 25,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Config.activeButtonColor, // light blue
-                ),
-                child: const Icon(
-                  Icons.arrow_back,
-                  size: 14,
-                  color: Config.iconDefaultColor,
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 20),
+              child: GestureDetector(
+                onTap: () async {
+                  final prefs = await SharedPreferences.getInstance();
+                  final role = prefs.getString('userRole')?.toLowerCase() ?? '';
+                  if (role.isNotEmpty) {
+                    await ExitDialog.show();
+                  } else {
+                    NavigationService.pushReplacementNamed('/onboarding');
+                  }
+                },
+                child: Container(
+                  width: 35,
+                  height: 35,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Config.activeButtonColor,
+                  ),
+                  alignment: Alignment.center,
+                  child: const Icon(
+                    Icons.arrow_back,
+                    size: Config.appBarBackIconSize,
+                    color: Config.iconDefaultColor,
+                  ),
                 ),
               ),
             ),
@@ -174,8 +215,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   Image.asset('assets/logo_dark.png', height: height * 0.2),
                   SizedBox(height: height * 0.04), // add more breathing space
                   // Welcome Text
-                  const Text(
-                    'Welcome',
+                  Text(
+                    // 'Welcome',
+                    getText('Welcome', langCode),
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: Config.titleFontSize,
                       fontWeight: FontWeight.bold,
@@ -183,8 +226,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  const Text(
-                    'Login to your account',
+                  Text(
+                    // 'Login to your account',
+                    getText('Login to your account', langCode),
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: Config.subTitleFontSize,
                       color: Config.subTitleFontColor,
@@ -197,7 +242,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Email',
+                      // 'Email',
+                      getText('Email', langCode),
                       style: TextStyle(
                         color: Config.inputLabelColor,
                         fontSize: Config.inputLabelFontSize,
@@ -207,7 +253,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 6),
                   CustomTextField(
                     controller: emailController,
-                    hint: 'Email',
+                    // hint: 'Email',
+                    hint: getText('Email', langCode),
                     keyboardType: TextInputType.emailAddress,
                   ),
                   const SizedBox(height: 6),
@@ -216,7 +263,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Password',
+                      // 'Password',
+                      getText('Password', langCode),
                       style: TextStyle(
                         color: Config.inputLabelColor,
                         fontSize: Config.inputLabelFontSize,
@@ -224,8 +272,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  PasswordField(controller: pwdController, hint: 'Passwrod'),
-
+                  // PasswordField(controller: pwdController, hint: 'Passwrod'),
+                  PasswordField(
+                    controller: pwdController,
+                    hint: getText('Password', langCode),
+                  ),
                   const SizedBox(height: 20),
 
                   // Forgot Password
@@ -238,8 +289,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           '/forgot-password',
                         );
                       },
-                      child: const Text(
-                        'Forgot Password?',
+                      child: Text(
+                        // 'Forgot Password?',
+                        getText('Forgot Password?', langCode),
                         style: TextStyle(color: Config.stressColor),
                       ),
                     ),
@@ -259,9 +311,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           color: Config.activeButtonColor,
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        child: const Center(
+                        child: Center(
                           child: Text(
-                            'Login',
+                            // 'Login',
+                            getText('Login', langCode),
                             style: TextStyle(
                               fontSize: Config.buttonTextFontSize,
                               color: Config.buttonTextColor,
@@ -277,8 +330,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
-                        "Don’t have account? ",
+                      Text(
+                        // "Don’t have account? ",
+                        getText('Don’t have account?', langCode),
                         style: TextStyle(color: Colors.white38),
                       ),
                       SizedBox(width: 10),
@@ -286,8 +340,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         onTap: () {
                           NavigationService.pushReplacementNamed('/register');
                         },
-                        child: const Text(
-                          "Create Now",
+                        child: Text(
+                          // "Create Now",
+                          getText('Create Now', langCode),
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,

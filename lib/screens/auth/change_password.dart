@@ -11,6 +11,10 @@ import 'dart:convert';
 import 'package:boostseller/utils/loading_overlay.dart';
 import 'package:boostseller/utils/back_override_wrapper.dart';
 import 'package:boostseller/services/navigation_services.dart';
+import 'package:boostseller/providers/loading_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:boostseller/screens/localization/app_localizations.dart';
+import 'package:boostseller/providers/language_provider.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   // final String email;
@@ -24,16 +28,21 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
-  bool _isLoading = false;
 
-  void changePassword({
+  Future<void> changePassword({
     required int otpType,
     required String address,
     required String password,
   }) async {
-    setState(() => _isLoading = true);
+    final loadingProvider = Provider.of<LoadingProvider>(
+      context,
+      listen: false,
+    );
+    loadingProvider.setLoading(false);
+    String langCode =
+        Provider.of<LanguageProvider>(context, listen: false).languageCode;
     final api = ApiService();
-    // final token = getAuthToken();
+
     try {
       final response = await api.post('/api/auth/change-password', {
         'otpType': otpType,
@@ -45,30 +54,36 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
       if ((response?.statusCode == 200 || response?.statusCode == 201) &&
           !jsonData['error']) {
-        ToastUtil.success(jsonData['message']);
+        ToastUtil.success(getText("change_password_success_message", langCode));
         NavigationService.pushReplacementNamed('/login');
       } else {
-        ToastUtil.error(jsonData['message']);
+        if (jsonData['message'] == 'user-not-found') {
+          ToastUtil.error(getText("user_not_found_message", langCode));
+        } else if (jsonData['message'] == 'change-password-error') {
+          ToastUtil.error(getText("change_password_error_message", langCode));
+        }
       }
     } catch (e) {
-      ToastUtil.error("Server not found.\nPlease try again.");
+      ToastUtil.error(getText("ajax_error_message", langCode));
     } finally {
-      setState(() => _isLoading = false);
+      loadingProvider.setLoading(false);
     }
   }
 
   void handleChangePwd({required int otpType, required String address}) {
     final password = newPasswordController.text.trim();
     final passwordConfirm = confirmPasswordController.text.trim();
+    String langCode =
+        Provider.of<LanguageProvider>(context, listen: false).languageCode;
 
     if (isValidPassword(password)) {
       if (password == passwordConfirm) {
         changePassword(otpType: otpType, address: address, password: password);
       } else {
-        ToastUtil.error("Passwords do not match.");
+        ToastUtil.error(getText("password_match_error_message", langCode));
       }
     } else {
-      ToastUtil.error("Password must be at least 6 characters.");
+      ToastUtil.error(getText("password_invalid_message", langCode));
     }
   }
 
@@ -80,30 +95,39 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     int otpType = args['otpType'];
     String address = args['address'];
+    final loadingProvider = Provider.of<LoadingProvider>(context);
+    String langCode = context.watch<LanguageProvider>().languageCode;
 
     return BackOverrideWrapper(
-      onBack: () {},
+      onBack: () {
+        NavigationService.pushReplacementNamed('/login');
+      },
       child: LoadingOverlay(
-        isLoading: _isLoading,
+        isLoading: loadingProvider.isLoading,
         child: Scaffold(
           backgroundColor: Config.backgroundColor,
           appBar: AppBar(
             backgroundColor: Config.appbarColor,
             elevation: 0,
-            leading: IconButton(
-              onPressed: () => Navigator.pop(context),
-              padding: const EdgeInsets.all(0),
-              icon: Container(
-                width: 25,
-                height: 25,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Config.activeButtonColor, // light blue
-                ),
-                child: const Icon(
-                  Icons.arrow_back,
-                  size: 14,
-                  color: Config.iconDefaultColor,
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 20),
+              child: GestureDetector(
+                onTap: () async {
+                  NavigationService.pushReplacementNamed('/login');
+                },
+                child: Container(
+                  width: 35,
+                  height: 35,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Config.activeButtonColor,
+                  ),
+                  alignment: Alignment.center,
+                  child: const Icon(
+                    Icons.arrow_back,
+                    size: Config.appBarBackIconSize,
+                    color: Config.iconDefaultColor,
+                  ),
                 ),
               ),
             ),
@@ -119,8 +143,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   Image.asset('assets/logo_dark.png', height: height * 0.18),
                   const SizedBox(height: 20),
 
-                  const Text(
-                    'Change Password',
+                  Text(
+                    getText("Change Password", langCode),
                     style: TextStyle(
                       fontSize: Config.titleFontSize,
                       fontWeight: FontWeight.bold,
@@ -130,17 +154,19 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
                   const SizedBox(height: 30),
 
-                  _buildLabel('Enter your new password'),
+                  _buildLabel(getText('Enter your new password', langCode)),
                   const SizedBox(height: 6),
                   PasswordField(
                     controller: newPasswordController,
-                    hint: 'Password',
+                    hint: getText('Password', langCode),
                   ),
-                  _buildLabel('Enter your confirmation password'),
+                  _buildLabel(
+                    getText("Enter your confirmation password", langCode),
+                  ),
                   const SizedBox(height: 6),
                   PasswordField(
                     controller: confirmPasswordController,
-                    hint: 'Password Confirm',
+                    hint: getText("Password Confirm", langCode),
                   ),
                   const SizedBox(height: 30),
 
@@ -159,9 +185,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           color: Config.activeButtonColor,
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        child: const Center(
+                        child: Center(
                           child: Text(
-                            'Submit',
+                            getText("Change", langCode),
                             style: TextStyle(
                               fontSize: Config.buttonTextFontSize,
                               color: Config.buttonTextColor,

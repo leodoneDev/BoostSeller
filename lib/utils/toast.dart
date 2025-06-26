@@ -3,8 +3,6 @@ import 'package:delightful_toast/delight_toast.dart';
 import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:boostseller/services/navigation_services.dart';
 
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-
 class ToastUtil {
   static bool _isToastVisible = false;
 
@@ -24,12 +22,12 @@ class ToastUtil {
     _showToast(message, 'notification');
   }
 
-  static void _showToast(String message, String type) {
+  static void _showToast(String message, String type) async {
     if (_isToastVisible) return;
     _isToastVisible = true;
 
-    final context =
-        NavigationService.navigatorKey.currentState?.overlay?.context;
+    final context = NavigationService.navigatorKey.currentContext;
+
     if (context == null) {
       _isToastVisible = false;
       return;
@@ -64,7 +62,7 @@ class ToastUtil {
       },
       position: DelightSnackbarPosition.top,
       autoDismiss: true,
-      snackbarDuration: const Duration(seconds: 2),
+      snackbarDuration: const Duration(seconds: 3),
     ).show(context);
 
     // Manually reset the flag after the duration
@@ -83,7 +81,7 @@ Color _getTypeColor(String type) {
     case 'info':
       return Colors.blue;
     case 'notification':
-      return Colors.yellow;
+      return Colors.orange;
     default:
       return Colors.grey;
   }
@@ -94,7 +92,7 @@ Icon _getTypeIcon(String type) {
     case 'error':
       return Icon(Icons.error, color: Colors.white);
     case 'success':
-      return Icon(Icons.check_circle, color: Colors.white); {}
+      return Icon(Icons.check_circle, color: Colors.white);
     case 'info':
       return Icon(Icons.info, color: Colors.white);
     case 'notification':

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "224849973423",
+    "project_id": "boostseller-ea2bf",
+    "storage_bucket": "boostseller-ea2bf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:224849973423:android:f07ba4258dc0eec1f0045a",
+        "android_client_info": {
+          "package_name": "com.example.boostseller"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAG2IhnYYjIAwlzslVY03eRcNAzKrTGEkQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

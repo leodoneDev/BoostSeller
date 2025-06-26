@@ -1,13 +1,23 @@
-// Hostess Profile Panel Page : made by Leo on 2025/05/01
+// Hostess profile panel : updated by Leo on 2025/05/15
 
+import 'dart:convert';
+import 'package:boostseller/utils/toast.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:boostseller/config/constants.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:boostseller/screens/auth/login.dart';
+import 'package:boostseller/services/navigation_services.dart';
+import 'package:boostseller/services/api_services.dart';
+import 'package:boostseller/providers/user_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:boostseller/services/websocket_service.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:boostseller/screens/localization/app_localizations.dart';
+import 'package:boostseller/providers/language_provider.dart';
+import 'package:boostseller/utils/translator_helper.dart';
 
 class ProfileHostessPanelController extends ChangeNotifier {
   bool _isVisible = false;
-
   bool get isVisible => _isVisible;
 
   void toggle() {
@@ -21,31 +31,140 @@ class ProfileHostessPanelController extends ChangeNotifier {
   }
 }
 
-class ProfileHostessPanel extends StatelessWidget {
+class ProfileHostessPanel extends StatefulWidget {
   final ProfileHostessPanelController controller;
 
   const ProfileHostessPanel({super.key, required this.controller});
 
   @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: controller,
-      builder: (context, _) {
-        if (!controller.isVisible) return const SizedBox.shrink();
+  State<ProfileHostessPanel> createState() => _ProfileHostessPanelState();
+}
 
+class _ProfileHostessPanelState extends State<ProfileHostessPanel> {
+  bool loading = false;
+  final baseUrl = Config.realBackendURL;
+  Map<String, dynamic> hostessInfo = {};
+  String _lastLangCode = '';
+  bool _hasPreloadedTranslations = false;
+  final Map<String, String> _translatedUserInfo = {};
+
+  @override
+  void initState() {
+    super.initState();
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    widget.controller.addListener(() {
+      if (widget.controller.isVisible) {
+        final hostessId = userProvider.user?.hostess?.id;
+        getHostessInfo(hostessId);
+      }
+    });
+  }
+
+  void _preloadTranslatedUserInfo(String langCode, String name) async {
+    _hasPreloadedTranslations = true;
+    _lastLangCode = langCode;
+    _translatedUserInfo.clear();
+    final translatedName = await TranslatorHelper.translateText(name, langCode);
+    setState(() {
+      _translatedUserInfo['name'] = translatedName;
+    });
+  }
+
+  Future<void> getHostessInfo(hostessId) async {
+    String langCode =
+        Provider.of<LanguageProvider>(context, listen: false).languageCode;
+    if (hostessId == null) return;
+    final api = ApiService();
+    try {
+      final response = await api.post('/api/profile/hostess', {
+        'hostessId': hostessId,
+      });
+      Map<String, dynamic> jsonData = jsonDecode(response?.data);
+      if ((response?.statusCode == 200 || response?.statusCode == 201) &&
+          !jsonData['error']) {
+        if (!mounted) return;
+        setState(() {
+          hostessInfo = jsonData['hostess'] ?? {};
+        });
+      } else {
+        ToastUtil.error(getText("data_load_error_message", langCode));
+      }
+    } catch (e) {
+      debugPrint('Error: $e');
+      ToastUtil.error(getText("ajax_error_message", langCode));
+    }
+  }
+
+  Future<void> _uploadImage() async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    String langCode =
+        Provider.of<LanguageProvider>(context, listen: false).languageCode;
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(source: ImageSource.gallery);
+    if (picked != null) {
+      setState(() => loading = true);
+
+      try {
+        final userId = userProvider.user?.id;
+        FormData formData = FormData.fromMap({
+          "profile_image": await MultipartFile.fromFile(picked.path),
+          "userId": userId,
+        });
+        final api = ApiService();
+        final response = await api.uploadFile(
+          path: "/api/profile/upload-image",
+          formData: formData,
+        );
+        Map<String, dynamic> jsonData = jsonDecode(response?.data);
+        if ((response?.statusCode == 200 || response?.statusCode == 201) &&
+            !jsonData['error']) {
+          ToastUtil.success(getText("avatar_upload_success", langCode));
+          final updatedUser = userProvider.user!.copyWith(
+            avatarPath: jsonData['imageUrl'],
+          );
+          userProvider.setUser(updatedUser);
+        } else {
+          ToastUtil.error(getText("avatar_upload_failed", langCode));
+        }
+      } catch (e) {
+        debugPrint('Error: $e');
+        ToastUtil.error(getText("ajax_error_message", langCode));
+      } finally {
+        setState(() => loading = false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+    String langCode = context.watch<LanguageProvider>().languageCode;
+    final user = userProvider.user;
+    final String avatarPath = user?.avatarPath ?? '';
+    final String name = user?.name ?? '';
+    final String phoneNumber = user?.phoneNumber ?? '';
+    final String translatedName = _translatedUserInfo['name'] ?? name;
+    final int totalCount = hostessInfo['totalCount'] ?? 0;
+    final int acceptedCount = hostessInfo['acceptedCount'] ?? 0;
+    final int completedCount = hostessInfo['completedCount'] ?? 0;
+
+    if (!_hasPreloadedTranslations || _lastLangCode != langCode) {
+      _preloadTranslatedUserInfo(langCode, name);
+    }
+    return AnimatedBuilder(
+      animation: widget.controller,
+      builder: (context, _) {
+        if (!widget.controller.isVisible) return const SizedBox.shrink();
         return Stack(
           children: [
-            // Overlay background
             GestureDetector(
-              onTap: controller.toggle,
+              onTap: widget.controller.toggle,
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
                 color: Colors.black.withAlpha(102),
               ),
             ),
-
-            // Sliding panel
             Positioned(
               top: 0,
               right: 0,
@@ -59,7 +178,6 @@ class ProfileHostessPanel extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    // Scrollable content
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.all(16),
@@ -67,49 +185,100 @@ class ProfileHostessPanel extends StatelessWidget {
                           child: Column(
                             children: [
                               const SizedBox(height: 30),
-                              const Center(
-                                child: CircleAvatar(
-                                  radius: 70,
-                                  backgroundColor: Colors.white,
-                                  backgroundImage: AssetImage(
-                                    'assets/profile.jpg',
-                                  ), // Replace with your image
-                                ),
+                              Stack(
+                                alignment: Alignment.bottomRight,
+                                children: [
+                                  GestureDetector(
+                                    onTap: _uploadImage,
+                                    child: CircleAvatar(
+                                      radius: 70,
+                                      backgroundColor: Colors.white,
+                                      backgroundImage:
+                                          avatarPath.isNotEmpty
+                                              ? CachedNetworkImageProvider(
+                                                '$baseUrl$avatarPath',
+                                              )
+                                              : const AssetImage(
+                                                    'assets/profile_hostess.png',
+                                                  )
+                                                  as ImageProvider,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    right: 4,
+                                    bottom: 4,
+                                    child: GestureDetector(
+                                      onTap: _uploadImage,
+                                      child: const CircleAvatar(
+                                        backgroundColor: Colors.black54,
+                                        radius: 16,
+                                        child: Icon(
+                                          Icons.edit,
+                                          color: Colors.white,
+                                          size: 16,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 30),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  _infoRow(Icons.home, "Maxim"),
+                                  _infoRow(Icons.home, translatedName),
                                   const SizedBox(height: 10),
-                                  _infoRow(Icons.phone, "1-232-234-2345"),
+                                  _infoRow(Icons.phone, phoneNumber),
                                   const SizedBox(height: 10),
-                                  _infoRow(Icons.check, "Hostess"),
+                                  _infoRow(
+                                    Icons.check,
+                                    getText("hostess", langCode),
+                                  ),
+                                  const SizedBox(height: 10),
                                 ],
                               ),
-                              const Divider(color: Colors.white24),
-                              const Align(
+                              Row(
+                                children: [
+                                  const Expanded(child: Divider(thickness: 1)),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0,
+                                    ),
+                                    child: Icon(
+                                      Icons.people,
+                                      size: 30,
+                                      color: Colors.white,
+                                    ), // or use Image.asset / Image.network
+                                  ),
+                                  const Expanded(child: Divider(thickness: 1)),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  "Leads",
+                                  getText("Leads", langCode),
                                   style: TextStyle(
                                     color: Colors.white70,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 12),
-                              _stat("Total", 15),
-                              _stat("Pending", 3),
-                              _stat("Assigned", 8),
-                              _stat("Closed", 4),
+                              const SizedBox(height: 10),
+                              _stat(getText("Total", langCode), totalCount),
+                              _stat(
+                                getText("Accepted", langCode),
+                                acceptedCount,
+                              ),
+                              _stat(
+                                getText("Completed", langCode),
+                                completedCount,
+                              ),
                             ],
                           ),
                         ),
                       ),
                     ),
-
-                    // Logout Button
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: SizedBox(
@@ -123,8 +292,8 @@ class ProfileHostessPanel extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 14),
                           ),
                           icon: const Icon(Icons.logout, color: Colors.white),
-                          label: const Text(
-                            "Logout",
+                          label: Text(
+                            getText("Logout", langCode),
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -132,20 +301,12 @@ class ProfileHostessPanel extends StatelessWidget {
                             ),
                           ),
                           onPressed: () async {
-                            final prefs = await SharedPreferences.getInstance();
-                            await prefs.remove('auth_token');
-                            // controller.close();
-                            // Navigator.of(context).pushAndRemoveUntil(
-                            //   MaterialPageRoute(
-                            //     builder: (_) => const LoginScreen(),
-                            //   ),
-                            //   (route) => false,
-                            // );
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => LoginScreen(),
-                              ),
+                            widget.controller.close();
+                            userProvider.logout();
+                            final socketService = SocketService();
+                            socketService.disconnect();
+                            NavigationService.pushReplacementNamed(
+                              '/onboarding',
                             );
                           },
                         ),
@@ -155,6 +316,7 @@ class ProfileHostessPanel extends StatelessWidget {
                 ),
               ),
             ),
+            if (loading) const Center(child: CircularProgressIndicator()),
           ],
         );
       },
@@ -166,11 +328,13 @@ class ProfileHostessPanel extends StatelessWidget {
       children: [
         Icon(icon, color: Colors.white, size: 20),
         const SizedBox(width: 8),
-        Text(
-          text,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ],

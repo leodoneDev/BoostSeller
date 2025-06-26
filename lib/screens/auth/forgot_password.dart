@@ -13,7 +13,9 @@ import 'dart:convert';
 import 'package:boostseller/utils/loading_overlay.dart';
 import 'package:boostseller/utils/back_override_wrapper.dart';
 import 'package:provider/provider.dart';
-import 'package:boostseller/providers/loading.provider.dart';
+import 'package:boostseller/providers/loading_provider.dart';
+import 'package:boostseller/screens/localization/app_localizations.dart';
+import 'package:boostseller/providers/language_provider.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -37,9 +39,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       context,
       listen: false,
     );
+    String langCode =
+        Provider.of<LanguageProvider>(context, listen: false).languageCode;
     loadingProvider.setLoading(true);
     final api = ApiService();
-    // final token = getAuthToken();
     try {
       final response = await api.post('/api/auth/send-otp', {
         'address': address,
@@ -49,7 +52,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
       if ((response?.statusCode == 200 || response?.statusCode == 201) &&
           !jsonData['error']) {
-        ToastUtil.success(jsonData['message']);
+        ToastUtil.success(getText("send_otp_success_message", langCode));
 
         NavigationService.pushReplacementNamed(
           '/verification',
@@ -66,10 +69,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           },
         );
       } else {
-        ToastUtil.error(jsonData['message']);
+        ToastUtil.error(getText("send_otp_fail_message", langCode));
       }
     } catch (e) {
-      ToastUtil.error("Server not found.\nPlease try again");
+      ToastUtil.error(getText("ajax_error_message", langCode));
     } finally {
       loadingProvider.setLoading(false);
     }
@@ -77,18 +80,20 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   void handleSendOTP() {
     final phoneNumber = phoneController.text.trim();
+    String langCode =
+        Provider.of<LanguageProvider>(context, listen: false).languageCode;
     if (usePhone) {
       if (fullPhoneNumber.isEmpty || phoneNumber.isEmpty) {
-        ToastUtil.error("Please enter a phone number.");
+        ToastUtil.error(getText("invalid_phone_number", langCode));
       } else {
         sendOTP(address: fullPhoneNumber);
       }
     } else {
       final email = emailController.text.trim();
       if (email.isEmpty) {
-        ToastUtil.error("Please enter a email.");
+        ToastUtil.error(getText("email_empty_message", langCode));
       } else if (!isValidEmail(email)) {
-        ToastUtil.error("Please enter a valid email.");
+        ToastUtil.error(getText("email_invalid_message", langCode));
       } else {
         sendOTP(address: email);
       }
@@ -101,6 +106,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     final width = size.width;
     final height = size.height;
     final loadingProvider = Provider.of<LoadingProvider>(context);
+    String langCode = context.watch<LanguageProvider>().languageCode;
 
     return BackOverrideWrapper(
       onBack: () {
@@ -113,22 +119,25 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           appBar: AppBar(
             backgroundColor: Config.appbarColor,
             elevation: 0,
-            leading: IconButton(
-              onPressed: () {
-                NavigationService.pushReplacementNamed('/login');
-              },
-              padding: EdgeInsets.zero,
-              icon: Container(
-                width: 25,
-                height: 25,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Config.activeButtonColor,
-                ),
-                child: const Icon(
-                  Icons.arrow_back,
-                  size: 14,
-                  color: Config.iconDefaultColor,
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 20),
+              child: GestureDetector(
+                onTap: () async {
+                  NavigationService.pushReplacementNamed('/login');
+                },
+                child: Container(
+                  width: 35,
+                  height: 35,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Config.activeButtonColor,
+                  ),
+                  alignment: Alignment.center,
+                  child: const Icon(
+                    Icons.arrow_back,
+                    size: Config.appBarBackIconSize,
+                    color: Config.iconDefaultColor,
+                  ),
                 ),
               ),
             ),
@@ -143,8 +152,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   Image.asset('assets/logo_dark.png', height: height * 0.2),
                   SizedBox(height: height * 0.04),
 
-                  const Text(
-                    'Forgot Password',
+                  Text(
+                    getText("Forgot Password", langCode),
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: Config.titleFontSize,
                       fontWeight: FontWeight.bold,
@@ -154,8 +164,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   const SizedBox(height: 4),
                   Text(
                     usePhone
-                        ? 'Enter your phone number to reset password'
-                        : 'Enter your email to reset password',
+                        ? getText(
+                          "Enter your phone number to reset password.",
+                          langCode,
+                        )
+                        : getText(
+                          "Enter your email to reset password.",
+                          langCode,
+                        ),
                     style: const TextStyle(
                       fontSize: Config.subTitleFontSize,
                       color: Config.subTitleFontColor,
@@ -167,7 +183,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      usePhone ? 'Phone Number' : 'Email',
+                      usePhone
+                          ? getText("Phone Number", langCode)
+                          : getText("Email", langCode),
                       style: const TextStyle(color: Colors.white, fontSize: 14),
                     ),
                   ),
@@ -176,16 +194,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   usePhone
                       ? CustomPhoneField(
                         controller: phoneController,
-                        onChanged: (value) {
-                          fullPhoneNumber = value;
+                        onChanged: (phoneNumber) {
+                          fullPhoneNumber = phoneNumber;
                         },
                       )
                       : CustomTextField(
                         controller: emailController,
-                        hint: 'Email',
+                        hint: getText("Email", langCode),
                         keyboardType: TextInputType.emailAddress,
                       ),
-
                   const SizedBox(height: 30),
 
                   SizedBox(
@@ -199,9 +216,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           color: Config.activeButtonColor,
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        child: const Center(
+                        child: Center(
                           child: Text(
-                            'Send OTP',
+                            getText("Send OTP", langCode),
                             style: TextStyle(
                               fontSize: Config.buttonTextFontSize,
                               color: Config.buttonTextColor,
@@ -216,10 +233,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   EffectButton(
                     onTap: () {
                       //setState(() => usePhone = !usePhone);
-                      ToastUtil.success("Developing...");
+                      // ToastUtil.success("Developing...");
                     },
                     child: Text(
-                      usePhone ? 'Use Email Instead' : 'Use Phone Instead',
+                      usePhone
+                          ? getText("Use Email Instead", langCode)
+                          : getText("Use Phone Instead", langCode),
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,

@@ -12,8 +12,8 @@ class ApiService {
   ApiService._internal() {
     _dio = Dio(
       BaseOptions(
+        //baseUrl: Config.testBackendURL,
         baseUrl: Config.realBackendURL,
-        // baseUrl: Config.testBackendURL,
         connectTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10),
         headers: {'Content-Type': 'application/json'},
@@ -48,6 +48,27 @@ class ApiService {
       rethrow;
     } catch (e) {
       ToastUtil.error('Some issues occurred.\nPlease try again.');
+      rethrow;
+    }
+  }
+
+  Future<Response?> uploadFile({
+    required String path,
+    required FormData formData,
+  }) async {
+    try {
+      final response = await _dio.post(
+        path,
+        data: formData,
+        options: Options(headers: {'Content-Type': 'multipart/form-data'}),
+      );
+      return response;
+    } on DioException catch (e) {
+      debugPrint("Upload error: ${e.message} - ${e.response?.data}");
+      ToastUtil.error('Image upload failed.\nPlease try again.');
+      rethrow;
+    } catch (e) {
+      ToastUtil.error('Unexpected error occurred.');
       rethrow;
     }
   }

@@ -9,9 +9,12 @@ import 'package:boostseller/utils/toast.dart';
 import 'package:boostseller/utils/loading_overlay.dart';
 import 'package:boostseller/utils/back_override_wrapper.dart';
 import 'package:boostseller/services/navigation_services.dart';
-import 'package:boostseller/providers/loading.provider.dart';
+import 'package:boostseller/providers/loading_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:boostseller/services/websocket_service.dart';
+import 'package:boostseller/screens/localization/app_localizations.dart';
+import 'package:boostseller/providers/language_provider.dart';
 
 class VerificationScreen extends StatefulWidget {
   const VerificationScreen({super.key});
@@ -25,9 +28,34 @@ class _VerificationScreenState extends State<VerificationScreen> {
     6,
     (_) => TextEditingController(),
   );
+  final socketService = SocketService();
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      initializeData();
+    });
+  }
+
+  Future<void> initializeData() async {
+    await Future.delayed(Duration.zero);
+    try {
+      await Future.wait([connectServer()]);
+    } catch (e) {
+      debugPrint('Error: $e');
+    }
+  }
+
+  Future<void> connectServer() async {
+    socketService.initContext(context);
+    String notRegisterUserId = '0';
+    socketService.connect(notRegisterUserId);
+  }
 
   @override
   void dispose() {
+    socketService.disconnect();
     for (final controller in _otpControllers) {
       controller.dispose();
     }
@@ -55,10 +83,10 @@ class _VerificationScreenState extends State<VerificationScreen> {
       context,
       listen: false,
     );
+    String langCode =
+        Provider.of<LanguageProvider>(context, listen: false).languageCode;
     loadingProvider.setLoading(true);
     final api = ApiService();
-    // final token = getAuthToken();
-
     try {
       final response = await api.post('/api/auth/verify-otp', {
         'code': otpCode,
@@ -70,38 +98,52 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
       if ((response?.statusCode == 200 || response?.statusCode == 201) &&
           !jsonData['error']) {
-        ToastUtil.success(jsonData['message']);
+        //ToastUtil.success(jsonData['message']);
         if (verifyType == 1) {
           final api = ApiService();
           final prefs = await SharedPreferences.getInstance();
           final role = prefs.getString('userRole')?.toLowerCase() ?? '';
 
           if (role.isEmpty) {
-            ToastUtil.error(
-              "Your role do not selected. Please your select role.",
-            );
+            ToastUtil.error(getText("role_empty_message", langCode));
             NavigationService.pushReplacementNamed('/onboarding');
           }
           try {
-            final response = await api.post('/api/auth/register', {
+            final registerResponse = await api.post('/api/auth/register', {
               'name': userData?['name'],
               'email': userData?['email'],
               'phoneNumber': userData?['phoneNumber'],
               'password': userData?['password'],
               'role': role,
+              'adminId': userData?['adminId'],
             });
 
-            Map<String, dynamic> jsonData = jsonDecode(response?.data);
+            Map<String, dynamic> registerJsonData = jsonDecode(
+              registerResponse?.data,
+            );
 
-            if ((response?.statusCode == 200 || response?.statusCode == 201) &&
-                !jsonData['error']) {
-              ToastUtil.success(jsonData['message']);
+            if ((registerResponse?.statusCode == 200 ||
+                    registerResponse?.statusCode == 201) &&
+                !registerJsonData['error']) {
+              ToastUtil.success(getText("register_success_message", langCode));
+              socketService.userRegister({
+                "userName": userData?['name'],
+                "userEmail": userData?['email'],
+                "adminId": userData?['adminId'],
+                "userRole": role,
+              });
+              NavigationService.pushReplacementNamed('/login');
             } else {
-              ToastUtil.error(jsonData['message']);
-              NavigationService.pushReplacementNamed('/register');
+              if (registerJsonData['exist']) {
+                ToastUtil.info(getText("user_exist_message", langCode));
+                NavigationService.pushReplacementNamed('/login');
+              } else {
+                ToastUtil.error(getText("register_fail_message", langCode));
+                NavigationService.pushReplacementNamed('/register');
+              }
             }
           } catch (e) {
-            ToastUtil.error("Server not found.\nPlease try again");
+            ToastUtil.error(getText("ajax_error_message", langCode));
           } finally {
             loadingProvider.setLoading(false);
           }
@@ -111,14 +153,15 @@ class _VerificationScreenState extends State<VerificationScreen> {
             arguments: {'otpType': otpType, 'address': address},
           );
         }
-      } else if (jsonData['expire']) {
-        ToastUtil.info('Please send your code again.');
-        reset();
       } else {
-        ToastUtil.error(jsonData['message']);
+        if (jsonData['expire']) {
+          ToastUtil.info(getText("expire_message", langCode));
+        } else {
+          ToastUtil.error(getText("verify_error_message", langCode));
+        }
       }
     } catch (e) {
-      ToastUtil.error("Server not found.\nPlease try again");
+      ToastUtil.error("Server not found. Please try again");
     } finally {
       loadingProvider.setLoading(false);
     }
@@ -132,14 +175,14 @@ class _VerificationScreenState extends State<VerificationScreen> {
     final loadingProvider = Provider.of<LoadingProvider>(context);
     final args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-
+    String langCode = context.watch<LanguageProvider>().languageCode;
     // argunments validation check
     if (args.isEmpty ||
         args['otpType'] == null ||
         args['verifyType'] == null ||
         args['address'] == null ||
         args['userData'] == null) {
-      ToastUtil.error("Missing required information.\nPlease try again.");
+      ToastUtil.error("Missing required information. Please try again.");
       NavigationService.pushReplacementNamed('/send-otp');
     }
 
@@ -162,26 +205,29 @@ class _VerificationScreenState extends State<VerificationScreen> {
           appBar: AppBar(
             elevation: 0,
             backgroundColor: Config.appbarColor,
-            leading: IconButton(
-              onPressed: () {
-                if (verifyType == 1) {
-                  NavigationService.pushReplacementNamed('/send-otp');
-                } else if (verifyType == 2) {
-                  NavigationService.pushReplacementNamed('/forgot-password');
-                }
-              },
-              padding: const EdgeInsets.all(0),
-              icon: Container(
-                width: 25,
-                height: 25,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Config.activeButtonColor,
-                ),
-                child: const Icon(
-                  Icons.arrow_back,
-                  size: 14,
-                  color: Config.iconDefaultColor,
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 20),
+              child: GestureDetector(
+                onTap: () async {
+                  if (verifyType == 1) {
+                    NavigationService.pushReplacementNamed('/send-otp');
+                  } else if (verifyType == 2) {
+                    NavigationService.pushReplacementNamed('/forgot-password');
+                  }
+                },
+                child: Container(
+                  width: 35,
+                  height: 35,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Config.activeButtonColor,
+                  ),
+                  alignment: Alignment.center,
+                  child: const Icon(
+                    Icons.arrow_back,
+                    size: Config.appBarBackIconSize,
+                    color: Config.iconDefaultColor,
+                  ),
                 ),
               ),
             ),
@@ -195,8 +241,9 @@ class _VerificationScreenState extends State<VerificationScreen> {
                   SizedBox(height: height * 0.04),
                   Image.asset('assets/logo_dark.png', height: height * 0.2),
                   const SizedBox(height: 16),
-                  const Text(
-                    'Verification',
+                  Text(
+                    getText("Verification", langCode),
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: Config.titleFontSize,
                       fontWeight: FontWeight.bold,
@@ -205,8 +252,8 @@ class _VerificationScreenState extends State<VerificationScreen> {
                   ),
                   if (otpType == 1) ...[
                     const SizedBox(height: 6),
-                    const Text(
-                      'Please enter the verification code sent \n to your email',
+                    Text(
+                      getText("otp_verify_message", langCode),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: Config.subTitleFontSize,
@@ -214,17 +261,17 @@ class _VerificationScreenState extends State<VerificationScreen> {
                       ),
                     ),
                     const SizedBox(height: 30),
-                    const Align(
+                    Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        'Email OTP',
+                        getText("Email OTP", langCode),
                         style: TextStyle(color: Colors.white, fontSize: 14),
                       ),
                     ),
                   ] else ...[
                     const SizedBox(height: 6),
-                    const Text(
-                      'Please enter the verification code sent \n to your phone number',
+                    Text(
+                      getText("otp_verify_message", langCode),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: Config.subTitleFontSize,
@@ -232,10 +279,10 @@ class _VerificationScreenState extends State<VerificationScreen> {
                       ),
                     ),
                     const SizedBox(height: 30),
-                    const Align(
+                    Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        'Mobile OTP',
+                        getText("Mobile OTP", langCode),
                         style: TextStyle(color: Colors.white, fontSize: 14),
                       ),
                     ),
@@ -259,9 +306,9 @@ class _VerificationScreenState extends State<VerificationScreen> {
                           color: Config.activeButtonColor,
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        child: const Center(
+                        child: Center(
                           child: Text(
-                            'Verify',
+                            getText("Verify", langCode),
                             style: TextStyle(
                               fontSize: Config.buttonTextFontSize,
                               color: Config.buttonTextColor,
@@ -273,16 +320,16 @@ class _VerificationScreenState extends State<VerificationScreen> {
                   ),
                   const SizedBox(height: 20),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      const Text(
-                        "If you didn't receive a code,",
-                        style: TextStyle(
-                          color: Config.guideTextColor,
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
+                      // Text(
+                      //   getText(context, "If you didn't receive a code,"),
+                      //   style: TextStyle(
+                      //     color: Config.guideTextColor,
+                      //     fontSize: 16,
+                      //   ),
+                      // ),
+                      // const SizedBox(width: 10),
                       EffectButton(
                         onTap: () async {
                           loadingProvider.setLoading(true);
@@ -301,19 +348,20 @@ class _VerificationScreenState extends State<VerificationScreen> {
                                     response?.statusCode == 201) &&
                                 !jsonData['error']) {
                               ToastUtil.success(jsonData['message']);
+                              reset();
                             } else {
                               ToastUtil.error(jsonData['message']);
                             }
                           } catch (e) {
                             ToastUtil.error(
-                              "Server not found. Please try again",
+                              getText("ajax_error_message", langCode),
                             );
                           } finally {
                             loadingProvider.setLoading(false);
                           }
                         },
-                        child: const Text(
-                          "Resend",
+                        child: Text(
+                          getText("Resend", langCode),
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,

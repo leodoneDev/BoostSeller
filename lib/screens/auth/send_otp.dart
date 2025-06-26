@@ -1,6 +1,6 @@
 // Send OTP Page : made by Leo on 2025/05/04
 
-import 'package:boostseller/providers/loading.provider.dart';
+import 'package:boostseller/providers/loading_provider.dart';
 import 'package:boostseller/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:boostseller/widgets/button_effect.dart';
@@ -11,6 +11,8 @@ import 'dart:convert';
 import 'package:boostseller/utils/toast.dart';
 import 'package:provider/provider.dart';
 import 'package:boostseller/utils/loading_overlay.dart';
+import 'package:boostseller/screens/localization/app_localizations.dart';
+import 'package:boostseller/providers/language_provider.dart';
 
 class SendOTPScreen extends StatefulWidget {
   const SendOTPScreen({super.key});
@@ -28,12 +30,18 @@ class _SendOTPScreenState extends State<SendOTPScreen> {
     String email = userData['email'] ?? '';
     String phoneNumber = userData['phoneNumber'] ?? '';
     String password = userData['password'] ?? '';
+    int adminId = userData['adminId'] ?? 0;
+    String langCode =
+        Provider.of<LanguageProvider>(context, listen: false).languageCode;
 
     if (name.isEmpty ||
         email.isEmpty ||
         phoneNumber.isEmpty ||
+        adminId == 0 ||
         password.isEmpty) {
-      ToastUtil.error("All fields are required.\nPlease check your input.");
+      ToastUtil.error(
+        getText("All fields are required. Please check your input.", langCode),
+      );
       NavigationService.pushReplacementNamed('/register');
     }
 
@@ -59,7 +67,7 @@ class _SendOTPScreenState extends State<SendOTPScreen> {
 
       if ((response?.statusCode == 200 || response?.statusCode == 201) &&
           !jsonData['error']) {
-        ToastUtil.success(jsonData['message']);
+        ToastUtil.success(getText("send_otp_success_message", langCode));
 
         NavigationService.pushReplacementNamed(
           '/verification',
@@ -72,14 +80,15 @@ class _SendOTPScreenState extends State<SendOTPScreen> {
               "email": email,
               "phoneNumber": phoneNumber,
               "password": password,
+              "adminId": adminId,
             },
           },
         );
       } else {
-        ToastUtil.error(jsonData['message']);
+        ToastUtil.error(getText("send_otp_fail_message", langCode));
       }
     } catch (e) {
-      ToastUtil.error("Server not found.\nPlease try again");
+      ToastUtil.error(getText("ajax_error_message", langCode));
     } finally {
       loadingProvider.setLoading(false);
     }
@@ -92,17 +101,21 @@ class _SendOTPScreenState extends State<SendOTPScreen> {
     final height = size.height;
     final Map<String, dynamic> userInfo =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    String langCode = context.watch<LanguageProvider>().languageCode;
 
     if (userInfo.isEmpty ||
         userInfo['name'] == null ||
         userInfo['email'] == null ||
         userInfo['phone'] == null ||
         userInfo['password'] == null ||
+        userInfo['adminId'] == null ||
         (userInfo['name'] as String).isEmpty ||
         (userInfo['email'] as String).isEmpty ||
         (userInfo['phone'] as String).isEmpty ||
         (userInfo['password'] as String).isEmpty) {
-      ToastUtil.error("All fields are required.\nPlease complete the form.");
+      ToastUtil.error(
+        getText("All fields are required. Please check your input.", langCode),
+      );
       NavigationService.pushReplacementNamed('/register');
     }
 
@@ -110,6 +123,7 @@ class _SendOTPScreenState extends State<SendOTPScreen> {
     final String email = userInfo['email'];
     final String phoneNumber = userInfo['phone'];
     final String password = userInfo['password'];
+    final adminId = userInfo['adminId'];
     final loadingProvider = Provider.of<LoadingProvider>(context);
 
     return BackOverrideWrapper(
@@ -124,20 +138,25 @@ class _SendOTPScreenState extends State<SendOTPScreen> {
           appBar: AppBar(
             backgroundColor: Config.appbarColor,
             elevation: 0,
-            leading: IconButton(
-              onPressed:
-                  () => NavigationService.pushReplacementNamed('/register'),
-              icon: Container(
-                width: 25,
-                height: 25,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Config.activeButtonColor,
-                ),
-                child: const Icon(
-                  Icons.arrow_back,
-                  size: 14,
-                  color: Config.iconDefaultColor,
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 20),
+              child: GestureDetector(
+                onTap: () async {
+                  NavigationService.pushReplacementNamed('/register');
+                },
+                child: Container(
+                  width: 35,
+                  height: 35,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Config.activeButtonColor,
+                  ),
+                  alignment: Alignment.center,
+                  child: const Icon(
+                    Icons.arrow_back,
+                    size: Config.appBarBackIconSize,
+                    color: Config.iconDefaultColor,
+                  ),
                 ),
               ),
             ),
@@ -152,8 +171,9 @@ class _SendOTPScreenState extends State<SendOTPScreen> {
                   Image.asset('assets/logo_dark.png', height: height * 0.2),
                   SizedBox(height: height * 0.04),
 
-                  const Text(
-                    'Verification',
+                  Text(
+                    getText("Verification", langCode),
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: Config.titleFontSize,
                       fontWeight: FontWeight.bold,
@@ -163,8 +183,8 @@ class _SendOTPScreenState extends State<SendOTPScreen> {
                   const SizedBox(height: 4),
                   Text(
                     usePhone
-                        ? 'Verify your phone number to continue \n We will send OTP to your phone number'
-                        : 'Verify your email to continue \n We will send OTP to your email',
+                        ? getText("verify_phone_message", langCode)
+                        : getText("verify_email_message", langCode),
                     style: const TextStyle(
                       fontSize: Config.subTitleFontSize,
                       color: Config.subTitleFontColor,
@@ -173,16 +193,50 @@ class _SendOTPScreenState extends State<SendOTPScreen> {
                   ),
                   const SizedBox(height: 30),
 
+                  // Align(
+                  //   child: Text(
+                  //     usePhone
+                  //         ? getText(
+                  //           context,
+                  //           'Your phone number is {number}',
+                  //           args: {'number': phoneNumber},
+                  //         )
+                  //         : getText(
+                  //           context,
+                  //           'Your email is {email}',
+                  //           args: {'email': email},
+                  //         ),
+
+                  //     style: const TextStyle(
+                  //       color: Colors.white,
+                  //       fontSize: Config.subTitleFontSize,
+                  //       fontWeight: FontWeight.bold,
+                  //     ),
+                  //   ),
+                  // ),
                   Align(
-                    child: Text(
-                      usePhone
-                          ? 'Your phone number is $phoneNumber}'
-                          : 'Your email is $email',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: Config.subTitleFontSize,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    child: Consumer<LanguageProvider>(
+                      builder: (context, langProvider, _) {
+                        return Text(
+                          usePhone
+                              ? getText(
+                                'Your phone number is {number}',
+                                langCode,
+                                args: {'number': phoneNumber},
+                              )
+                              : getText(
+                                'Your email is {email}',
+                                langCode,
+                                args: {'email': email},
+                              ),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: Config.subTitleFontSize,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        );
+                      },
                     ),
                   ),
 
@@ -197,6 +251,7 @@ class _SendOTPScreenState extends State<SendOTPScreen> {
                             'email': email,
                             'phoneNumber': phoneNumber,
                             'password': password,
+                            'adminId': adminId,
                           }),
                       child: Container(
                         width: double.infinity,
@@ -205,9 +260,9 @@ class _SendOTPScreenState extends State<SendOTPScreen> {
                           color: Config.activeButtonColor,
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        child: const Center(
+                        child: Center(
                           child: Text(
-                            'Send OTP',
+                            getText("Send OTP", langCode),
                             style: TextStyle(
                               fontSize: Config.buttonTextFontSize,
                               color: Config.buttonTextColor,
@@ -224,7 +279,9 @@ class _SendOTPScreenState extends State<SendOTPScreen> {
                       setState(() => usePhone = !usePhone);
                     },
                     child: Text(
-                      usePhone ? 'Use Email Instead' : 'Use Phone Instead',
+                      usePhone
+                          ? getText("Use Email Instead", langCode)
+                          : getText("Use Phone Instead", langCode),
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
