@@ -278,6 +278,7 @@ class _AssignedLeadDetailScreenState extends State<AssignedLeadDetailScreen> {
       listen: false,
     );
     final performerId = userProvider.user?.performer?.id;
+    final adminId = userProvider.user?.adminId;
     String langCode =
         Provider.of<LanguageProvider>(context, listen: false).languageCode;
     final api = ApiService();
@@ -293,6 +294,13 @@ class _AssignedLeadDetailScreenState extends State<AssignedLeadDetailScreen> {
           !jsonData['error']) {
         acceptedCount++;
         ToastUtil.success(getText("Lead accepted successfully", langCode));
+        if (jsonData['educationMode']) {
+          socketService.educationMode({
+            'leadId': lead.id,
+            'performerId': performerId,
+            'adminId': adminId,
+          });
+        }
         final prefs = await SharedPreferences.getInstance();
         await prefs.setInt('acceptedCount', acceptedCount);
         lead.status = jsonData['stageName'];

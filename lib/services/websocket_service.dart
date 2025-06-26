@@ -160,6 +160,16 @@ class SocketService {
     }
   }
 
+  void educationMode(Map<String, dynamic> data) {
+    if (socket != null && socket!.connected) {
+      socket?.emit('education_accept', data);
+      print('Emitted education_accept with data: $data');
+      print(data);
+    } else {
+      print('Socket not connected. Cannot send lead.');
+    }
+  }
+
   void disconnect() {
     if (socket != null) {
       socket?.clearListeners(); // Remove all event listeners
