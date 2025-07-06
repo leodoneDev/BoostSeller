@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAG2IhnYYjIAwlzslVY03eRcNAzKrTGEkQ',
-    appId: '1:224849973423:android:f07ba4258dc0eec1f0045a',
+    appId: '1:224849973423:android:054fafbcec86e12af0045a',
     messagingSenderId: '224849973423',
     projectId: 'boostseller-ea2bf',
     storageBucket: 'boostseller-ea2bf.firebasestorage.app',
@@ -59,20 +59,20 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyC6YcwUhL0rOYiqrwXZ4POj3T7OhlZqhhA',
-    appId: '1:224849973423:ios:718f07ef3bdab725f0045a',
+    appId: '1:224849973423:ios:76b270cda62cfd84f0045a',
     messagingSenderId: '224849973423',
     projectId: 'boostseller-ea2bf',
     storageBucket: 'boostseller-ea2bf.firebasestorage.app',
-    iosBundleId: 'com.example.boostseller',
+    iosBundleId: 'ai.boostseller.mobile',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyC6YcwUhL0rOYiqrwXZ4POj3T7OhlZqhhA',
-    appId: '1:224849973423:ios:718f07ef3bdab725f0045a',
+    appId: '1:224849973423:ios:76b270cda62cfd84f0045a',
     messagingSenderId: '224849973423',
     projectId: 'boostseller-ea2bf',
     storageBucket: 'boostseller-ea2bf.firebasestorage.app',
-    iosBundleId: 'com.example.boostseller',
+    iosBundleId: 'ai.boostseller.mobile',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(

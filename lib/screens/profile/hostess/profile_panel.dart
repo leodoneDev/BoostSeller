@@ -170,149 +170,155 @@ class _ProfileHostessPanelState extends State<ProfileHostessPanel> {
               right: 0,
               bottom: 0,
               width: MediaQuery.of(context).size.width * 0.7,
-              child: Material(
-                color: const Color(0xFF2C2C2C),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(24),
-                  bottomLeft: Radius.circular(24),
-                ),
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              const SizedBox(height: 30),
-                              Stack(
-                                alignment: Alignment.bottomRight,
-                                children: [
-                                  GestureDetector(
-                                    onTap: _uploadImage,
-                                    child: CircleAvatar(
-                                      radius: 70,
-                                      backgroundColor: Colors.white,
-                                      backgroundImage:
-                                          avatarPath.isNotEmpty
-                                              ? CachedNetworkImageProvider(
-                                                '$baseUrl$avatarPath',
-                                              )
-                                              : const AssetImage(
-                                                    'assets/profile_hostess.png',
-                                                  )
-                                                  as ImageProvider,
-                                    ),
-                                  ),
-                                  Positioned(
-                                    right: 4,
-                                    bottom: 4,
-                                    child: GestureDetector(
+              child: SafeArea(
+                child: Material(
+                  color: const Color(0xFF2C2C2C),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(24),
+                    bottomLeft: Radius.circular(24),
+                  ),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 30),
+                                Stack(
+                                  alignment: Alignment.bottomRight,
+                                  children: [
+                                    GestureDetector(
                                       onTap: _uploadImage,
-                                      child: const CircleAvatar(
-                                        backgroundColor: Colors.black54,
-                                        radius: 16,
-                                        child: Icon(
-                                          Icons.edit,
-                                          color: Colors.white,
-                                          size: 16,
+                                      child: CircleAvatar(
+                                        radius: 70,
+                                        backgroundColor: Colors.white,
+                                        backgroundImage:
+                                            avatarPath.isNotEmpty
+                                                ? CachedNetworkImageProvider(
+                                                  '$baseUrl$avatarPath',
+                                                )
+                                                : const AssetImage(
+                                                      'assets/profile_hostess.png',
+                                                    )
+                                                    as ImageProvider,
+                                      ),
+                                    ),
+                                    Positioned(
+                                      right: 4,
+                                      bottom: 4,
+                                      child: GestureDetector(
+                                        onTap: _uploadImage,
+                                        child: const CircleAvatar(
+                                          backgroundColor: Colors.black54,
+                                          radius: 16,
+                                          child: Icon(
+                                            Icons.edit,
+                                            color: Colors.white,
+                                            size: 16,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 30),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  _infoRow(Icons.home, translatedName),
-                                  const SizedBox(height: 10),
-                                  _infoRow(Icons.phone, phoneNumber),
-                                  const SizedBox(height: 10),
-                                  _infoRow(
-                                    Icons.check,
-                                    getText("hostess", langCode),
-                                  ),
-                                  const SizedBox(height: 10),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  const Expanded(child: Divider(thickness: 1)),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0,
+                                  ],
+                                ),
+                                const SizedBox(height: 30),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _infoRow(Icons.home, translatedName),
+                                    const SizedBox(height: 10),
+                                    _infoRow(Icons.phone, phoneNumber),
+                                    const SizedBox(height: 10),
+                                    _infoRow(
+                                      Icons.check,
+                                      getText("hostess", langCode),
                                     ),
-                                    child: Icon(
-                                      Icons.people,
-                                      size: 30,
-                                      color: Colors.white,
-                                    ), // or use Image.asset / Image.network
-                                  ),
-                                  const Expanded(child: Divider(thickness: 1)),
-                                ],
-                              ),
-                              const SizedBox(height: 10),
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  getText("Leads", langCode),
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                    fontWeight: FontWeight.bold,
+                                    const SizedBox(height: 10),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    const Expanded(
+                                      child: Divider(thickness: 1),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0,
+                                      ),
+                                      child: Icon(
+                                        Icons.people,
+                                        size: 30,
+                                        color: Colors.white,
+                                      ), // or use Image.asset / Image.network
+                                    ),
+                                    const Expanded(
+                                      child: Divider(thickness: 1),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 10),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    getText("Leads", langCode),
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(height: 10),
-                              _stat(getText("Total", langCode), totalCount),
-                              _stat(
-                                getText("Accepted", langCode),
-                                acceptedCount,
-                              ),
-                              _stat(
-                                getText("Completed", langCode),
-                                completedCount,
-                              ),
-                            ],
+                                const SizedBox(height: 10),
+                                _stat(getText("Total", langCode), totalCount),
+                                _stat(
+                                  getText("Accepted", langCode),
+                                  acceptedCount,
+                                ),
+                                _stat(
+                                  getText("Completed", langCode),
+                                  completedCount,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Config.activeButtonColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Config.activeButtonColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
                             ),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                          ),
-                          icon: const Icon(Icons.logout, color: Colors.white),
-                          label: Text(
-                            getText("Logout", langCode),
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                            icon: const Icon(Icons.logout, color: Colors.white),
+                            label: Text(
+                              getText("Logout", langCode),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
                             ),
+                            onPressed: () async {
+                              widget.controller.close();
+                              userProvider.logout();
+                              final socketService = SocketService();
+                              socketService.disconnect();
+                              NavigationService.pushReplacementNamed(
+                                '/onboarding',
+                              );
+                            },
                           ),
-                          onPressed: () async {
-                            widget.controller.close();
-                            userProvider.logout();
-                            final socketService = SocketService();
-                            socketService.disconnect();
-                            NavigationService.pushReplacementNamed(
-                              '/onboarding',
-                            );
-                          },
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

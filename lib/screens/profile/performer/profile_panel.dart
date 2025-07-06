@@ -226,288 +226,302 @@ class _PerformerProfilePanelState extends State<PerformerProfilePanel> {
               right: 0,
               bottom: 0,
               width: MediaQuery.of(context).size.width * 0.7,
-              child: Material(
-                color: const Color(0xFF2C2C2C),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(24),
-                  bottomLeft: Radius.circular(24),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              const SizedBox(height: 30),
-                              Stack(
-                                alignment: Alignment.bottomRight,
-                                children: [
-                                  GestureDetector(
-                                    onTap: _uploadImage,
-                                    child: CircleAvatar(
-                                      radius: 70,
-                                      backgroundColor: Colors.white,
-                                      backgroundImage:
-                                          avatarPath.isNotEmpty
-                                              ? CachedNetworkImageProvider(
-                                                '$baseUrl$avatarPath',
-                                              )
-                                              : const AssetImage(
-                                                    'assets/profile_performer.png',
-                                                  )
-                                                  as ImageProvider,
-                                    ),
-                                  ),
-                                  Positioned(
-                                    right: 4,
-                                    bottom: 4,
-                                    child: GestureDetector(
+              child: SafeArea(
+                child: Material(
+                  color: const Color(0xFF2C2C2C),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(24),
+                    bottomLeft: Radius.circular(24),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 30),
+                                Stack(
+                                  alignment: Alignment.bottomRight,
+                                  children: [
+                                    GestureDetector(
                                       onTap: _uploadImage,
-                                      child: const CircleAvatar(
-                                        backgroundColor: Colors.black54,
-                                        radius: 16,
-                                        child: Icon(
-                                          Icons.edit,
-                                          color: Colors.white,
-                                          size: 16,
+                                      child: CircleAvatar(
+                                        radius: 70,
+                                        backgroundColor: Colors.white,
+                                        backgroundImage:
+                                            avatarPath.isNotEmpty
+                                                ? CachedNetworkImageProvider(
+                                                  '$baseUrl$avatarPath',
+                                                )
+                                                : const AssetImage(
+                                                      'assets/profile_performer.png',
+                                                    )
+                                                    as ImageProvider,
+                                      ),
+                                    ),
+                                    Positioned(
+                                      right: 4,
+                                      bottom: 4,
+                                      child: GestureDetector(
+                                        onTap: _uploadImage,
+                                        child: const CircleAvatar(
+                                          backgroundColor: Colors.black54,
+                                          radius: 16,
+                                          child: Icon(
+                                            Icons.edit,
+                                            color: Colors.white,
+                                            size: 16,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 20),
+                                  ],
+                                ),
+                                const SizedBox(height: 20),
 
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.home,
-                                        color: Colors.white,
-                                        size: 20,
-                                      ),
-                                      SizedBox(width: 8),
-                                      Text(
-                                        translatedName,
-                                        style: TextStyle(
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.home,
                                           color: Colors.white,
-                                          fontWeight: FontWeight.bold,
+                                          size: 20,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 10),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.phone,
-                                        color: Colors.white,
-                                        size: 20,
-                                      ),
-                                      SizedBox(width: 8),
-                                      Text(
-                                        phoneNumber,
-                                        style: TextStyle(
+                                        SizedBox(width: 8),
+                                        Text(
+                                          translatedName,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 10),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.phone,
                                           color: Colors.white,
-                                          fontWeight: FontWeight.bold,
+                                          size: 20,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 10),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.check,
-                                        color: Colors.white,
-                                        size: 20,
-                                      ),
-                                      SizedBox(width: 8),
-                                      Text(
-                                        getText("performer", langCode),
-                                        style: TextStyle(
+                                        SizedBox(width: 8),
+                                        Text(
+                                          phoneNumber,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 10),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.check,
                                           color: Colors.white,
-                                          fontWeight: FontWeight.bold,
+                                          size: 20,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 10),
-                                ],
-                              ),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          getText("performer", langCode),
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 10),
+                                  ],
+                                ),
 
-                              // const Divider(color: Colors.white24),
-                              Row(
-                                children: [
-                                  const Expanded(child: Divider(thickness: 1)),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0,
+                                // const Divider(color: Colors.white24),
+                                Row(
+                                  children: [
+                                    const Expanded(
+                                      child: Divider(thickness: 1),
                                     ),
-                                    child: Icon(
-                                      Icons.emoji_events_rounded,
-                                      size: 30,
-                                      color: Colors.white,
-                                    ), // or use Image.asset / Image.network
-                                  ),
-                                  const Expanded(child: Divider(thickness: 1)),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  getText("Score", langCode),
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              _scoreRow(
-                                getText("Conversion", langCode),
-                                "$conversion %",
-                              ),
-                              _scoreRow(
-                                getText("Responsiveness", langCode),
-                                "$responsiveness s",
-                              ),
-                              _scoreRow(
-                                getText("Effectiveness", langCode),
-                                "$effectiveness %",
-                              ),
-                              const SizedBox(height: 8),
-                              // const Divider(color: Colors.white24),
-                              Row(
-                                children: [
-                                  const Expanded(child: Divider(thickness: 1)),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0,
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0,
+                                      ),
+                                      child: Icon(
+                                        Icons.emoji_events_rounded,
+                                        size: 30,
+                                        color: Colors.white,
+                                      ), // or use Image.asset / Image.network
                                     ),
-                                    child: Icon(
-                                      Icons.people,
-                                      size: 30,
-                                      color: Colors.white,
-                                    ), // or use Image.asset / Image.network
-                                  ),
-                                  const Expanded(child: Divider(thickness: 1)),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  getText("Leads", langCode),
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              _scoreRow(
-                                getText("Assigned", langCode),
-                                assignedCount.toString(),
-                              ),
-                              _scoreRow(
-                                getText("Accepted", langCode),
-                                acceptedCount.toString(),
-                              ),
-                              _scoreRow(
-                                getText("Completed", langCode),
-                                completedCount.toString(),
-                              ),
-                              const SizedBox(height: 8),
-                              Row(
-                                children: [
-                                  const Expanded(child: Divider(thickness: 1)),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0,
+                                    const Expanded(
+                                      child: Divider(thickness: 1),
                                     ),
-                                    child: Icon(
-                                      Icons.settings,
-                                      size: 30,
-                                      color: Colors.white,
-                                    ), // or use Image.asset / Image.network
-                                  ),
-                                  const Expanded(child: Divider(thickness: 1)),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  getText("Setting", langCode),
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  ],
                                 ),
-                              ),
-                              const SizedBox(height: 8),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    getText("Do Not Disturb", langCode),
+                                const SizedBox(height: 8),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    getText("Score", langCode),
                                     style: TextStyle(
-                                      color: Config.titleFontColor,
-                                      fontSize: Config.subTitleFontSize,
+                                      color: Colors.white70,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  Switch(
-                                    value: !disturbFlag,
-                                    onChanged: (val) {
-                                      setState(() {
-                                        disturbFlag = !val;
-                                      });
-                                      setDisturb(val);
-                                    },
-                                    activeColor: Config.activeButtonColor,
+                                ),
+                                const SizedBox(height: 8),
+                                _scoreRow(
+                                  getText("Conversion", langCode),
+                                  "$conversion %",
+                                ),
+                                _scoreRow(
+                                  getText("Responsiveness", langCode),
+                                  "$responsiveness s",
+                                ),
+                                _scoreRow(
+                                  getText("Effectiveness", langCode),
+                                  "$effectiveness %",
+                                ),
+                                const SizedBox(height: 8),
+                                // const Divider(color: Colors.white24),
+                                Row(
+                                  children: [
+                                    const Expanded(
+                                      child: Divider(thickness: 1),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0,
+                                      ),
+                                      child: Icon(
+                                        Icons.people,
+                                        size: 30,
+                                        color: Colors.white,
+                                      ), // or use Image.asset / Image.network
+                                    ),
+                                    const Expanded(
+                                      child: Divider(thickness: 1),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    getText("Leads", langCode),
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton.icon(
-                          onPressed: () async {
-                            widget.controller.close();
-                            userProvider.logout();
-                            final socketService = SocketService();
-                            socketService.disconnect();
-                            NavigationService.pushReplacementNamed(
-                              '/onboarding',
-                            );
-                          },
-                          icon: const Icon(Icons.logout, color: Colors.white),
-                          label: Text(
-                            getText("Logout", langCode),
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Config.activeButtonColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                                ),
+                                const SizedBox(height: 8),
+                                _scoreRow(
+                                  getText("Assigned", langCode),
+                                  assignedCount.toString(),
+                                ),
+                                _scoreRow(
+                                  getText("Accepted", langCode),
+                                  acceptedCount.toString(),
+                                ),
+                                _scoreRow(
+                                  getText("Completed", langCode),
+                                  completedCount.toString(),
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    const Expanded(
+                                      child: Divider(thickness: 1),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0,
+                                      ),
+                                      child: Icon(
+                                        Icons.settings,
+                                        size: 30,
+                                        color: Colors.white,
+                                      ), // or use Image.asset / Image.network
+                                    ),
+                                    const Expanded(
+                                      child: Divider(thickness: 1),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    getText("Setting", langCode),
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      getText("Do Not Disturb", langCode),
+                                      style: TextStyle(
+                                        color: Config.titleFontColor,
+                                        fontSize: Config.subTitleFontSize,
+                                      ),
+                                    ),
+                                    Switch(
+                                      value: !disturbFlag,
+                                      onChanged: (val) {
+                                        setState(() {
+                                          disturbFlag = !val;
+                                        });
+                                        setDisturb(val);
+                                      },
+                                      activeColor: Config.activeButtonColor,
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
                           ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: () async {
+                              widget.controller.close();
+                              userProvider.logout();
+                              final socketService = SocketService();
+                              socketService.disconnect();
+                              NavigationService.pushReplacementNamed(
+                                '/onboarding',
+                              );
+                            },
+                            icon: const Icon(Icons.logout, color: Colors.white),
+                            label: Text(
+                              getText("Logout", langCode),
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Config.activeButtonColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

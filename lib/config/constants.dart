@@ -28,8 +28,8 @@ class Config {
   static const leadDetailInfoColor = Colors.white;
   static const containerColor = Color(0xFF2A2A2A);
   static const deactiveButtonColor = Color(0xFF2A2A2A);
-  static const String realBackendURL = 'http://192.168.1.227:3000';
-  // static const String realBackendURL = 'https://cp.boostseller.ai';
+  // static const String realBackendURL = 'http://192.168.1.227:3000';
+  static const String realBackendURL = 'https://cp.boostseller.ai';
   static const double appBarIconSize = 30;
   static const double appBarBackIconSize = 25;
   static const notificationBadgeColor = Colors.orange;

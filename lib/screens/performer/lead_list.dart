@@ -253,6 +253,7 @@ class _PerformerDashboardScreenState extends State<PerformerDashboardScreen>
       child: Stack(
         children: [
           Scaffold(
+            resizeToAvoidBottomInset: true,
             backgroundColor: Config.backgroundColor,
             // appBar: AppBar(
             //   backgroundColor: Config.appbarColor,

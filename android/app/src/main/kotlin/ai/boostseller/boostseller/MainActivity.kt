@@ -1,4 +1,4 @@
-package com.example.boostseller
+package ai.boostseller.mobile
 
 import io.flutter.embedding.android.FlutterActivity
 

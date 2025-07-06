@@ -329,76 +329,78 @@ class _SalesStageScreenState extends State<SalesStageScreen>
             bottom: 0,
             left: 0,
             right: 0,
-            child: Material(
-              color: Colors.transparent,
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF2C2C2C),
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black45,
-                      blurRadius: 8,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Stack(
-                  children: [
-                    // Close button
-                    Positioned(
-                      top: 0,
-                      right: 0,
-                      child: GestureDetector(
-                        onTap: () => overlayEntry.remove(),
-                        child: const Icon(
-                          Icons.close,
-                          color: Config.activeButtonColor,
-                        ),
+            child: SafeArea(
+              child: Material(
+                color: Colors.transparent,
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF2C2C2C),
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black45,
+                        blurRadius: 8,
+                        offset: Offset(0, 2),
                       ),
-                    ),
-
-                    // Left-aligned content
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(height: 10),
-                        Text(
-                          _translatedName ?? lead.name,
-                          style: TextStyle(
-                            fontSize: Config.leadNameFontSize,
-                            fontWeight: FontWeight.bold,
-                            color: Config.leadNameColor,
+                    ],
+                  ),
+                  child: Stack(
+                    children: [
+                      // Close button
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: GestureDetector(
+                          onTap: () => overlayEntry.remove(),
+                          child: const Icon(
+                            Icons.close,
+                            color: Config.activeButtonColor,
                           ),
                         ),
-                        SizedBox(height: 10),
-                        _LeadInfoRow(
-                          label: getText("Phone Number", langCode),
-                          value: lead.phone,
-                        ),
-                        _LeadInfoRow(
-                          label: getText("Interest", langCode),
-                          value: _translatedInterest ?? lead.interest,
-                        ),
-                        // _LeadInfoRow(
-                        //   label: getText("ID", langCode),
-                        //   value: lead.idStr,
-                        // ),
-                        _LeadInfoRow(
-                          label: getText("Register Date", langCode),
-                          value: lead.date,
-                        ),
-                        ...?_translatedAdditionalInfo?.map((item) {
-                          return _LeadInfoRow(
-                            label: item['label'] ?? '',
-                            value: item['value'] ?? '',
-                          );
-                        }),
-                      ],
-                    ),
-                  ],
+                      ),
+
+                      // Left-aligned content
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(height: 10),
+                          Text(
+                            _translatedName ?? lead.name,
+                            style: TextStyle(
+                              fontSize: Config.leadNameFontSize,
+                              fontWeight: FontWeight.bold,
+                              color: Config.leadNameColor,
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          _LeadInfoRow(
+                            label: getText("Phone Number", langCode),
+                            value: lead.phone,
+                          ),
+                          _LeadInfoRow(
+                            label: getText("Interest", langCode),
+                            value: _translatedInterest ?? lead.interest,
+                          ),
+                          // _LeadInfoRow(
+                          //   label: getText("ID", langCode),
+                          //   value: lead.idStr,
+                          // ),
+                          _LeadInfoRow(
+                            label: getText("Register Date", langCode),
+                            value: lead.date,
+                          ),
+                          ...?_translatedAdditionalInfo?.map((item) {
+                            return _LeadInfoRow(
+                              label: item['label'] ?? '',
+                              value: item['value'] ?? '',
+                            );
+                          }),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -419,129 +421,137 @@ class _SalesStageScreenState extends State<SalesStageScreen>
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        return Padding(
-          // Adjust height when keyboard appears
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: StatefulBuilder(
-            builder: (context, setModalState) {
-              return Container(
-                width: double.infinity,
-                padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
-                decoration: const BoxDecoration(
-                  color: Color(0xFF2C2C2C),
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                ),
-                child: Stack(
-                  children: [
-                    // Close Icon
-                    Positioned(
-                      top: 0,
-                      right: 0,
-                      child: GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: const Icon(
-                          Icons.close,
-                          color: Config.activeButtonColor,
-                        ),
-                      ),
+        return SafeArea(
+          child: Padding(
+            // Adjust height when keyboard appears
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: StatefulBuilder(
+              builder: (context, setModalState) {
+                return Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF2C2C2C),
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(24),
                     ),
-
-                    // Main Content
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 20),
-                        Center(
-                          child: Text(
-                            getText("Add reason & comment", langCode),
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.white70,
-                              fontWeight: FontWeight.w500,
-                            ),
+                  ),
+                  child: Stack(
+                    children: [
+                      // Close Icon
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: GestureDetector(
+                          onTap: () => Navigator.pop(context),
+                          child: const Icon(
+                            Icons.close,
+                            color: Config.activeButtonColor,
                           ),
                         ),
+                      ),
 
-                        const SizedBox(height: 20),
-                        CustomDropdownNormal(
-                          hint: getText("Reason", langCode),
-                          value: selectedReason,
-                          items: ["Rejected", "Unqualified", "Deal closed"],
-                          onChanged: (value) {
-                            setModalState(() {
-                              selectedReason = value;
-                            });
-                          },
+                      // Main Content
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 20),
+                          Center(
+                            child: Text(
+                              getText("Add reason & comment", langCode),
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.white70,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
 
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                        ),
+                          const SizedBox(height: 20),
+                          CustomDropdownNormal(
+                            hint: getText("Reason", langCode),
+                            value: selectedReason,
+                            items: ["Rejected", "Unqualified", "Deal closed"],
+                            onChanged: (value) {
+                              setModalState(() {
+                                selectedReason = value;
+                              });
+                            },
 
-                        const SizedBox(height: 16),
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                          ),
 
-                        CustomMultilineTextField(
-                          label: getText("Comment", langCode),
-                          hintText: getText("comment_hint", langCode),
-                          controller: commentReasonController,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                        ),
+                          const SizedBox(height: 16),
 
-                        const SizedBox(height: 12),
+                          CustomMultilineTextField(
+                            label: getText("Comment", langCode),
+                            hintText: getText("comment_hint", langCode),
+                            controller: commentReasonController,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                          ),
 
-                        // Submit Button
-                        SizedBox(
-                          width: double.infinity,
-                          child: EffectButton(
-                            onTap: () {
-                              if (selectedReason == null ||
-                                  selectedReason == '') {
-                                ToastUtil.error(
-                                  getText("reason_empty", langCode),
-                                );
-                              } else {
-                                final comment =
-                                    commentReasonController.text.trim();
-                                if (comment == '') {
+                          const SizedBox(height: 12),
+
+                          // Submit Button
+                          SizedBox(
+                            width: double.infinity,
+                            child: EffectButton(
+                              onTap: () {
+                                if (selectedReason == null ||
+                                    selectedReason == '') {
                                   ToastUtil.error(
-                                    getText("comment_required", langCode),
+                                    getText("reason_empty", langCode),
                                   );
                                 } else {
-                                  FocusScope.of(context).unfocus();
-                                  setState(() {
-                                    _autoValidateMode =
-                                        AutovalidateMode.onUserInteraction;
-                                  });
-                                  Navigator.pop(context);
-                                  closedLead(lead, selectedReason, comment);
+                                  final comment =
+                                      commentReasonController.text.trim();
+                                  if (comment == '') {
+                                    ToastUtil.error(
+                                      getText("comment_required", langCode),
+                                    );
+                                  } else {
+                                    FocusScope.of(context).unfocus();
+                                    setState(() {
+                                      _autoValidateMode =
+                                          AutovalidateMode.onUserInteraction;
+                                    });
+                                    Navigator.pop(context);
+                                    closedLead(lead, selectedReason, comment);
+                                  }
                                 }
-                              }
-                            },
-                            child: Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              decoration: BoxDecoration(
-                                color: Config.activeButtonColor,
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                getText("Continue", langCode),
-                                style: TextStyle(
-                                  fontSize: Config.buttonTextFontSize,
-                                  color: Config.buttonTextColor,
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 10,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Config.activeButtonColor,
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  getText("Continue", langCode),
+                                  style: TextStyle(
+                                    fontSize: Config.buttonTextFontSize,
+                                    color: Config.buttonTextColor,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            },
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
         );
       },
@@ -575,8 +585,8 @@ class _SalesStageScreenState extends State<SalesStageScreen>
         child: Stack(
           children: [
             Scaffold(
-              backgroundColor: Config.backgroundColor,
               resizeToAvoidBottomInset: true,
+              backgroundColor: Config.backgroundColor,
               appBar: CustomAppBar(
                 unreadCount: unreadCount,
                 avatarPath: avatarPath.isNotEmpty ? '$baseUrl$avatarPath' : '',

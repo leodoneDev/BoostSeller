@@ -250,6 +250,7 @@ class _NotificationPageState extends State<NotificationPage> {
         child: Stack(
           children: [
             Scaffold(
+              resizeToAvoidBottomInset: true,
               backgroundColor: Config.backgroundColor,
               appBar: CustomAppBar(
                 unreadCount: unreadCount,
@@ -274,66 +275,68 @@ class _NotificationPageState extends State<NotificationPage> {
                 },
                 onNotificationTap: () {},
               ),
-              body:
-                  translatedNotifications.isEmpty
-                      ? _buildEmptyState(context)
-                      : ListView.builder(
-                        padding: const EdgeInsets.all(16),
-                        itemCount: translatedNotifications.length,
-                        itemBuilder: (context, index) {
-                          final item = translatedNotifications[index];
-                          return GestureDetector(
-                            onTap: () => markAsRead(index, item.id),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
-                              margin: const EdgeInsets.only(bottom: 12),
-                              decoration: BoxDecoration(
-                                color:
-                                    item.isRead
-                                        ? Config.leadCardColor
-                                        : Config.containerColor,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: ListTile(
-                                leading: Icon(
-                                  item.isRead
-                                      ? Icons.notifications_none
-                                      : Icons.notifications_active,
+              body: SafeArea(
+                child:
+                    translatedNotifications.isEmpty
+                        ? _buildEmptyState(context)
+                        : ListView.builder(
+                          padding: const EdgeInsets.all(16),
+                          itemCount: translatedNotifications.length,
+                          itemBuilder: (context, index) {
+                            final item = translatedNotifications[index];
+                            return GestureDetector(
+                              onTap: () => markAsRead(index, item.id),
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 300),
+                                margin: const EdgeInsets.only(bottom: 12),
+                                decoration: BoxDecoration(
                                   color:
                                       item.isRead
-                                          ? Colors.grey
-                                          : Colors.amberAccent,
+                                          ? Config.leadCardColor
+                                          : Config.containerColor,
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                                title: Text(
-                                  item.title,
-                                  style: TextStyle(
-                                    color: Config.titleFontColor,
-                                    fontWeight:
+                                child: ListTile(
+                                  leading: Icon(
+                                    item.isRead
+                                        ? Icons.notifications_none
+                                        : Icons.notifications_active,
+                                    color:
                                         item.isRead
-                                            ? FontWeight.w400
-                                            : FontWeight.bold,
-                                    fontSize: 16,
+                                            ? Colors.grey
+                                            : Colors.amberAccent,
                                   ),
-                                ),
-                                subtitle: Text(
-                                  item.message,
-                                  style: TextStyle(
-                                    color: Config.subTitleFontColor,
-                                    fontSize: 14,
+                                  title: Text(
+                                    item.title,
+                                    style: TextStyle(
+                                      color: Config.titleFontColor,
+                                      fontWeight:
+                                          item.isRead
+                                              ? FontWeight.w400
+                                              : FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
                                   ),
-                                ),
-                                trailing: Text(
-                                  formatTimeAgo(item.createdAt),
-                                  style: const TextStyle(
-                                    color: Config.activeButtonColor,
-                                    fontSize: 12,
+                                  subtitle: Text(
+                                    item.message,
+                                    style: TextStyle(
+                                      color: Config.subTitleFontColor,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  trailing: Text(
+                                    formatTimeAgo(item.createdAt),
+                                    style: const TextStyle(
+                                      color: Config.activeButtonColor,
+                                      fontSize: 12,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
+                            );
+                          },
+                        ),
+              ),
             ),
             PerformerProfilePanel(controller: _profilePerformerController),
             ProfileHostessPanel(controller: _profileHostessController),

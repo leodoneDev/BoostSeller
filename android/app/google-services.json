@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:224849973423:android:f07ba4258dc0eec1f0045a",
+        "mobilesdk_app_id": "1:224849973423:android:054fafbcec86e12af0045a",
         "android_client_info": {
-          "package_name": "com.example.boostseller"
+          "package_name": "ai.boostseller.mobile"
         }
       },
       "oauth_client": [],
